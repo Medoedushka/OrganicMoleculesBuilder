@@ -35,8 +35,10 @@
             // 
             // pcb_Output
             // 
+            this.pcb_Output.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pcb_Output.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pcb_Output.Dock = System.Windows.Forms.DockStyle.Top;
             this.pcb_Output.Location = new System.Drawing.Point(0, 0);
             this.pcb_Output.Name = "pcb_Output";
             this.pcb_Output.Size = new System.Drawing.Size(617, 311);
@@ -45,7 +47,8 @@
             // 
             // rtb_Command
             // 
-            this.rtb_Command.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtb_Command.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.rtb_Command.Location = new System.Drawing.Point(0, 311);
             this.rtb_Command.Name = "rtb_Command";
             this.rtb_Command.Size = new System.Drawing.Size(617, 119);
@@ -61,6 +64,7 @@
             this.Controls.Add(this.rtb_Command);
             this.Controls.Add(this.pcb_Output);
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "OrganicMoleculesBuilder";
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Output)).EndInit();
             this.ResumeLayout(false);
