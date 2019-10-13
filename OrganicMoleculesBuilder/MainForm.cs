@@ -14,9 +14,9 @@ namespace OrganicMoleculesBuilder
         int n = 15;
         float x0 = 0, y0 = 0;
         PointF vector = new PointF();
-        PointF[] MainAcyclicChain;
+        
         string lastCommand;
-
+        Molecule crrMolecule;
         public MainForm()
         {
             InitializeComponent();
@@ -31,106 +31,188 @@ namespace OrganicMoleculesBuilder
         {
             if (e.KeyChar == (char)Keys.Enter && txb_Command.Text != "")
             {
+                
                 string command = txb_Command.Text;
                 string[] el = command.Split(' ');
-                try
+                switch (el[0])
                 {
-                    if (el[1] == "()")
-                    {
-                        string[] parts = el[0].Split('-');
-                        try
+                    case "Create":
+                        if (crrMolecule == null)
                         {
-                            if (parts[0].Contains("\r\n")) parts[0] = parts[0].Remove(0, 2);
-                            if (parts[0] == "alkane")
-                                DrawAcyclicPart(int.Parse(parts[1]));
+                            crrMolecule = new Molecule(el[1]);
                         }
-                        catch (FormatException ex)
+                        else MessageBox.Show("Молекула уже создана. Имя: " + crrMolecule);
+                        lastCommand = command;
+                        txb_Command.Text = string.Empty;
+                        break;
+                    case "Add":
+                        if (crrMolecule != null)
                         {
-                            MessageBox.Show(ex.Message);
+                            string[] coords = el[2].Split(';');
+                            if (el[1].Contains("-"))
+                            {
+                                string[] parts = el[1].Split('-');
+                                DrawMolecularPart(parts[0], new PointF(float.Parse(coords[0]), float.Parse(coords[1])), int.Parse(parts[1]));
+                            }
+                            else
+                                DrawMolecularPart(el[1], new PointF(float.Parse(coords[0]), float.Parse(coords[1])));
                         }
-                    }
-                    else
-                    {
-                        string ang = el[1].Substring(1, el[1].Length - 2);
-                        string[] parts = el[0].Split('-');
-                        try
+                        lastCommand = command;
+                        txb_Command.Text = string.Empty;
+                        break;
+                    case "Addsub":
+                        if (crrMolecule != null && el[2].ToLower() == "at")
                         {
-                            if (parts[0].Contains("\r\n")) parts[0] = parts[0].Remove(0, 2);
-                            if (parts[0] == "alkane")
-                                DrawAcyclicPart(int.Parse(parts[1]), int.Parse(ang));
+                            DrawSub(el[1], int.Parse(el[3]), double.Parse(el[4]));
+                            lastCommand = command;
+                            txb_Command.Text = string.Empty;
                         }
-                        catch (FormatException ex)
+                        break;
+                    case "Rotate":
+                        if (crrMolecule != null && el[2].ToLower() == "base")
                         {
-                            MessageBox.Show(ex.Message);
+                            string[] parts = el[1].Split(',');
+                            int[] indexes = new int[parts.Length];
+                            for(int i = 0; i < indexes.Length; i++)
+                            {
+                                indexes[i] = int.Parse(parts[i]);
+                            }
+                            RotateMolecularPart(indexes, int.Parse(el[3]), double.Parse(el[4]));
                         }
-                    }
-                    lastCommand = txb_Command.Text;
-                    txb_Command.Text = "";
+                        lastCommand = command;
+                        txb_Command.Text = string.Empty;
+                        break;
+                    case "Connect":
+                        if (crrMolecule != null && el[3].ToLower() == "by")
+                        {
+                            crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
+                            pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+                        }
+                        lastCommand = command;
+                        txb_Command.Text = string.Empty;
+                        break;
+                    case "Circles":
+                        if (crrMolecule != null)
+                        {
+                            if (el[1] == "On")
+                            {
+                                crrMolecule.DrawAtomCircle = true;
+                            }
+                            else if (el[1] == "Off")
+                                crrMolecule.DrawAtomCircle = false;
+                            pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+                        }
+                        break;
+                    case "Numbers":
+                        if (crrMolecule != null)
+                        {
+                            if (el[1] == "On")
+                            {
+                                crrMolecule.ShowAtomNumbers = true;
+                            }
+                            else if (el[1] == "Off")
+                                crrMolecule.ShowAtomNumbers = false;
+                            pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+                        }
+                        break;
+                    default:
+                        MessageBox.Show("Неверная команда!", "Ошибка синтаксиса", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
                 }
-                catch(Exception ex) { MessageBox.Show(ex.Message); }
                 
             }
             
         }
 
-        private void DrawAcyclicPart(int n, int ang = 0)
+        private void DrawMolecularPart(string type, PointF pos, int n = 5)
         {
-            MainAcyclicChain = new PointF[n];
-            Molecule mol = new Molecule("Alkane");
-            for (int i = 0; i < MainAcyclicChain.Length; i++)
+            if (type == "alkane")
             {
-                MainAcyclicChain[i].X = x0 + i * vector.X;
-                MainAcyclicChain[i].Y = (float)(y0 - vector.Y * (1 - Math.Pow(-1, i)) / 2);
-                Atom atom = new Atom(Element.C, 4, i, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
-                mol.AddAtom(atom, 1, i - 1);
+                PointF[] MainAcyclicChain = new PointF[n];
+                x0 = pos.X; y0 = pos.Y;
+                for (int i = 0; i < MainAcyclicChain.Length; i++)
+                {
+                    MainAcyclicChain[i].X = x0 + i * vector.X;
+                    MainAcyclicChain[i].Y = (float)(y0 - vector.Y * (1 - Math.Pow(-1, i)) / 2);
+                    Atom atom = new Atom(Element.C, 4, i + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
+                    crrMolecule.AddAtom(atom, 1, i);
+                }
             }
-            pcb_Output.Image = mol.ReturnPic(pcb_Output.Width, pcb_Output.Height);
-            //Bitmap bm = new Bitmap(pcb_Output.Width, pcb_Output.Height);
-            //using (g = Graphics.FromImage(bm))
-            //{
-            //    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            //    g.DrawLines(new Pen(Color.Black), MainAcyclicChain);
-            //    DrawSub(1, new PointF(MainAcyclicChain[4].X, MainAcyclicChain[4].Y), bm, ang);
-            //}
-            //pcb_Output.Image = bm;
+            else return;
+            pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+        }
+
+        private void DrawSub(string type, int subPos, double ang)
+        {
+            PointF[] subPt = new PointF[1];
+            PointF targetPos = new PointF(0, 0);
+            PointF[] newVector = new PointF[1];
+            //Поиск координат атома, к которому будет цепляться заместитель
+            foreach (Atom at in crrMolecule.atoms)
+            {
+                if (at.Index == subPos)
+                {
+                    targetPos = at.Position;
+                    break;
+                }
+            }
+            switch (type)
+            {
+                case "Me":
+                    newVector = new PointF[1];
+                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                    subPt = new PointF[2];
+                    break;
+                case "Et":
+                    newVector = new PointF[2];
+                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                    newVector[1] = RotateVector(ang, new PointF((float)(2 * L * Math.Sin( K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
+                       (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
+                    subPt = new PointF[3];
+                    break;
+            }
+            int prev = subPos;
+            for (int i = 1; i < subPt.Length; i++)
+            {
+                subPt[i].X = targetPos.X + newVector[i - 1].X;
+                subPt[i].Y = targetPos.Y + newVector[i - 1].Y;
+                Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
+                crrMolecule.AddAtom(atom, 1, prev);
+                prev = crrMolecule.atoms.Count;
+            }
+            pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
             
         }
 
-        private void DrawSub(int len, PointF pos, Bitmap bm, int a = 0)
+        private void RotateMolecularPart(int[] rotInd, int baseInd, double ang)
         {
-            PointF[] pt = new PointF[len + 1];
-            pt[0].X = pos.X; pt[0].Y = pos.Y;
-            pt[1].X = pt[0].X; pt[1].Y = pt[0].Y - (float)L;
-           
-            PointF[] pt_temp = new PointF[len + 1];
-            for (int i = 0; i < pt_temp.Length; i++)
+            //поиск координат атомов
+            PointF[] rotPt = new PointF[rotInd.Length];
+            PointF basePt = new PointF();
+            foreach(Atom at in crrMolecule.atoms)
             {
-                if (i == 0)
+                if (at.Index == baseInd)
                 {
-                    pt_temp[i].X = pos.X;
-                    pt_temp[i].Y = pos.Y;
-                }
-                else
-                {
-                    PointF oldVector = new PointF(pt[i].X - pt[0].X, pt[i].Y - pt[0].Y);
-                    PointF newVector = RotateVector(a, oldVector);
-                    pt_temp[i].X = pt[0].X + newVector.X;
-                    pt_temp[i].Y = pt[0].Y + newVector.Y;
+                    basePt = at.Position;
+                    break;
                 }
             }
-            
-            using (g = Graphics.FromImage(bm))
+            for(int i = 0; i < rotInd.Length; i++)
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                g.DrawLines(new Pen(Color.Black), pt_temp); //(float)2 * vector.X + pos.X, pos.Y
-                //g.DrawLine(new Pen(Color.Green), pt_temp[0], pt_temp[1]);
-                //for (int i = 1; i < 5; i++)
-                //{
-                //    g.DrawLine(new Pen(Color.Green), pt_temp[1], pt_temp[i]);
-                //}
+                foreach(Atom at in crrMolecule.atoms)
+                {
+                    if (at.Index == rotInd[i])
+                    {
+                        PointF oldVector = new PointF(at.Position.X - basePt.X, at.Position.Y - basePt.Y);
+                        PointF newVector = RotateVector(ang, oldVector);
+                        at.Position = new PointF(basePt.X + newVector.X, basePt.Y + newVector.Y);
+                        break;
+                    }
+                    
+                }
+            }
 
-            }
-            pcb_Output.Image = bm;
+            pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
         }
 
         private PointF RotateVector(double ang, PointF vec)
