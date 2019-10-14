@@ -286,6 +286,8 @@ namespace OrganicMoleculesBuilder
 
         private void rtb_Out_TextChanged(object sender, EventArgs e)
         {
+            int save = txb_Command.SelectionStart;
+
             string str = txb_Command.Text;
             for(int i = 0; i < Keywords.Length; i++)
             {
@@ -297,7 +299,7 @@ namespace OrganicMoleculesBuilder
                     txb_Command.SelectionColor = Color.Blue;
                     txb_Command.SelectionFont = new Font("Arial", 10, FontStyle.Bold);
 
-                    txb_Command.SelectionStart = str.Length;
+                    txb_Command.SelectionStart = txb_Command.Text.Length;
                     txb_Command.SelectionColor = Color.Black;
                     txb_Command.SelectionFont = new Font("Arial", 10);
                 }
@@ -318,10 +320,11 @@ namespace OrganicMoleculesBuilder
                 }
             }
             if (txb_Command.Text == "")
-           {
+            {
                 txb_Command.SelectionColor = Color.Black;
                 txb_Command.SelectionFont = new Font("Arial", 10);
-           } 
+            }
+            txb_Command.SelectionStart = save;
         }
 
     }
