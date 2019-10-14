@@ -117,6 +117,12 @@ namespace OrganicMoleculesBuilder
         {
             if (order > 0 && order < 4)
             {
+                if (order == 1 && IsInvPair(firstInd, secondInd))
+                {
+                    InvAtomPairs.Remove(firstInd + "-" + secondInd);
+                    InvAtomPairs.Remove(secondInd + "-" + firstInd);
+                }
+
                 if (!AtomExists(firstInd) || !AtomExists(secondInd))
                     throw new ArgumentOutOfRangeException("Передаваемые индексы атомов не существуют!");
                 int d = order - Bonds(firstInd, secondInd, true);
