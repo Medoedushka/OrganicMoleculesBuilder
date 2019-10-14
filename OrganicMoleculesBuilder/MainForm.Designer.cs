@@ -48,13 +48,14 @@
             // txb_Command
             // 
             this.txb_Command.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txb_Command.Font = new System.Drawing.Font("Arial Narrow", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.txb_Command.Font = new System.Drawing.Font("Arial Narrow", 10F);
             this.txb_Command.Location = new System.Drawing.Point(4, 3);
             this.txb_Command.Name = "txb_Command";
             this.txb_Command.Size = new System.Drawing.Size(298, 217);
             this.txb_Command.TabIndex = 2;
             this.txb_Command.Text = "";
             this.txb_Command.TextChanged += new System.EventHandler(this.rtb_Out_TextChanged);
+            this.txb_Command.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txb_Command_KeyDown);
             this.txb_Command.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.rtb_Command_KeyPress);
             // 
             // panel1

@@ -110,7 +110,8 @@ namespace OrganicMoleculesBuilder
                         if (crrMolecule != null && el[3].ToLower() == "by")
                         {
                             crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
-                            if (el.Length == 6 && el[5] == "inv")
+
+                            if (el.Length == 6 && el[5].TrimEnd(new char[] { '\n' } ) == "inv")
                                 crrMolecule.AddInvPair(int.Parse(el[1]), int.Parse(el[2]));
 
                            pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
@@ -283,58 +284,44 @@ namespace OrganicMoleculesBuilder
             return pt;
         }
 
-        private void Search()
-        {
-            string[] str = txb_Command.Text.Split(' ');
-            for(int i = 0; i < str.Length - 1; i++)
-            {
-                for(int j = 0; j < Keywords.Length; j++)
-                {
-                    if (str[i] == Keywords[j])
-                    {
-                        colortext_sintacsis_html(str[i], Color.Blue);
-                    }
-                }
-                for (int j = 0; j < Subs.Length; j++)
-                {
-                    if (str[i] == Subs[j])
-                    {
-                        colortext_sintacsis_html(str[i], Color.FromArgb(194, 110, 27));
-                    }
-                }
-            }
-        }
-
-        private void colortext_sintacsis_html(string text, Color color)
-        {
-            int position_save = txb_Command.SelectionStart; // сохраняем позицию курсора изначально
-
-            string str = text;
-            int i = 0;
-            while (i <= txb_Command.Text.Length - str.Length)
-            {
-                //выделение цветом
-                i = txb_Command.Text.IndexOf(str, i);
-                if (i < 0) break;
-                txb_Command.SelectionStart = i;
-                txb_Command.SelectionLength = str.Length;
-                txb_Command.SelectionColor = color;
-                txb_Command.SelectionFont = new Font("Arial", 10, FontStyle.Bold);
-                i += str.Length;
-                txb_Command.SelectionStart = position_save; // ставим как было
-                txb_Command.SelectionColor = Color.Black; // чужое красим в черное
-            }
-        }
-
         private void rtb_Out_TextChanged(object sender, EventArgs e)
         {
-            Search();
-           if (txb_Command.Text == "")
+            string str = txb_Command.Text;
+            for(int i = 0; i < Keywords.Length; i++)
             {
-                
+                int val;    
+                if ( (val = str.IndexOf(Keywords[i])) >= 0)
+                {
+                    txb_Command.SelectionStart = val;
+                    txb_Command.SelectionLength = Keywords[i].Length;
+                    txb_Command.SelectionColor = Color.Blue;
+                    txb_Command.SelectionFont = new Font("Arial", 10, FontStyle.Bold);
+
+                    txb_Command.SelectionStart = str.Length;
+                    txb_Command.SelectionColor = Color.Black;
+                    txb_Command.SelectionFont = new Font("Arial", 10);
+                }
+            }
+            for (int i = 0; i < Subs.Length; i++)
+            {
+                int val;
+                if ((val = str.IndexOf(Subs[i])) >= 0)
+                {
+                    txb_Command.SelectionStart = val;
+                    txb_Command.SelectionLength = Subs[i].Length;
+                    txb_Command.SelectionColor = Color.FromArgb(194, 110, 27);
+                    txb_Command.SelectionFont = new Font("Arial", 10, FontStyle.Bold);
+
+                    txb_Command.SelectionStart = txb_Command.Text.Length;
+                    txb_Command.SelectionColor = Color.Black;
+                    txb_Command.SelectionFont = new Font("Arial", 10);
+                }
+            }
+            if (txb_Command.Text == "")
+           {
                 txb_Command.SelectionColor = Color.Black;
                 txb_Command.SelectionFont = new Font("Arial", 10);
-            } 
+           } 
         }
 
     }
