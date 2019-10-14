@@ -17,6 +17,30 @@ namespace OrganicMoleculesBuilder
         
         string lastCommand;
         Molecule crrMolecule;
+
+        string[] Keywords =
+        {
+            "Create",
+            "Add",
+            "Addsub",
+            "at",
+            "Rotate",
+            "base",
+            "Delete",
+            "Connect",
+            "inv",
+            "by",
+            "Circles",
+            "Numbers",
+            "Move",
+            "Clear"
+        };
+        string[] Subs =
+        {
+            "Me",
+            "Et"
+        };
+
         public MainForm()
         {
             InitializeComponent();
@@ -86,10 +110,23 @@ namespace OrganicMoleculesBuilder
                         if (crrMolecule != null && el[3].ToLower() == "by")
                         {
                             crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
+                            if (el.Length == 6 && el[5] == "inv")
+                                crrMolecule.AddInvPair(int.Parse(el[1]), int.Parse(el[2]));
+
+                           pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+                        }
+                        lastCommand = command;
+                        txb_Command.Text = string.Empty;
+                        break;
+                    case "Delete":
+                        if (crrMolecule != null)
+                        {
+                            crrMolecule.RemoveAtom(int.Parse(el[1]));
                             pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
                         }
                         lastCommand = command;
                         txb_Command.Text = string.Empty;
+                        
                         break;
                     case "Circles":
                         if (crrMolecule != null)
@@ -101,6 +138,8 @@ namespace OrganicMoleculesBuilder
                             else if (el[1] == "Off")
                                 crrMolecule.DrawAtomCircle = false;
                             pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+                            
+                            
                         }
                         break;
                     case "Numbers":
@@ -243,5 +282,60 @@ namespace OrganicMoleculesBuilder
 
             return pt;
         }
+
+        private void Search()
+        {
+            string[] str = txb_Command.Text.Split(' ');
+            for(int i = 0; i < str.Length - 1; i++)
+            {
+                for(int j = 0; j < Keywords.Length; j++)
+                {
+                    if (str[i] == Keywords[j])
+                    {
+                        colortext_sintacsis_html(str[i], Color.Blue);
+                    }
+                }
+                for (int j = 0; j < Subs.Length; j++)
+                {
+                    if (str[i] == Subs[j])
+                    {
+                        colortext_sintacsis_html(str[i], Color.FromArgb(194, 110, 27));
+                    }
+                }
+            }
+        }
+
+        private void colortext_sintacsis_html(string text, Color color)
+        {
+            int position_save = txb_Command.SelectionStart; // сохраняем позицию курсора изначально
+
+            string str = text;
+            int i = 0;
+            while (i <= txb_Command.Text.Length - str.Length)
+            {
+                //выделение цветом
+                i = txb_Command.Text.IndexOf(str, i);
+                if (i < 0) break;
+                txb_Command.SelectionStart = i;
+                txb_Command.SelectionLength = str.Length;
+                txb_Command.SelectionColor = color;
+                txb_Command.SelectionFont = new Font("Arial", 10, FontStyle.Bold);
+                i += str.Length;
+                txb_Command.SelectionStart = position_save; // ставим как было
+                txb_Command.SelectionColor = Color.Black; // чужое красим в черное
+            }
+        }
+
+        private void rtb_Out_TextChanged(object sender, EventArgs e)
+        {
+            Search();
+           if (txb_Command.Text == "")
+            {
+                
+                txb_Command.SelectionColor = Color.Black;
+                txb_Command.SelectionFont = new Font("Arial", 10);
+            } 
+        }
+
     }
 }

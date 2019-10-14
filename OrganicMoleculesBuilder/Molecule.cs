@@ -11,6 +11,7 @@ namespace OrganicMoleculesBuilder
     {
         string Name { get; set; }
         public List<Atom> atoms = new List<Atom>();
+        List<string> InvAtomPairs = new List<string>();
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
 
@@ -19,6 +20,26 @@ namespace OrganicMoleculesBuilder
             Name = name;
             ShowAtomNumbers = true;
             DrawAtomCircle = true;
+        }
+
+        public void AddInvPair(int ind1, int ind2)
+        {
+            if (IsInvPair(ind1, ind2))
+                return;
+
+            InvAtomPairs.Add(ind1 + "-" + ind2);
+        }
+
+        private bool IsInvPair(int ind1, int ind2)
+        {
+            foreach(string str in InvAtomPairs)
+            {
+                string[] el = str.Split('-');
+                if ((ind1 == int.Parse(el[0]) && ind2 == int.Parse(el[1])) || (ind1 == int.Parse(el[1]) && ind2 == int.Parse(el[0])))
+                    return true;
+                
+            }
+            return false;
         }
 
         private bool AtomExists(int atomIndex)
@@ -99,50 +120,75 @@ namespace OrganicMoleculesBuilder
                 if (!AtomExists(firstInd) || !AtomExists(secondInd))
                     throw new ArgumentOutOfRangeException("Передаваемые индексы атомов не существуют!");
                 int d = order - Bonds(firstInd, secondInd, true);
-                if (d <= Bonds(firstInd, 0, false) && d <= Bonds(secondInd, 0, false))
+                if (d > 0)
                 {
-                    int count = 0;
-                    for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
+                    if (d <= Bonds(firstInd, 0, false) && d <= Bonds(secondInd, 0, false))
                     {
-                        if (atoms[firstInd - 1].Neighbours[i] == null && count < d)
+                        int count = 0;
+                        for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
                         {
-                            atoms[firstInd - 1].Neighbours[i] = atoms[secondInd - 1];
-                            count++;
+                            if (atoms[firstInd - 1].Neighbours[i] == null && count < d)
+                            {
+                                atoms[firstInd - 1].Neighbours[i] = atoms[secondInd - 1];
+                                count++;
+                            }
+
                         }
-                        
+                        count = 0;
+                        for (int i = 0; i < atoms[secondInd - 1].Neighbours.Length; i++)
+                        {
+                            if (atoms[secondInd - 1].Neighbours[i] == null && count < d)
+                            {
+                                atoms[secondInd - 1].Neighbours[i] = atoms[firstInd - 1];
+                                count++;
+                            }
+
+                        }
                     }
-                    count = 0;
-                    for (int i = 0; i < atoms[secondInd - 1].Neighbours.Length; i++)
+                }
+                else
+                {
+                    if (Math.Abs(d) <= Bonds(firstInd, secondInd, true) && d <= Bonds(secondInd, firstInd, true))
                     {
-                        if (atoms[secondInd - 1].Neighbours[i] == null && count < d)
+                        int count = 0;
+                        for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
                         {
-                            atoms[secondInd - 1].Neighbours[i] = atoms[firstInd - 1];
-                            count++;
+                            if (atoms[firstInd - 1].Neighbours[i] == atoms[secondInd - 1] && count < Math.Abs(d))
+                            {
+                                atoms[firstInd - 1].Neighbours[i] = null;
+                                count++;
+                            }
+
                         }
-                        
+                        count = 0;
+                        for (int i = 0; i < atoms[secondInd - 1].Neighbours.Length; i++)
+                        {
+                            if (atoms[secondInd - 1].Neighbours[i] == atoms[firstInd - 1] && count < Math.Abs(d))
+                            {
+                                atoms[secondInd - 1].Neighbours[i] = null;
+                                count++;
+                            }
+
+                        }
                     }
                 }
 
-                //for (int i = 0; i < first.Neighbours.Length; i++)
-                //{
-                //    if (first.Neighbours[i] == null && k < order)
-                //    {
-                //        first.Neighbours[i] = second;
-                //        k++;
-                //    }
-                //}
-                //k = 0;
-                //for (int i = 0; i < second.Neighbours.Length; i++)
-                //{
-                //    if (first.Neighbours[i] == null && k < order)
-                //    {
-                //        second.Neighbours[i] = first;
-                //        k++;
-                //    }
-                //}
             }
         }
-        
+
+        public void RemoveAtom(int index)
+        {
+            foreach(Atom at in atoms)
+            {
+                for(int i = 0; i < at.Neighbours.Length; i++)
+                {
+                    if (at.Neighbours[i] == atoms[index - 1])
+                        at.Neighbours[i] = null;
+                }
+            }
+            atoms.Remove(atoms[index - 1]);
+        }
+
         public Bitmap ReturnPic(int width, int height)
         {
             Bitmap bm = new Bitmap(width, height);
@@ -170,8 +216,19 @@ namespace OrganicMoleculesBuilder
                                 double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
                                 
                                 PointF moveVector = new PointF((float)n_x, (float)n_y);
-                                PointF pt1 = new PointF(at.Position.X + moveVector.X, at.Position.Y + moveVector.Y);
-                                PointF pt2 = new PointF(at.Neighbours[i].Position.X + moveVector.X, at.Neighbours[i].Position.Y + moveVector.Y);
+                                PointF pt1;
+                                PointF pt2;
+                                if (IsInvPair(at.Index, at.Neighbours[i].Index))
+                                {
+                                    pt1 = new PointF(at.Position.X + moveVector.X, at.Position.Y + moveVector.Y);
+                                    pt2 = new PointF(at.Neighbours[i].Position.X + moveVector.X, at.Neighbours[i].Position.Y + moveVector.Y);
+                                }
+                                else
+                                {
+                                    pt1 = new PointF(at.Position.X - moveVector.X, at.Position.Y - moveVector.Y);
+                                    pt2 = new PointF(at.Neighbours[i].Position.X - moveVector.X, at.Neighbours[i].Position.Y - moveVector.Y);
+                                }
+
                                 g.DrawLine(new Pen(Color.Black), pt1, pt2);
                                 
                             }
@@ -182,10 +239,20 @@ namespace OrganicMoleculesBuilder
 
                                 double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
                                 double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-
                                 PointF moveVector = new PointF((float)n_x, (float)n_y);
-                                PointF pt1 = new PointF(at.Position.X - moveVector.X, at.Position.Y - moveVector.Y);
-                                PointF pt2 = new PointF(at.Neighbours[i].Position.X - moveVector.X, at.Neighbours[i].Position.Y - moveVector.Y);
+                                PointF pt1;
+                                PointF pt2;
+                                if (IsInvPair(at.Index, at.Neighbours[i].Index))
+                                {
+                                    pt1 = new PointF(at.Position.X - moveVector.X, at.Position.Y - moveVector.Y);
+                                    pt2 = new PointF(at.Neighbours[i].Position.X - moveVector.X, at.Neighbours[i].Position.Y - moveVector.Y);
+                                }
+                                else
+                                {
+                                    pt1 = new PointF(at.Position.X + moveVector.X, at.Position.Y + moveVector.Y);
+                                    pt2 = new PointF(at.Neighbours[i].Position.X + moveVector.X, at.Neighbours[i].Position.Y + moveVector.Y);
+                                }
+                                
                                 g.DrawLine(new Pen(Color.Black), pt1, pt2);
                             }
                         }
