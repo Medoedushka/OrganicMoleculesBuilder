@@ -129,6 +129,40 @@ namespace OrganicMoleculesBuilder
                             txb_Command.Text = string.Empty;
 
                             break;
+                        case "Move":
+                            if (crrMolecule != null)
+                            {
+                                string[] parts = el[1].Split(',');
+                                float a, b;
+                                if (float.TryParse(parts[0], out a) && float.TryParse(parts[1], out b) && parts.Length == 2)
+                                {
+                                    PointF moveVector = new PointF(a, b);
+                                    foreach(Atom at in crrMolecule.atoms)
+                                    {
+                                        at.Position = new PointF(at.Position.X + moveVector.X, at.Position.Y - moveVector.Y);
+                                    }
+                                    pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Неверный синтаксис команды Move!", "Ошибка синтаксиса", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                                lastCommand = command;
+                                txb_Command.Text = string.Empty;
+                            }
+                            break;
+                        case "Clear":
+                            if (crrMolecule != null)
+                            {
+                                string name = crrMolecule.ToString();
+                                crrMolecule = null;
+                                GC.Collect();
+                                MessageBox.Show("Молекула " + name + " успешно удалена", "Удаление молекулы", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                pcb_Output.Image = new Bitmap(pcb_Output.Width, pcb_Output.Height);
+                                lastCommand = command;
+                                txb_Command.Text = string.Empty;
+                            }
+                            break;
                         case "Circles":
                             if (crrMolecule != null)
                             {

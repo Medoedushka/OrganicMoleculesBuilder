@@ -30,8 +30,8 @@
         {
             this.txb_Command = new System.Windows.Forms.RichTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.pcb_Output = new System.Windows.Forms.PictureBox();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Output)).BeginInit();
             this.SuspendLayout();
@@ -44,7 +44,7 @@
             this.txb_Command.Font = new System.Drawing.Font("Arial Narrow", 10F);
             this.txb_Command.Location = new System.Drawing.Point(3, 407);
             this.txb_Command.Name = "txb_Command";
-            this.txb_Command.Size = new System.Drawing.Size(455, 32);
+            this.txb_Command.Size = new System.Drawing.Size(455, 25);
             this.txb_Command.TabIndex = 2;
             this.txb_Command.Text = "";
             this.txb_Command.TextChanged += new System.EventHandler(this.rtb_Out_TextChanged);
@@ -63,23 +63,6 @@
             this.panel1.Size = new System.Drawing.Size(461, 506);
             this.panel1.TabIndex = 3;
             // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox1.Font = new System.Drawing.Font("Arial Narrow", 10F);
-            this.richTextBox1.Location = new System.Drawing.Point(3, 445);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(455, 58);
-            this.richTextBox1.TabIndex = 2;
-            this.richTextBox1.Text = "";
-            this.richTextBox1.TextChanged += new System.EventHandler(this.rtb_Out_TextChanged);
-            this.richTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txb_Command_KeyDown);
-            this.richTextBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.rtb_Command_KeyPress);
-            // 
             // pcb_Output
             // 
             this.pcb_Output.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -90,6 +73,23 @@
             this.pcb_Output.Size = new System.Drawing.Size(455, 398);
             this.pcb_Output.TabIndex = 3;
             this.pcb_Output.TabStop = false;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox1.Font = new System.Drawing.Font("Arial Narrow", 10F);
+            this.richTextBox1.Location = new System.Drawing.Point(3, 438);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(455, 65);
+            this.richTextBox1.TabIndex = 2;
+            this.richTextBox1.Text = "";
+            this.richTextBox1.TextChanged += new System.EventHandler(this.rtb_Out_TextChanged);
+            this.richTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txb_Command_KeyDown);
+            this.richTextBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.rtb_Command_KeyPress);
             // 
             // MainForm
             // 
