@@ -195,6 +195,26 @@ namespace OrganicMoleculesBuilder
             atoms.Remove(atoms[index - 1]);
         }
 
+        private void MultiBonds(int p, Atom atBase, Atom atNeighbour,  out PointF pt1, out PointF pt2)
+        {
+            int d = 5;
+            PointF vector = new PointF(atNeighbour.Position.X - atBase.Position.X, atNeighbour.Position.Y - atBase.Position.Y);
+            double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+            double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+            PointF moveVector = new PointF((float)n_x, (float)n_y);
+
+            if (IsInvPair(atBase.Index, atNeighbour.Index))
+            {
+                pt1 = new PointF(atBase.Position.X + p * moveVector.X, atBase.Position.Y + p * moveVector.Y);
+                pt2 = new PointF(atNeighbour.Position.X + p * moveVector.X, atNeighbour.Position.Y + p * moveVector.Y);
+            }
+            else
+            {
+                pt1 = new PointF(atBase.Position.X - p * moveVector.X, atBase.Position.Y - p * moveVector.Y);
+                pt2 = new PointF(atNeighbour.Position.X - p * moveVector.X, atNeighbour.Position.Y - p * moveVector.Y);
+            }
+        }
+
         public Bitmap ReturnPic(int width, int height)
         {
             Bitmap bm = new Bitmap(width, height);
@@ -213,54 +233,18 @@ namespace OrganicMoleculesBuilder
                         {
                             int numBonds = Bonds(at.Index, at.Neighbours[i].Index, true);
                             g.DrawLine(new Pen(Color.Black), at.Position, at.Neighbours[i].Position);
+                            PointF pt1, pt2;
                             if (numBonds >= 2)
                             {
-                                int d = 5;
-                                PointF vector = new PointF(at.Neighbours[i].Position.X - at.Position.X, at.Neighbours[i].Position.Y - at.Position.Y);
-                               
-                                double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                                double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                                
-                                PointF moveVector = new PointF((float)n_x, (float)n_y);
-                                PointF pt1;
-                                PointF pt2;
-                                if (IsInvPair(at.Index, at.Neighbours[i].Index))
-                                {
-                                    pt1 = new PointF(at.Position.X + moveVector.X, at.Position.Y + moveVector.Y);
-                                    pt2 = new PointF(at.Neighbours[i].Position.X + moveVector.X, at.Neighbours[i].Position.Y + moveVector.Y);
-                                }
-                                else
-                                {
-                                    pt1 = new PointF(at.Position.X - moveVector.X, at.Position.Y - moveVector.Y);
-                                    pt2 = new PointF(at.Neighbours[i].Position.X - moveVector.X, at.Neighbours[i].Position.Y - moveVector.Y);
-                                }
-
+                                MultiBonds(1, at, at.Neighbours[i], out pt1, out pt2);
                                 g.DrawLine(new Pen(Color.Black), pt1, pt2);
-                                
                             }
                             if (numBonds == 3)
                             {
-                                int d = 5;
-                                PointF vector = new PointF(at.Neighbours[i].Position.X - at.Position.X, at.Neighbours[i].Position.Y - at.Position.Y);
-
-                                double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                                double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                                PointF moveVector = new PointF((float)n_x, (float)n_y);
-                                PointF pt1;
-                                PointF pt2;
-                                if (IsInvPair(at.Index, at.Neighbours[i].Index))
-                                {
-                                    pt1 = new PointF(at.Position.X - moveVector.X, at.Position.Y - moveVector.Y);
-                                    pt2 = new PointF(at.Neighbours[i].Position.X - moveVector.X, at.Neighbours[i].Position.Y - moveVector.Y);
-                                }
-                                else
-                                {
-                                    pt1 = new PointF(at.Position.X + moveVector.X, at.Position.Y + moveVector.Y);
-                                    pt2 = new PointF(at.Neighbours[i].Position.X + moveVector.X, at.Neighbours[i].Position.Y + moveVector.Y);
-                                }
-                                
+                                MultiBonds(-1, at, at.Neighbours[i], out pt1, out pt2);
                                 g.DrawLine(new Pen(Color.Black), pt1, pt2);
-                            }
+                            } 
+                            
                         }
                         if (DrawAtomCircle)
                         {
