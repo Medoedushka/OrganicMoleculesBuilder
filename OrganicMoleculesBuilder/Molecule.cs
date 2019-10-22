@@ -99,7 +99,7 @@ namespace OrganicMoleculesBuilder
                                 {
                                     
                                     atoms[i].Neighbours[j] = newAtom;
-                                    newAtom.Neighbours[j] = atoms[i];
+                                    newAtom.Neighbours[k] = atoms[i];
                                     k++;
                                 }
                               
@@ -246,12 +246,24 @@ namespace OrganicMoleculesBuilder
                             } 
                             
                         }
+
+
+                        if (at.ToString() != "C" && DrawAtomCircle == false)
+                        {
+                            int hidrNum = Bonds(at.Index, 0, false);
+                            string symbol = hidrNum > 1 ? at.ToString() + "H" + hidrNum : at.ToString() + (hidrNum == 0 ? "" : "H");
+                            Font symbolFont = new Font("Arial", 9);
+                            SizeF size = g.MeasureString(symbol, symbolFont);
+                            g.FillRectangle(new SolidBrush(Color.White), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));
+                            g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2);
+                        }
+
                         if (DrawAtomCircle)
                         {
                             switch (at.ToString())
                             {
                                 case "C": roundColor = Color.Black; break;
-                                case "N": roundColor = Color.Indigo; break;
+                                case "N": roundColor = Color.Blue; break;
                                 case "O": roundColor = Color.Red; break;
                             }
                             g.FillEllipse(new SolidBrush(roundColor), at.Position.X - r / 2, at.Position.Y - r / 2, r, r);

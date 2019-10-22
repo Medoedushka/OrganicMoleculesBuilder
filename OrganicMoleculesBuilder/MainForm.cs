@@ -7,7 +7,7 @@ namespace OrganicMoleculesBuilder
 {
     public partial class MainForm : Form
     {
-        const double L = 35; // Длина связи C-C
+        const double L = 45; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
         Graphics g;
@@ -37,7 +37,9 @@ namespace OrganicMoleculesBuilder
         string[] Subs =
         {
             "Me",
-            "Et"
+            "Et",
+            "OH",
+            "NH2"
         };
 
         public MainForm()
@@ -238,12 +240,16 @@ namespace OrganicMoleculesBuilder
                     break;
                 }
             }
+            Element el = Element.C;
+            int val = 4;
             switch (type)
             {
                 case "Me":
                     newVector = new PointF[1];
                     newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
                     subPt = new PointF[2];
+                    el = Element.C;
+                    val = 4;
                     break;
                 case "Et":
                     newVector = new PointF[2];
@@ -251,6 +257,22 @@ namespace OrganicMoleculesBuilder
                     newVector[1] = RotateVector(ang, new PointF((float)(2 * L * Math.Sin( K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
                        (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
                     subPt = new PointF[3];
+                    el = Element.C;
+                    val = 4;
+                    break;
+                case "OH":
+                    newVector = new PointF[1];
+                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                    subPt = new PointF[2];
+                    el = Element.O;
+                    val = 2;
+                    break;
+                case "NH2":
+                    newVector = new PointF[1];
+                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                    subPt = new PointF[2];
+                    el = Element.N;
+                    val = 3;
                     break;
             }
             int prev = subPos;
@@ -258,7 +280,7 @@ namespace OrganicMoleculesBuilder
             {
                 subPt[i].X = targetPos.X + newVector[i - 1].X;
                 subPt[i].Y = targetPos.Y + newVector[i - 1].Y;
-                Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
+                Atom atom = new Atom(el, val, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
                 crrMolecule.AddAtom(atom, 1, prev);
                 prev = crrMolecule.atoms.Count;
             }
