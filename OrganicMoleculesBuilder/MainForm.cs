@@ -7,7 +7,7 @@ namespace OrganicMoleculesBuilder
 {
     public partial class MainForm : Form
     {
-        const double L = 45; // Длина связи C-C
+        const double L = 35; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
         Graphics g;
@@ -39,7 +39,12 @@ namespace OrganicMoleculesBuilder
             "Me",
             "Et",
             "OH",
-            "NH2"
+            "COOH",
+            "NH2",
+            "F",
+            "Cl",
+            "Br",
+            "I"
         };
 
         public MainForm()
@@ -260,6 +265,39 @@ namespace OrganicMoleculesBuilder
                     el = Element.C;
                     val = 4;
                     break;
+                case "COOH":
+                    newVector = new PointF[3];
+                    subPt = new PointF[4];
+                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                    newVector[1] = RotateVector(ang, new PointF((float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
+                       (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
+                    newVector[2] = RotateVector(ang, new PointF((float)(2 * L * Math.Sin(K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
+                       (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
+                    
+                    for (int i = 1; i < subPt.Length; i++)
+                    {
+                        subPt[i].X = targetPos.X + newVector[i - 1].X;
+                        subPt[i].Y = targetPos.Y + newVector[i - 1].Y;
+                        if (i == 1)
+                        {
+                            Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
+                            crrMolecule.AddAtom(atom, 1, subPos);
+                        }
+                        else if (i == 2)
+                        {
+                            Atom atom = new Atom(Element.O, 2, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
+                            crrMolecule.AddAtom(atom, 2, subPos + 1);
+                        }
+                        else
+                        {
+                            Atom atom = new Atom(Element.O, 2, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
+                            crrMolecule.AddAtom(atom, 1, subPos + 1);
+                        }
+                        
+                    }
+                    pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+                    return;
+                    //break;
                 case "OH":
                     newVector = new PointF[1];
                     newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
@@ -273,6 +311,34 @@ namespace OrganicMoleculesBuilder
                     subPt = new PointF[2];
                     el = Element.N;
                     val = 3;
+                    break;
+                case "F":
+                    newVector = new PointF[1];
+                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                    subPt = new PointF[2];
+                    el = Element.F;
+                    val = 1;
+                    break;
+                case "Cl":
+                    newVector = new PointF[1];
+                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                    subPt = new PointF[2];
+                    el = Element.Cl;
+                    val = 1;
+                    break;
+                case "Br":
+                    newVector = new PointF[1];
+                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                    subPt = new PointF[2];
+                    el = Element.Br;
+                    val = 1;
+                    break;
+                case "I":
+                    newVector = new PointF[1];
+                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                    subPt = new PointF[2];
+                    el = Element.I;
+                    val = 1;
                     break;
             }
             int prev = subPos;

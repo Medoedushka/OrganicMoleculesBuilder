@@ -179,7 +179,7 @@ namespace OrganicMoleculesBuilder
                     }
                 }
 
-            }
+            }       
         }
 
         public void RemoveAtom(int index)
