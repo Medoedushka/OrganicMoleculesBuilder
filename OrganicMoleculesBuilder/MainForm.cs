@@ -227,6 +227,17 @@ namespace OrganicMoleculesBuilder
                     crrMolecule.AddAtom(atom, 1, i);
                 }
             }
+            else if (type == "cyclo")
+            {
+                PointF[] MainAcyclicChain = DrawPoly(L, pos, n);
+                for(int i = 0; i < MainAcyclicChain.Length; i++)
+                {
+                   
+                    Atom atom = new Atom(Element.C, 4, i + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
+                    crrMolecule.AddAtom(atom, 1, i);
+                }
+                crrMolecule.ConnectAtoms(1, n, 1);
+            }
             else return;
             pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
         }
@@ -265,38 +276,39 @@ namespace OrganicMoleculesBuilder
                     el = Element.C;
                     val = 4;
                     break;
-                case "COOH":
-                    newVector = new PointF[3];
-                    subPt = new PointF[4];
-                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
-                    newVector[1] = RotateVector(ang, new PointF((float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
-                       (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
-                    newVector[2] = RotateVector(ang, new PointF((float)(2 * L * Math.Sin(K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
-                       (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
-                    
-                    for (int i = 1; i < subPt.Length; i++)
-                    {
-                        subPt[i].X = targetPos.X + newVector[i - 1].X;
-                        subPt[i].Y = targetPos.Y + newVector[i - 1].Y;
-                        if (i == 1)
-                        {
-                            Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
-                            crrMolecule.AddAtom(atom, 1, subPos);
-                        }
-                        else if (i == 2)
-                        {
-                            Atom atom = new Atom(Element.O, 2, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
-                            crrMolecule.AddAtom(atom, 2, subPos + 1);
-                        }
-                        else
-                        {
-                            Atom atom = new Atom(Element.O, 2, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
-                            crrMolecule.AddAtom(atom, 1, subPos + 1);
-                        }
+                //case "COOH":
+                //    newVector = new PointF[3];
+                //    subPt = new PointF[4];
+                //    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                //    newVector[1] = RotateVector(ang, new PointF((float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
+                //       (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
+                //    newVector[2] = RotateVector(ang, new PointF((float)(2 * L * Math.Sin(K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
+                //       (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
+                //    int cInd = 1;
+                //    for (int i = 1; i < subPt.Length; i++)
+                //    {
+                //        subPt[i].X = targetPos.X + newVector[i - 1].X;
+                //        subPt[i].Y = targetPos.Y + newVector[i - 1].Y;
+                //        if (i == 1)
+                //        {
+                //            Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
+                //            cInd = crrMolecule.atoms.Count + 1;
+                //            crrMolecule.AddAtom(atom, 1, subPos);
+                //        }
+                //        else if (i == 2)
+                //        {
+                //            Atom atom = new Atom(Element.O, 2, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
+                //            crrMolecule.AddAtom(atom, 2, cInd);
+                //        }
+                //        else
+                //        {
+                //            Atom atom = new Atom(Element.O, 2, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
+                //            crrMolecule.AddAtom(atom, 1, cInd);
+                //        }
                         
-                    }
-                    pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
-                    return;
+                //    }
+                //    pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+                //    return;
                     //break;
                 case "OH":
                     newVector = new PointF[1];
@@ -407,8 +419,8 @@ namespace OrganicMoleculesBuilder
             PointF[] pt = new PointF[n];
             for(int i = 0; i < pt.Length; i++)
             {
-                pt[i].X = (float)(l * Math.Sin(i * 72 * K) + center.X);
-                pt[i].Y = (float)(l * Math.Cos(i * 72 * K) + center.Y);
+                pt[i].X = (float)(l * Math.Sin(i * 360 / n * K) + center.X);
+                pt[i].Y = (float)(l * Math.Cos(i * 360 / n * K) + center.Y);
             }
 
             return pt;

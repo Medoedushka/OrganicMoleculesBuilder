@@ -43,9 +43,10 @@
             this.txb_Command.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txb_Command.Font = new System.Drawing.Font("Arial Narrow", 10F);
             this.txb_Command.Location = new System.Drawing.Point(3, 407);
+            this.txb_Command.Multiline = false;
             this.txb_Command.Name = "txb_Command";
             this.txb_Command.Size = new System.Drawing.Size(455, 25);
-            this.txb_Command.TabIndex = 2;
+            this.txb_Command.TabIndex = 1;
             this.txb_Command.Text = "";
             this.txb_Command.TextChanged += new System.EventHandler(this.rtb_Out_TextChanged);
             this.txb_Command.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txb_Command_KeyDown);
