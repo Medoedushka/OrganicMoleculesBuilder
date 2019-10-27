@@ -9,6 +9,7 @@ namespace OrganicMoleculesBuilder
 {
     public class Molecule
     {
+        const double K = Math.PI / 180;
         string Name { get; set; }
         public List<Atom> atoms = new List<Atom>();
         List<string> InvAtomPairs = new List<string>();
@@ -201,8 +202,8 @@ namespace OrganicMoleculesBuilder
             PointF vector = new PointF(atNeighbour.Position.X - atBase.Position.X, atNeighbour.Position.Y - atBase.Position.Y);
             double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
             double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            PointF moveVector = new PointF((float)n_x, (float)n_y);
-
+            PointF moveVector = RotateVector(0, new PointF((float)n_x, (float)n_y));
+            
             if (IsInvPair(atBase.Index, atNeighbour.Index))
             {
                 pt1 = new PointF(atBase.Position.X + p * moveVector.X, atBase.Position.Y + p * moveVector.Y);
@@ -213,6 +214,14 @@ namespace OrganicMoleculesBuilder
                 pt1 = new PointF(atBase.Position.X - p * moveVector.X, atBase.Position.Y - p * moveVector.Y);
                 pt2 = new PointF(atNeighbour.Position.X - p * moveVector.X, atNeighbour.Position.Y - p * moveVector.Y);
             }
+        }
+
+        private PointF RotateVector(double ang, PointF vec)
+        {
+            float x = 0, y = 0;
+            x = (float)(vec.X * Math.Cos(ang * K) - vec.Y * Math.Sin(ang * K));
+            y = (float)(vec.X * Math.Sin(ang * K) + vec.Y * Math.Cos(ang * K));
+            return new PointF(x, y);
         }
 
         public Bitmap ReturnPic(int width, int height)

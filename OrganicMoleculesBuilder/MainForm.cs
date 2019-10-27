@@ -288,18 +288,7 @@ namespace OrganicMoleculesBuilder
             switch (type)
             {
                 case "cyclo":
-                    PointF[] MainAcyclicChain = DrawPoly(L, new PointF(targetPos.X, (float)(targetPos.Y - 2 * L)), 6);
-                    int p = subPos;
-                    int s = 0;
-                    for (int i = 0; i < MainAcyclicChain.Length; i++)
-                    {
-
-                        Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
-                        crrMolecule.AddAtom(atom, 1, p);
-                        p = crrMolecule.atoms.Count;
-                        if (s == 0) s = p;
-                    }
-                    crrMolecule.ConnectAtoms(s, p, 1);
+                    
                     break;
                 case "Me":
                     newVector = new PointF[1];
@@ -359,6 +348,26 @@ namespace OrganicMoleculesBuilder
                     subPt = new PointF[2];
                     el = Element.I;
                     val = 1;
+                    break;
+                default:
+                    if (type.Contains("cyclo-"))
+                    {
+                        string[] parts = type.Split('-');
+                        int n = int.Parse(parts[1]);
+                        PointF vec = RotateVector(ang, new PointF(0, 2 * (float)L));
+                        PointF[] MainAcyclicChain = DrawPoly(L, new PointF(targetPos.X, (float)(targetPos.Y - vec.Y)), n);
+                        int p = subPos;
+                        int s = 0;
+                        for (int i = 0; i < MainAcyclicChain.Length; i++)
+                        {
+
+                            Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
+                            crrMolecule.AddAtom(atom, 1, p);
+                            p = crrMolecule.atoms.Count;
+                            if (s == 0) s = p;
+                        }
+                        crrMolecule.ConnectAtoms(s, p, 1);
+                    }
                     break;
             }
             
