@@ -252,7 +252,7 @@ namespace OrganicMoleculesBuilder
                         {
                             int hidrNum = Bonds(at.Index, 0, false);
                             string symbol = hidrNum > 1 ? at.ToString() + "H" + hidrNum : at.ToString() + (hidrNum == 0 ? "" : "H");
-                            Font symbolFont = new Font("Arial", 9);
+                            Font symbolFont = new Font("Arial", 8);
                             SizeF size = g.MeasureString(symbol, symbolFont);
                             g.FillRectangle(new SolidBrush(Color.White), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));
                             g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2);
