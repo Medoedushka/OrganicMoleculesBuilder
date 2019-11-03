@@ -21,7 +21,7 @@ namespace OrganicMoleculesBuilder
         {
             "Create",
             "Add",
-            //"Addsub",
+            "Insert",
             "at",
             "Rotate",
             "base",
@@ -44,7 +44,8 @@ namespace OrganicMoleculesBuilder
             "F",
             "Cl",
             "Br",
-            "I"
+            "I",
+            "S"
         };
 
         public MainForm()
@@ -76,21 +77,7 @@ namespace OrganicMoleculesBuilder
                             lastCommand = command;
                             txb_Command.Text = string.Empty;
                             break;
-                        //case "Add":
-                        //    if (crrMolecule != null)
-                        //    {
-                        //        string[] coords = el[2].Split(';');
-                        //        if (el[1].Contains("-"))
-                        //        {
-                        //            string[] parts = el[1].Split('-');
-                        //            DrawMolecularPart(parts[0], new PointF(float.Parse(coords[0]), float.Parse(coords[1])), int.Parse(parts[1]));
-                        //        }
-                        //        else
-                        //            DrawMolecularPart(el[1], new PointF(float.Parse(coords[0]), float.Parse(coords[1])));
-                        //    }
-                        //    lastCommand = command;
-                        //    txb_Command.Text = string.Empty;
-                        //    break;
+                        
                         case "Add":
                             if (crrMolecule != null && el[2].ToLower() == "at")
                             {
@@ -182,6 +169,16 @@ namespace OrganicMoleculesBuilder
                                 txb_Command.Text = string.Empty;
                             }
                             break;
+                        case "Insert":
+                            if (crrMolecule != null)
+                            {
+                                int val = int.Parse(el[1].Substring(el[1].IndexOf('(') + 1, 1));
+                                string atom = Convert.ToString(el[1][0]);
+                                int ind = int.Parse(el[2]);
+                                crrMolecule.InsertAtom(atom, val, ind);
+                                pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+                            }
+                            break;
                         case "Circles":
                             if (crrMolecule != null)
                             {
@@ -197,7 +194,7 @@ namespace OrganicMoleculesBuilder
                             lastCommand = command;
                             txb_Command.Text = string.Empty;
                             break;
-                        case "Numbers":
+                       case "Numbers":
                             if (crrMolecule != null)
                             {
                                 if (el[1] == "On")
@@ -225,35 +222,41 @@ namespace OrganicMoleculesBuilder
             
         }
 
-        private void DrawMolecularPart(string type, PointF pos, int n = 5)
-        {
-            if (type == "alkane")
-            {
-                PointF[] MainAcyclicChain = new PointF[n];
-                x0 = pos.X; y0 = pos.Y;
-                //vector = RotateVector(-90, vector);
-                for (int i = 0; i < MainAcyclicChain.Length; i++)
-                {
-                    MainAcyclicChain[i].X = x0 + i * vector.X;
-                    MainAcyclicChain[i].Y = (float)(y0 - vector.Y * (1 - Math.Pow(-1, i)) / 2);
-                    Atom atom = new Atom(Element.C, 4, i + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
-                    crrMolecule.AddAtom(atom, 1, i);
-                }
-            }
-            else if (type == "cyclo")
-            {
-                PointF[] MainAcyclicChain = DrawPoly(L, pos, n);
-                for(int i = 0; i < MainAcyclicChain.Length; i++)
-                {
+        //private void DrawMolecularPart(string type, PointF pos, int n = 5)
+        //{
+        //    if (type == "alkane")
+        //    {
+        //        PointF[] MainAcyclicChain = new PointF[n];
+        //        x0 = pos.X; y0 = pos.Y;
+        //        for (int i = 0; i < MainAcyclicChain.Length; i++)
+        //        {
+        //            MainAcyclicChain[i].X = x0 + i * vector.X;
+        //            MainAcyclicChain[i].Y = (float)(y0 - vector.Y * (1 - Math.Pow(-1, i)) / 2);
+        //            Atom atom = new Atom(Element.C, 4, i + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
+        //            crrMolecule.AddAtom(atom, 1, i);
+        //        }
+        //    }
+        //    else if (type == "cyclo")
+        //    {
+        //        PointF[] MainAcyclicChain = DrawPoly(L, pos, n);
+        //        for(int i = 0; i < MainAcyclicChain.Length; i++)
+        //        {
                    
-                    Atom atom = new Atom(Element.C, 4, i + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
-                    crrMolecule.AddAtom(atom, 1, i);
-                }
-                crrMolecule.ConnectAtoms(1, n, 1);
-            }
+        //            Atom atom = new Atom(Element.C, 4, i + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
+        //            crrMolecule.AddAtom(atom, 1, i);
+        //        }
+        //        crrMolecule.ConnectAtoms(1, n, 1);
+        //    }
             
-            else return;
-            pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+        //    else return;
+        //    pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
+        //}
+
+        private void GetCoord(double a, out PointF[] newVec, out PointF[] subPt) 
+        {
+            newVec = new PointF[1];
+            newVec[0] = RotateVector(a, new PointF(0, (float)-L));
+            subPt = new PointF[2];
         }
 
         private void DrawSub(string type, string pos, double ang)
@@ -284,16 +287,10 @@ namespace OrganicMoleculesBuilder
                     }
                 }
             }
-
+            GetCoord(ang, out newVector, out subPt);
             switch (type)
             {
-                case "cyclo":
-                    
-                    break;
                 case "Me":
-                    newVector = new PointF[1];
-                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
-                    subPt = new PointF[2];
                     el = Element.C;
                     val = 4;
                     break;
@@ -306,48 +303,33 @@ namespace OrganicMoleculesBuilder
                     el = Element.C;
                     val = 4;
                     break;
-                
                 case "OH":
-                    newVector = new PointF[1];
-                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
-                    subPt = new PointF[2];
                     el = Element.O;
                     val = 2;
                     break;
                 case "NH2":
-                    newVector = new PointF[1];
-                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
-                    subPt = new PointF[2];
                     el = Element.N;
                     val = 3;
                     break;
                 case "F":
-                    newVector = new PointF[1];
-                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
-                    subPt = new PointF[2];
                     el = Element.F;
                     val = 1;
                     break;
                 case "Cl":
-                    newVector = new PointF[1];
-                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
-                    subPt = new PointF[2];
                     el = Element.Cl;
                     val = 1;
                     break;
                 case "Br":
-                    newVector = new PointF[1];
-                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
-                    subPt = new PointF[2];
                     el = Element.Br;
                     val = 1;
                     break;
                 case "I":
-                    newVector = new PointF[1];
-                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
-                    subPt = new PointF[2];
                     el = Element.I;
                     val = 1;
+                    break;
+                case "S":
+                    el = Element.S;
+                    val = 2;
                     break;
                 default:
                     if (type.Contains("cyclo-"))

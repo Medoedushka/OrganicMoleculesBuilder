@@ -9,7 +9,7 @@ namespace OrganicMoleculesBuilder
 {
     public class Molecule
     {
-        const double K = Math.PI / 180;
+        
         string Name { get; set; }
         public List<Atom> atoms = new List<Atom>();
         List<string> InvAtomPairs = new List<string>();
@@ -196,13 +196,31 @@ namespace OrganicMoleculesBuilder
             atoms.Remove(atoms[index - 1]);
         }
 
+        public void InsertAtom(string newAtom, int newAtomVal, int baseAtomInd)
+        {
+            int takenBonds = atoms[baseAtomInd - 1].Valence - Bonds(baseAtomInd, 0, false);
+            if (newAtomVal < takenBonds)
+                throw new ArgumentException("Значение валентности вставляемого атома меньше, чем кол-во занятых связей у базового атома!", "newAtomVal");
+            else 
+            {
+                Element el;
+                if (newAtom == Element.C.ToString()) el = Element.C;
+                else if (newAtom == Element.N.ToString()) el = Element.N;
+                else if (newAtom == Element.O.ToString()) el = Element.O;
+                else if (newAtom == Element.S.ToString()) el = Element.S;
+                else throw new ArgumentException("Недопустимое название нового атома!", "newAtom");
+                atoms[baseAtomInd - 1].Type = el;
+                atoms[baseAtomInd - 1].ApdateValence(newAtomVal);
+            }
+        }
+
         private void MultiBonds(int p, Atom atBase, Atom atNeighbour,  out PointF pt1, out PointF pt2)
         {
             int d = 5;
             PointF vector = new PointF(atNeighbour.Position.X - atBase.Position.X, atNeighbour.Position.Y - atBase.Position.Y);
             double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
             double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            PointF moveVector = RotateVector(0, new PointF((float)n_x, (float)n_y));
+            PointF moveVector = new PointF((float)n_x, (float)n_y);
             
             if (IsInvPair(atBase.Index, atNeighbour.Index))
             {
@@ -214,14 +232,6 @@ namespace OrganicMoleculesBuilder
                 pt1 = new PointF(atBase.Position.X - p * moveVector.X, atBase.Position.Y - p * moveVector.Y);
                 pt2 = new PointF(atNeighbour.Position.X - p * moveVector.X, atNeighbour.Position.Y - p * moveVector.Y);
             }
-        }
-
-        private PointF RotateVector(double ang, PointF vec)
-        {
-            float x = 0, y = 0;
-            x = (float)(vec.X * Math.Cos(ang * K) - vec.Y * Math.Sin(ang * K));
-            y = (float)(vec.X * Math.Sin(ang * K) + vec.Y * Math.Cos(ang * K));
-            return new PointF(x, y);
         }
 
         public Bitmap ReturnPic(int width, int height)
@@ -246,14 +256,9 @@ namespace OrganicMoleculesBuilder
                             if (numBonds >= 2)
                             {
                                 MultiBonds(1, at, at.Neighbours[i], out pt1, out pt2);
+                                if (numBonds == 3) MultiBonds(-1, at, at.Neighbours[i], out pt1, out pt2);
                                 g.DrawLine(new Pen(Color.Black), pt1, pt2);
                             }
-                            if (numBonds == 3)
-                            {
-                                MultiBonds(-1, at, at.Neighbours[i], out pt1, out pt2);
-                                g.DrawLine(new Pen(Color.Black), pt1, pt2);
-                            } 
-                            
                         }
 
 

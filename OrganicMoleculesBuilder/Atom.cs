@@ -24,14 +24,24 @@ namespace OrganicMoleculesBuilder
     {
         public int Index { get; set; }
         public int Valence { get; set; }
-        public Element Type { get; set; }
-        public double AtomWeight { get; set; }
+        private Element type;
+        public Element Type
+        {
+            get { return type; }
+            set
+            {
+                type = value;
+                AtomWeight = (int)value;
+                //ApdateValence(3);
+            }
+        }
+        public double AtomWeight { get; private set; }
         public PointF Position { get; set; }
         public Atom[] Neighbours;
 
         public Atom(Element type, int valence, int ind, PointF pos)
         {
-            Type = type;
+            this.type = type;
             Valence = valence;
             Neighbours = new Atom[Valence];
             Index = ind;
@@ -45,6 +55,18 @@ namespace OrganicMoleculesBuilder
                 Neighbours[i] = null;
             }
 
+        }
+
+        public void ApdateValence(int val)
+        {
+            Atom[] temp = new Atom[val];
+            for(int i = 0; i < Neighbours.Length; i++)
+            {
+                if (Neighbours[i] != null) temp[i] = Neighbours[i];
+            }
+            Neighbours = temp;
+            temp = null;
+            Valence = val;
         }
 
         public override string ToString()
