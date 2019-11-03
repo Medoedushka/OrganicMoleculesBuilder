@@ -129,26 +129,14 @@ namespace MoleculesBuilder
             if (pos[0] == '0')
             {
                 string[] parts = pos.Remove(0, 1).Split(';');
-                if (parts[0].Contains("+"))
-                {
-                    string[] sum = parts[0].Split('+');
-                    parts[0] = Convert.ToString(int.Parse(sum[0]) + int.Parse(sum[1]));
-                }
-                if (parts[1].Contains("+"))
-                {
-                    string[] sum = parts[1].Split('+');
-                    parts[1] = Convert.ToString(int.Parse(sum[0]) + int.Parse(sum[1]));
-                }
+                if (parts[0].Contains("+")) parts[0] = SumStrings(parts[0]);
+                if (parts[1].Contains("+")) parts[1] = SumStrings(parts[1]);
                 targetPos = new PointF(float.Parse(parts[0]), float.Parse(parts[1]));
                 subPos = 0;
             }
             else
             {
-                if (pos.Contains("+"))
-                {
-                    string[] sum = pos.Split('+');
-                    pos = Convert.ToString(int.Parse(sum[0]) + int.Parse(sum[1]));
-                }
+                if (pos.Contains("+")) pos = SumStrings(pos);
                 subPos = int.Parse(pos);
                 foreach (Atom at in crrMolecule.atoms)
                 {
@@ -294,6 +282,7 @@ namespace MoleculesBuilder
                     case "Add":
                         if (crrMolecule != null && el[2].ToLower() == "at")
                         {
+                            if (el[4].Contains("+")) el[4] = SumStrings(el[4]);
                             if (el[3].Contains(";"))
                             {
                                 if (crrMolecule.atoms.Count != 0)
