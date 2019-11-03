@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OrganicMoleculesBuilder
+namespace MoleculesBuilder
 {
     public enum Element
     {
@@ -32,7 +32,7 @@ namespace OrganicMoleculesBuilder
             {
                 type = value;
                 AtomWeight = (int)value;
-                //ApdateValence(3);
+                
             }
         }
         public double AtomWeight { get; private set; }
