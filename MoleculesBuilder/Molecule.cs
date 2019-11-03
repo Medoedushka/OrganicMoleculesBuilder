@@ -11,7 +11,37 @@ namespace MoleculesBuilder
 {
     public class Molecule
     {
-        
+        public static string[] Keywords =
+        {
+            "Create",
+            "Add",
+            "Insert",
+            "at",
+            "Rotate",
+            "base",
+            "Delete",
+            "Connect",
+            "inv",
+            "by",
+            "Circles",
+            "Numbers",
+            "Move",
+            "Clear"
+        };
+        public static string[] Subs =
+        {
+            "Me",
+            "Et",
+            "OH",
+            "COOH",
+            "NH2",
+            "F",
+            "Cl",
+            "Br",
+            "I",
+            "S"
+        };
+
         string Name { get; set; }
         const double L = 35; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
@@ -20,6 +50,17 @@ namespace MoleculesBuilder
         List<string> InvAtomPairs = new List<string>();
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
+
+        private static string SumStrings(string strToSum)
+        {
+            string[] comp = strToSum.Split('+');
+            double sum = 0;
+            for(int i = 0; i < comp.Length; i++)
+            {
+                sum += double.Parse(comp[i]);
+            }
+            return Convert.ToString(sum);
+        }
 
         private static PointF[] DrawPoly(double l, PointF center, int n = 5)
         {
@@ -88,11 +129,26 @@ namespace MoleculesBuilder
             if (pos[0] == '0')
             {
                 string[] parts = pos.Remove(0, 1).Split(';');
+                if (parts[0].Contains("+"))
+                {
+                    string[] sum = parts[0].Split('+');
+                    parts[0] = Convert.ToString(int.Parse(sum[0]) + int.Parse(sum[1]));
+                }
+                if (parts[1].Contains("+"))
+                {
+                    string[] sum = parts[1].Split('+');
+                    parts[1] = Convert.ToString(int.Parse(sum[0]) + int.Parse(sum[1]));
+                }
                 targetPos = new PointF(float.Parse(parts[0]), float.Parse(parts[1]));
                 subPos = 0;
             }
             else
             {
+                if (pos.Contains("+"))
+                {
+                    string[] sum = pos.Split('+');
+                    pos = Convert.ToString(int.Parse(sum[0]) + int.Parse(sum[1]));
+                }
                 subPos = int.Parse(pos);
                 foreach (Atom at in crrMolecule.atoms)
                 {
@@ -253,6 +309,77 @@ namespace MoleculesBuilder
                             }
                         }
                         break;
+                    case "AddFromFile":
+                        if (File.Exists(el[1]) && crrMolecule != null)
+                        {
+                            FileStream read = new FileStream(el[1], FileMode.Open, FileAccess.Read);
+                            using (StreamReader reader = new StreamReader(read))
+                            {
+                                string str = "";
+                                List<string> commands = new List<string>();
+                                string[] ind = null;
+                                while (str != null)
+                                {
+                                    str = reader.ReadLine();
+                                    if (!string.IsNullOrEmpty(str) && !str.Contains("AddFromFile"))
+                                    {
+                                        if (str[0] == '(')
+                                        {
+                                            str = str.Remove(0, 1);
+                                            str = str.Remove(str.Length - 1, 1);
+                                            ind = str.Split(',');
+                                            if (ind.Length != el.Length - 2) throw new Exception("Не хватает параметров!");
+                                            continue;
+                                        }
+                                        if (str.Contains("//"))
+                                        {
+                                            int num = str.IndexOf('/');
+                                            str = str.Remove(num);
+                                        }
+                                        if (str.Contains("{"))
+                                        {
+                                            string s = "";
+                                            bool open = false;
+                                            int k = 0;
+                                            foreach(char c in str)
+                                            {
+                                                if (c == '{')
+                                                {
+                                                    open = true;
+                                                    k++; 
+                                                }
+                                                if (open) s += c;
+                                                if (c == '}')
+                                                {
+                                                    open = false;
+                                                    string temp = s.Remove(0, 1);
+                                                    temp = temp.Remove(temp.Length - 1, 1);
+                                                    int n = 0;
+                                                    for(int i = 0; i < ind.Length; i++)
+                                                    {
+                                                        if (ind[i] == temp)
+                                                        {
+                                                            n = i;
+                                                            break;
+                                                        }
+                                                    }
+                                                    str = str.Replace(s, el[2 + n]);
+                                                    s = "";
+                                                }
+                                            }
+                                        }
+                                        if (str != "")
+                                            commands.Add(str);
+                                    }
+                                }
+                                foreach (string c in commands)
+                                {
+                                    result = RunCommand(ref crrMolecule, c, bmWidth, bmHeight);
+                                }
+                            }
+                            return result;
+                        }
+                        break;
                     case "Rotate":
                         if (crrMolecule != null && el[2].ToLower() == "base")
                         {
@@ -268,6 +395,9 @@ namespace MoleculesBuilder
                     case "Connect":
                         if (crrMolecule != null && el[3].ToLower() == "by")
                         {
+                            if (el[1].Contains("+")) el[1] = SumStrings(el[1]);
+                            if (el[2].Contains("+")) el[2] = SumStrings(el[2]);
+
                             crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
 
                             if (el.Length == 6 && el[5].TrimEnd(new char[] { '\n' }) == "inv")
@@ -640,8 +770,6 @@ namespace MoleculesBuilder
             }
             return bm;
         }
-
-
 
         public override string ToString()
         {
