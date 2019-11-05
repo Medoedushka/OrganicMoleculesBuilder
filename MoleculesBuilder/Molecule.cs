@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -51,7 +51,7 @@ namespace MoleculesBuilder
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
 
-        private static string SumStrings(string strToSum)
+        private static string SumStrings(string strToSum) 
         {
             string[] comp = strToSum.Split('+');
             double sum = 0;
@@ -126,7 +126,7 @@ namespace MoleculesBuilder
             int val = 4;
 
             //Поиск координат атома, к которому будет цепляться заместитель
-            if (pos[0] == '0')
+            if (pos[0] == 'n')
             {
                 string[] parts = pos.Remove(0, 1).Split(';');
                 if (parts[0].Contains("+")) parts[0] = SumStrings(parts[0]);
@@ -290,7 +290,7 @@ namespace MoleculesBuilder
                                     MessageBox.Show("((99((9");
                                     throw new Exception();
                                 }
-                                DrawSub(crrMolecule, el[1], "0" + el[3], double.Parse(el[4]));
+                                DrawSub(crrMolecule, el[1], "n" + el[3], double.Parse(el[4]));
                             }
                             else
                             {
