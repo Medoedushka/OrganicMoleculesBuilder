@@ -257,38 +257,40 @@ namespace MoleculesBuilder
         public static Bitmap RunCommand(ref Molecule crrMolecule, string comm, int bmWidth, int bmHeight)
         {
             Bitmap result = new Bitmap(bmWidth, bmHeight);
-            try
+            string command = comm.Trim(new char[] { '\n' });
+            string[] el = command.Split(' ');
+            switch (el[0])
             {
-                string command = comm.Trim(new char[] { '\n' });
-                string[] el = command.Split(' ');
-                switch (el[0])
-                {
-                    case "Create":
-                        if (crrMolecule == null)
-                        {
-                            crrMolecule = new Molecule(el[1]);
-                        }
-                        else MessageBox.Show("Молекула уже создана. Имя: " + crrMolecule);
-                        break;
+                case "Create":
+                    if (crrMolecule == null)
+                    {
+                        crrMolecule = new Molecule(el[1]);
+                    }
+                    else MessageBox.Show("Молекула уже создана. Имя: " + crrMolecule);
+                    break;
 
-                    case "Add":
-                        if (crrMolecule != null && el[2].ToLower() == "at")
+                case "Add":
+                    if (crrMolecule != null && el[2].ToLower() == "at")
+                    {
+                        if (el[4].Contains("+") || el[4].Contains("-")) el[4] = AddStrings(el[4]);
+                        if (el[3].Contains(";") && crrMolecule.atoms.Count != 0)
                         {
-                            if (el[4].Contains("+") || el[4].Contains("-")) el[4] = AddStrings(el[4]);
-                            if (el[3].Contains(";") && crrMolecule.atoms.Count != 0)
-                            {
-                                throw new Exception("Начальная точка уже была построена.");
-                            }
-                            else
-                            {
-                                DrawSub(crrMolecule, el[1], el[3], double.Parse(el[4]));
-                            }
+                            throw new Exception("Начальная точка уже была построена.");
                         }
-                        break;
-                    case "AddFromFile":
-                        if (File.Exists(el[1]) && crrMolecule != null)
+                        else
                         {
-                            FileStream read = new FileStream(el[1], FileMode.Open, FileAccess.Read);
+                            DrawSub(crrMolecule, el[1], el[3], double.Parse(el[4]));
+                        }
+                    }
+                    break;
+                case "AddFromFile":
+                    if (el[1][0] == '[' && el[1][el[1].Length - 1] == ']' && crrMolecule != null)
+                    {
+                        string path = el[1].Remove(0, 1);
+                        path = path.Remove(path.Length - 1, 1);
+                        if (File.Exists(path))
+                        {
+                            FileStream read = new FileStream(path, FileMode.Open, FileAccess.Read);
                             using (StreamReader reader = new StreamReader(read))
                             {
                                 string str = "";
@@ -317,12 +319,12 @@ namespace MoleculesBuilder
                                             string s = "";
                                             bool open = false;
                                             int k = 0;
-                                            foreach(char c in str)
+                                            foreach (char c in str)
                                             {
                                                 if (c == '{')
                                                 {
                                                     open = true;
-                                                    k++; 
+                                                    k++;
                                                 }
                                                 if (open) s += c;
                                                 if (c == '}')
@@ -331,7 +333,7 @@ namespace MoleculesBuilder
                                                     string temp = s.Remove(0, 1);
                                                     temp = temp.Remove(temp.Length - 1, 1);
                                                     int n = 0;
-                                                    for(int i = 0; i < ind.Length; i++)
+                                                    for (int i = 0; i < ind.Length; i++)
                                                     {
                                                         if (ind[i] == temp)
                                                         {
@@ -355,115 +357,112 @@ namespace MoleculesBuilder
                             }
                             return result;
                         }
-                        break;
-                    case "Rotate":
-                        if (crrMolecule != null && el[2].ToLower() == "base")
+                        else throw new FileNotFoundException(path + " не найден.");
+                    }
+                    break;
+                case "Rotate":
+                    if (crrMolecule != null && el[2].ToLower() == "base")
+                    {
+                        string[] parts = el[1].Split(',');
+                        int[] indexes = new int[parts.Length];
+                        for (int i = 0; i < indexes.Length; i++)
                         {
-                            string[] parts = el[1].Split(',');
-                            int[] indexes = new int[parts.Length];
-                            for (int i = 0; i < indexes.Length; i++)
+                            indexes[i] = int.Parse(parts[i]);
+                        }
+                        RotateMolecularPart(crrMolecule, indexes, int.Parse(el[3]), double.Parse(el[4]));
+                    }
+                    break;
+                case "Connect":
+                    if (crrMolecule != null && el[3].ToLower() == "by")
+                    {
+                        if (el[1].Contains("+") || el[1].Contains("-")) el[1] = AddStrings(el[1]);
+                        if (el[2].Contains("+") || el[2].Contains("-")) el[2] = AddStrings(el[2]);
+
+                        crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
+
+                        if (el.Length == 6 && el[5].TrimEnd(new char[] { '\n' }) == "inv")
+                            crrMolecule.AddInvPair(int.Parse(el[1]), int.Parse(el[2]));
+
+
+                    }
+                    break;
+                case "Delete":
+                    if (crrMolecule != null)
+                    {
+                        crrMolecule.RemoveAtom(int.Parse(el[1]));
+
+                    }
+                    break;
+                case "Move":
+                    if (crrMolecule != null)
+                    {
+                        string[] parts = el[1].Split(',');
+                        float a, b;
+                        if (float.TryParse(parts[0], out a) && float.TryParse(parts[1], out b) && parts.Length == 2)
+                        {
+                            PointF moveVector = new PointF(a, b);
+                            foreach (Atom at in crrMolecule.atoms)
                             {
-                                indexes[i] = int.Parse(parts[i]);
+                                at.Position = new PointF(at.Position.X + moveVector.X, at.Position.Y - moveVector.Y);
                             }
-                            RotateMolecularPart(crrMolecule, indexes, int.Parse(el[3]), double.Parse(el[4]));
+
                         }
-                        break;
-                    case "Connect":
-                        if (crrMolecule != null && el[3].ToLower() == "by")
+                        else
                         {
-                            if (el[1].Contains("+") || el[1].Contains("-")) el[1] = AddStrings(el[1]);
-                            if (el[2].Contains("+") || el[2].Contains("-")) el[2] = AddStrings(el[2]);
-
-                            crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
-
-                            if (el.Length == 6 && el[5].TrimEnd(new char[] { '\n' }) == "inv")
-                                crrMolecule.AddInvPair(int.Parse(el[1]), int.Parse(el[2]));
-
-
+                            MessageBox.Show("Неверный синтаксис команды Move!", "Ошибка синтаксиса", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
-                        break;
-                    case "Delete":
-                        if (crrMolecule != null)
+                    }
+                    break;
+                case "Clear":
+                    if (crrMolecule != null)
+                    {
+                        string name = crrMolecule.ToString();
+                        crrMolecule = null;
+                        GC.Collect();
+                        MessageBox.Show("Молекула " + name + " успешно удалена", "Удаление молекулы", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    }
+                    break;
+                case "Insert":
+                    if (crrMolecule != null)
+                    {
+                        int val = int.Parse(el[1].Substring(el[1].IndexOf('(') + 1, 1));
+                        string atom = Convert.ToString(el[1][0]);
+                        int ind = int.Parse(el[2]);
+                        crrMolecule.InsertAtom(atom, val, ind);
+
+                    }
+                    break;
+                case "Circles":
+                    if (crrMolecule != null)
+                    {
+                        if (el[1] == "On")
                         {
-                            crrMolecule.RemoveAtom(int.Parse(el[1]));
-
+                            crrMolecule.DrawAtomCircle = true;
                         }
-                        break;
-                    case "Move":
-                        if (crrMolecule != null)
+                        else if (el[1] == "Off")
+                            crrMolecule.DrawAtomCircle = false;
+
+
+                    }
+                    break;
+                case "Numbers":
+                    if (crrMolecule != null)
+                    {
+                        if (el[1] == "On")
                         {
-                            string[] parts = el[1].Split(',');
-                            float a, b;
-                            if (float.TryParse(parts[0], out a) && float.TryParse(parts[1], out b) && parts.Length == 2)
-                            {
-                                PointF moveVector = new PointF(a, b);
-                                foreach (Atom at in crrMolecule.atoms)
-                                {
-                                    at.Position = new PointF(at.Position.X + moveVector.X, at.Position.Y - moveVector.Y);
-                                }
-
-                            }
-                            else
-                            {
-                                MessageBox.Show("Неверный синтаксис команды Move!", "Ошибка синтаксиса", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
+                            crrMolecule.ShowAtomNumbers = true;
                         }
-                        break;
-                    case "Clear":
-                        if (crrMolecule != null)
-                        {
-                            string name = crrMolecule.ToString();
-                            crrMolecule = null;
-                            GC.Collect();
-                            MessageBox.Show("Молекула " + name + " успешно удалена", "Удаление молекулы", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        else if (el[1] == "Off")
+                            crrMolecule.ShowAtomNumbers = false;
 
-                        }
-                        break;
-                    case "Insert":
-                        if (crrMolecule != null)
-                        {
-                            int val = int.Parse(el[1].Substring(el[1].IndexOf('(') + 1, 1));
-                            string atom = Convert.ToString(el[1][0]);
-                            int ind = int.Parse(el[2]);
-                            crrMolecule.InsertAtom(atom, val, ind);
-
-                        }
-                        break;
-                    case "Circles":
-                        if (crrMolecule != null)
-                        {
-                            if (el[1] == "On")
-                            {
-                                crrMolecule.DrawAtomCircle = true;
-                            }
-                            else if (el[1] == "Off")
-                                crrMolecule.DrawAtomCircle = false;
-
-
-                        }
-                        break;
-                    case "Numbers":
-                        if (crrMolecule != null)
-                        {
-                            if (el[1] == "On")
-                            {
-                                crrMolecule.ShowAtomNumbers = true;
-                            }
-                            else if (el[1] == "Off")
-                                crrMolecule.ShowAtomNumbers = false;
-
-                        }
-                        break;
-                    default:
-                        MessageBox.Show("Неверная команда!", "Ошибка синтаксиса", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        break;
-                }
+                    }
+                    break;
+                default:
+                    throw new ArgumentException("Неверная команда.");
+                    
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка при вводе команды", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
+            
             result = crrMolecule?.ReturnPic(bmWidth, bmHeight);
             return result;
         }

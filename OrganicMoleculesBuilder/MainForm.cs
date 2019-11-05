@@ -20,7 +20,14 @@ namespace OrganicMoleculesBuilder
         {
             if (e.KeyChar == (char)Keys.Enter && txb_Command.Text != "")
             {
-                pcb_Output.Image = Molecule.RunCommand(ref crrMolecule, txb_Command.Text, pcb_Output.Width, pcb_Output.Height);
+                try
+                {
+                    pcb_Output.Image = Molecule.RunCommand(ref crrMolecule, txb_Command.Text, pcb_Output.Width, pcb_Output.Height);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Ошибка выполнения команды!", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                }
                 lastCommand = txb_Command.Text;
                 txb_Command.Text = string.Empty;
             }
