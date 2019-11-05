@@ -20,19 +20,9 @@ namespace OrganicMoleculesBuilder
         {
             if (e.KeyChar == (char)Keys.Enter && txb_Command.Text != "")
             {
-                if (txb_Command.Text != "File")
-                {
-                    pcb_Output.Image = Molecule.RunCommand(ref crrMolecule, txb_Command.Text, pcb_Output.Width, pcb_Output.Height);
-                    lastCommand = txb_Command.Text;
-                    txb_Command.Text = string.Empty;
-                    
-                }
-                else
-                {
-                    pcb_Output.Image = Molecule.RunCommandsFromFile(crrMolecule, "test.txt", pcb_Output.Width, pcb_Output.Height);
-                    lastCommand = txb_Command.Text;
-                    txb_Command.Text = string.Empty;
-                }
+                pcb_Output.Image = Molecule.RunCommand(ref crrMolecule, txb_Command.Text, pcb_Output.Width, pcb_Output.Height);
+                lastCommand = txb_Command.Text;
+                txb_Command.Text = string.Empty;
             }
             
         }

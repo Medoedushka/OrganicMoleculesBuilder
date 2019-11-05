@@ -51,7 +51,7 @@ namespace MoleculesBuilder
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
 
-        
+        //Вспомагательные методы
         private static string AddStrings(string strToSum) 
         {
             double sum = 0;
@@ -76,7 +76,14 @@ namespace MoleculesBuilder
             
             return Convert.ToString(sum);
         }
+        private static void GetCoord(double a, out PointF[] newVec, out PointF[] subPt)
+        {
+            newVec = new PointF[1];
+            newVec[0] = RotateVector(a, new PointF(0, (float)-L));
+            subPt = new PointF[2];
+        }
 
+        //Расчитывает точки для правильного n-угольника
         private static PointF[] DrawPoly(double l, PointF center, int n = 5)
         {
             PointF[] pt = new PointF[n];
@@ -88,6 +95,7 @@ namespace MoleculesBuilder
 
             return pt;
         }
+        //Вращает вектор по часовой стрелке для положительных значений аргумента ang
         private static PointF RotateVector(double ang, PointF vec)
         {
             float x = 0, y = 0;
@@ -95,12 +103,8 @@ namespace MoleculesBuilder
             y = (float)(vec.X * Math.Sin(ang * K) + vec.Y * Math.Cos(ang * K));
             return new PointF(x, y);
         }
-        private static void GetCoord(double a, out PointF[] newVec, out PointF[] subPt)
-        {
-            newVec = new PointF[1];
-            newVec[0] = RotateVector(a, new PointF(0, (float)-L));
-            subPt = new PointF[2];
-        }
+        
+        //Вращение указанных вершин молекулы относительно базовой вершины на угол ang
         private static void RotateMolecularPart(Molecule crrMolecule, int[] rotInd, int baseInd, double ang)
         {
             //поиск координат атомов
@@ -131,6 +135,7 @@ namespace MoleculesBuilder
 
             //pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
         }
+        //Добавление нового заместителя в молекулу
         private static void DrawSub(Molecule crrMolecule, string type, string pos, double ang)
         {
             PointF[] subPt = new PointF[1];
@@ -141,9 +146,9 @@ namespace MoleculesBuilder
             int val = 4;
 
             //Поиск координат атома, к которому будет цепляться заместитель
-            if (pos[0] == 'n')
+            if (pos.Contains(";"))
             {
-                string[] parts = pos.Remove(0, 1).Split(';');
+                string[] parts = pos.Split(';');
                 if (parts[0].Contains("+") || parts[0].Contains("-")) parts[0] = AddStrings(parts[0]);
                 if (parts[1].Contains("+") || parts[1].Contains("-")) parts[1] = AddStrings(parts[1]);
                 targetPos = new PointF(float.Parse(parts[0]), float.Parse(parts[1]));
@@ -241,42 +246,14 @@ namespace MoleculesBuilder
 
         }
 
-        public static Bitmap RunCommandsFromFile(Molecule crrMolecule, string filePath, int bmWidth, int bmHeight)
-        {
-            Bitmap result = new Bitmap(bmWidth, bmHeight);
-
-            if (File.Exists(filePath))
-            {
-                FileStream read = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                using (StreamReader reader = new StreamReader(read))
-                {
-                    string str = "";
-                    List<string> commands = new List<string>();
-                    while (str != null)
-                    {
-                        str = reader.ReadLine();
-                        if (!string.IsNullOrEmpty(str))
-                        {
-                            if (str.Contains("//"))
-                            {
-                                int num = str.IndexOf('/');
-                                str = str.Remove(num);
-                            }
-                            if (str != "")
-                                commands.Add(str);
-                        }
-
-                    }
-                    foreach (string comm in commands)
-                    {
-                        result = RunCommand(ref crrMolecule, comm, bmWidth, bmHeight);
-                    }
-                }
-            }
-            else throw new FileNotFoundException();
-
-            return result;
-        }
+        /// <summary>
+        /// Выполняет команду по отрисовке молекулы. Возвращает картинку с отрисованной молекулой.
+        /// </summary>
+        /// <param name="crrMolecule"></param>
+        /// <param name="comm"></param>
+        /// <param name="bmWidth"></param>
+        /// <param name="bmHeight"></param>
+        /// <returns></returns>
         public static Bitmap RunCommand(ref Molecule crrMolecule, string comm, int bmWidth, int bmHeight)
         {
             Bitmap result = new Bitmap(bmWidth, bmHeight);
@@ -298,14 +275,9 @@ namespace MoleculesBuilder
                         if (crrMolecule != null && el[2].ToLower() == "at")
                         {
                             if (el[4].Contains("+") || el[4].Contains("-")) el[4] = AddStrings(el[4]);
-                            if (el[3].Contains(";"))
+                            if (el[3].Contains(";") && crrMolecule.atoms.Count != 0)
                             {
-                                if (crrMolecule.atoms.Count != 0)
-                                {
-                                    MessageBox.Show("((99((9");
-                                    throw new Exception();
-                                }
-                                DrawSub(crrMolecule, el[1], "n" + el[3], double.Parse(el[4]));
+                                throw new Exception("Начальная точка уже была построена.");
                             }
                             else
                             {
