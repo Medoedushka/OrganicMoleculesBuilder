@@ -51,14 +51,29 @@ namespace MoleculesBuilder
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
 
-        private static string SumStrings(string strToSum) 
+        
+        private static string AddStrings(string strToSum) 
         {
-            string[] comp = strToSum.Split('+');
             double sum = 0;
-            for(int i = 0; i < comp.Length; i++)
+            if (strToSum.Contains("+"))
             {
-                sum += double.Parse(comp[i]);
+                string[] comp = strToSum.Split('+');
+                for (int i = 0; i < comp.Length; i++)
+                {
+                    sum += double.Parse(comp[i]);
+                }
             }
+            else if (strToSum.Contains("-"))
+            {
+                string[] comp = strToSum.Split('-');
+                sum = double.Parse(comp[0]);
+                for (int i = 1; i < comp.Length; i++)
+                {
+                    sum -= double.Parse(comp[i]);
+                }
+            }
+            else throw new Exception("Неверная арифметическая операция!");
+            
             return Convert.ToString(sum);
         }
 
@@ -129,14 +144,14 @@ namespace MoleculesBuilder
             if (pos[0] == 'n')
             {
                 string[] parts = pos.Remove(0, 1).Split(';');
-                if (parts[0].Contains("+")) parts[0] = SumStrings(parts[0]);
-                if (parts[1].Contains("+")) parts[1] = SumStrings(parts[1]);
+                if (parts[0].Contains("+") || parts[0].Contains("-")) parts[0] = AddStrings(parts[0]);
+                if (parts[1].Contains("+") || parts[1].Contains("-")) parts[1] = AddStrings(parts[1]);
                 targetPos = new PointF(float.Parse(parts[0]), float.Parse(parts[1]));
                 subPos = 0;
             }
             else
             {
-                if (pos.Contains("+")) pos = SumStrings(pos);
+                if (pos.Contains("+") || pos.Contains("-")) pos = AddStrings(pos);
                 subPos = int.Parse(pos);
                 foreach (Atom at in crrMolecule.atoms)
                 {
@@ -282,7 +297,7 @@ namespace MoleculesBuilder
                     case "Add":
                         if (crrMolecule != null && el[2].ToLower() == "at")
                         {
-                            if (el[4].Contains("+")) el[4] = SumStrings(el[4]);
+                            if (el[4].Contains("+") || el[4].Contains("-")) el[4] = AddStrings(el[4]);
                             if (el[3].Contains(";"))
                             {
                                 if (crrMolecule.atoms.Count != 0)
@@ -384,8 +399,8 @@ namespace MoleculesBuilder
                     case "Connect":
                         if (crrMolecule != null && el[3].ToLower() == "by")
                         {
-                            if (el[1].Contains("+")) el[1] = SumStrings(el[1]);
-                            if (el[2].Contains("+")) el[2] = SumStrings(el[2]);
+                            if (el[1].Contains("+") || el[1].Contains("-")) el[1] = AddStrings(el[1]);
+                            if (el[2].Contains("+") || el[2].Contains("-")) el[2] = AddStrings(el[2]);
 
                             crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
 
