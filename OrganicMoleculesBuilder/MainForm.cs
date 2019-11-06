@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MoleculesBuilder;
@@ -125,6 +126,42 @@ namespace OrganicMoleculesBuilder
             if (matchesLinks.Count > 0)
             {
                 Hightlight(matchesLinks, Color.FromArgb(128, 0, 128), new Font("Arial", 10, FontStyle.Italic), rtb_Debug);
+            }
+        }
+
+        private void btn_saveCode_Click(object sender, EventArgs e)
+        {
+            if (rtb_Debug.Text != "")
+            {
+                string[] strings = rtb_Debug.Text.Split('\n');
+                for(int i = 0; i < strings.Length; i++)
+                {
+                    if (strings[i].Contains(">")) strings[i] = strings[i].Remove(0, 1);
+                }
+
+                string path = ""; DialogResult res;
+                using (SaveFileDialog save = new SaveFileDialog())
+                {
+                    res = save.ShowDialog();
+                    path = save.FileName + ".txt";
+                }
+                if (res == DialogResult.OK)
+                {
+                    if (!File.Exists(path))
+                    {
+                        using (File.Create(path)) { }
+                        FileStream write = new FileStream(path, FileMode.Open, FileAccess.Write);
+                        using (StreamWriter sw = new StreamWriter(write))
+                        {
+                            foreach(string s in strings)
+                            {
+                                if (s == "") continue;
+                                sw.WriteLine(s);
+                            }
+                        }
+                    }
+                    MessageBox.Show("Код успешно сохранён!", "Сохранение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
         }
     }
