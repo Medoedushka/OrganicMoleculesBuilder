@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MoleculesBuilder;
 
@@ -10,11 +10,24 @@ namespace OrganicMoleculesBuilder
     public partial class MainForm : Form
     {
         string lastCommand;
+        string regexKeyWords;
+        string regexSubs;
         Molecule crrMolecule;
         public MainForm()
         {
             InitializeComponent();
-            
+            for (int i = 0; i < Molecule.Keywords.Length; i++)
+            {
+                if (char.IsLower(Molecule.Keywords[i][0]))
+                {
+                    regexKeyWords += "\\s" + Molecule.Keywords[i] + "\\b|";
+                }
+                else regexKeyWords += Molecule.Keywords[i] + "\\s|";
+            }
+            for(int i = 0; i < Molecule.Subs.Length; i++)
+            {
+                regexSubs += "\\s" + Molecule.Subs[i] + "\\s?|";
+            }
         }
         private void rtb_Command_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -22,7 +35,9 @@ namespace OrganicMoleculesBuilder
             {
                 try
                 {
-                    pcb_Output.Image = Molecule.RunCommand(ref crrMolecule, txb_Command.Text, pcb_Output.Width, pcb_Output.Height);
+                    string command = txb_Command.Text.TrimEnd(new char[] { ' ' }).TrimStart(new char[] { ' ' });
+                    pcb_Output.Image = Molecule.RunCommand(ref crrMolecule, command, pcb_Output.Width, pcb_Output.Height);
+                    rtb_Debug.AppendText(">" + txb_Command.Text + "\n");
                 }
                 catch(Exception ex)
                 {
@@ -42,49 +57,75 @@ namespace OrganicMoleculesBuilder
                 txb_Command.Text = lastCommand;
             }
         }
-
+        
         private void rtb_Out_TextChanged(object sender, EventArgs e)
         {
-            int save = txb_Command.SelectionStart;
-
-            string str = txb_Command.Text;
-            for(int i = 0; i < Molecule.Keywords.Length; i++)
+            Regex regex = new Regex(regexKeyWords);
+            MatchCollection matchesKey = regex.Matches(txb_Command.Text);
+            regex = new Regex(regexSubs);
+            MatchCollection matchesSub = regex.Matches(txb_Command.Text);
+            MatchCollection matchesLinks = new Regex(@"\[\w*\]").Matches(txb_Command.Text);
+            if (matchesKey.Count > 0)
             {
-                int val;    
-                if ( (val = str.IndexOf(Molecule.Keywords[i])) >= 0)
-                {
-                    txb_Command.SelectionStart = val;
-                    txb_Command.SelectionLength = Molecule.Keywords[i].Length;
-                    txb_Command.SelectionColor = Color.Blue;
-                    txb_Command.SelectionFont = new Font("Arial", 10, FontStyle.Bold);
-
-                    txb_Command.SelectionStart = txb_Command.Text.Length;
-                    txb_Command.SelectionColor = Color.Black;
-                    txb_Command.SelectionFont = new Font("Arial", 10);
-                }
+                Hightlight(matchesKey, Color.FromArgb(15, 132, 235), new Font("Arial", 10, FontStyle.Bold), txb_Command);
             }
-            for (int i = 0; i < Molecule.Subs.Length; i++)
+            if (matchesSub.Count > 0)
             {
-                int val;
-                if ((val = str.IndexOf(Molecule.Subs[i])) >= 0)
-                {
-                    txb_Command.SelectionStart = val;
-                    txb_Command.SelectionLength = Molecule.Subs[i].Length;
-                    txb_Command.SelectionColor = Color.FromArgb(194, 110, 27);
-                    txb_Command.SelectionFont = new Font("Arial", 10, FontStyle.Bold);
-
-                    txb_Command.SelectionStart = txb_Command.Text.Length;
-                    txb_Command.SelectionColor = Color.Black;
-                    txb_Command.SelectionFont = new Font("Arial", 10);
-                }
+                Hightlight(matchesSub, Color.FromArgb(194, 110, 27), new Font("Arial", 10, FontStyle.Bold), txb_Command);
             }
-            if (txb_Command.Text == "")
+            if (matchesLinks.Count > 0)
             {
-                txb_Command.SelectionColor = Color.Black;
-                txb_Command.SelectionFont = new Font("Arial", 10);
+                Hightlight(matchesLinks, Color.FromArgb(128, 0, 128), new Font("Arial", 10, FontStyle.Italic), txb_Command);
             }
-            txb_Command.SelectionStart = save;
         }
 
+        private void Hightlight(MatchCollection matches, Color hightlight, Font font ,RichTextBox rtb)
+        {
+            foreach (Match m in matches)
+            {
+                if (m.Value == "") continue;
+                string temp = rtb.Text;
+                while (temp.Contains(m.Value))
+                {
+                    rtb.SelectionStart = temp.IndexOf(m.Value);
+                    rtb.SelectionLength = m.Value.Length;
+                    rtb.SelectionColor = hightlight;
+                    rtb.SelectionFont = font;
+                    temp = temp.Remove(rtb.SelectionStart, m.Value.Length);
+                    temp = temp.Insert(rtb.SelectionStart, new string('*', m.Value.Length));
+                    
+                }
+                
+            }
+            rtb.SelectionStart = rtb.Text.Length;
+            rtb.SelectionColor = Color.Black;
+            rtb.SelectionFont = new Font("Arial", 10);
+        }
+
+        private void chb_CommandsDebug_CheckedChanged(object sender, EventArgs e)
+        {
+            rtb_Debug.ReadOnly = !rtb_Debug.ReadOnly;
+        }
+
+        private void rtb_Debug_TextChanged(object sender, EventArgs e)
+        {
+            Regex regex = new Regex(regexKeyWords);
+            MatchCollection matchesKey = regex.Matches(rtb_Debug.Text);
+            regex = new Regex(regexSubs);
+            MatchCollection matchesSub = regex.Matches(rtb_Debug.Text);
+            MatchCollection matchesLinks = new Regex(@"\[\w*\]").Matches(rtb_Debug.Text);
+            if (matchesKey.Count > 0)
+            {
+                Hightlight(matchesKey, Color.FromArgb(15, 132, 235), new Font("Arial", 10, FontStyle.Bold), rtb_Debug);
+            }
+            if (matchesSub.Count > 0)
+            {
+                Hightlight(matchesSub, Color.FromArgb(194, 110, 27), new Font("Arial", 10, FontStyle.Bold), rtb_Debug);
+            }
+            if (matchesLinks.Count > 0)
+            {
+                Hightlight(matchesLinks, Color.FromArgb(128, 0, 128), new Font("Arial", 10, FontStyle.Italic), rtb_Debug);
+            }
+        }
     }
 }

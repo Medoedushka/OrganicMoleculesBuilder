@@ -26,15 +26,15 @@ namespace MoleculesBuilder
             "Circles",
             "Numbers",
             "Move",
-            "Clear"
+            "Clear",
+            "AddFromFile"
         };
         public static string[] Subs =
         {
             "Me",
             "Et",
             "OH",
-            "COOH",
-            "NH2",
+            "N",
             "F",
             "Cl",
             "Br",
@@ -75,6 +75,14 @@ namespace MoleculesBuilder
             else throw new Exception("Неверная арифметическая операция!");
             
             return Convert.ToString(sum);
+        }
+        private static bool ContainsNotNumbers(string str)
+        {
+            foreach(char c in str)
+            {
+                if (!char.IsNumber(c)) return true;
+            }
+            return false;
         }
         private static void GetCoord(double a, out PointF[] newVec, out PointF[] subPt)
         {
@@ -149,14 +157,14 @@ namespace MoleculesBuilder
             if (pos.Contains(";"))
             {
                 string[] parts = pos.Split(';');
-                if (parts[0].Contains("+") || parts[0].Contains("-")) parts[0] = AddStrings(parts[0]);
-                if (parts[1].Contains("+") || parts[1].Contains("-")) parts[1] = AddStrings(parts[1]);
+                if (ContainsNotNumbers(parts[0])) parts[0] = AddStrings(parts[0]);
+                if (ContainsNotNumbers(parts[1])) parts[1] = AddStrings(parts[1]);
                 targetPos = new PointF(float.Parse(parts[0]), float.Parse(parts[1]));
                 subPos = 0;
             }
             else
             {
-                if (pos.Contains("+") || pos.Contains("-")) pos = AddStrings(pos);
+                if (ContainsNotNumbers(pos)) pos = AddStrings(pos);
                 subPos = int.Parse(pos);
                 foreach (Atom at in crrMolecule.atoms)
                 {
@@ -272,7 +280,7 @@ namespace MoleculesBuilder
                 case "Add":
                     if (crrMolecule != null && el[2].ToLower() == "at")
                     {
-                        if (el[4].Contains("+") || el[4].Contains("-")) el[4] = AddStrings(el[4]);
+                        if (ContainsNotNumbers(el[4])) el[4] = AddStrings(el[4]);
                         if (el[3].Contains(";") && crrMolecule.atoms.Count != 0)
                         {
                             throw new Exception("Начальная точка уже была построена.");
@@ -288,6 +296,7 @@ namespace MoleculesBuilder
                     {
                         string path = el[1].Remove(0, 1);
                         path = path.Remove(path.Length - 1, 1);
+                        if (!path.Contains(".txt")) path += ".txt";
                         if (File.Exists(path))
                         {
                             FileStream read = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -375,8 +384,8 @@ namespace MoleculesBuilder
                 case "Connect":
                     if (crrMolecule != null && el[3].ToLower() == "by")
                     {
-                        if (el[1].Contains("+") || el[1].Contains("-")) el[1] = AddStrings(el[1]);
-                        if (el[2].Contains("+") || el[2].Contains("-")) el[2] = AddStrings(el[2]);
+                        if (ContainsNotNumbers(el[1])) el[1] = AddStrings(el[1]);
+                        if (ContainsNotNumbers(el[2])) el[2] = AddStrings(el[2]);
 
                         crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
 
