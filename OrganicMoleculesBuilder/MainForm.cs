@@ -17,6 +17,7 @@ namespace OrganicMoleculesBuilder
         public MainForm()
         {
             InitializeComponent();
+            crrMolecule = new Molecule("name", "MolecularParts");
             for (int i = 0; i < Molecule.Keywords.Length; i++)
             {
                 if (char.IsLower(Molecule.Keywords[i][0]))
@@ -39,6 +40,7 @@ namespace OrganicMoleculesBuilder
                     string command = txb_Command.Text.TrimEnd(new char[] { ' ' }).TrimStart(new char[] { ' ' });
                     pcb_Output.Image = Molecule.RunCommand(ref crrMolecule, command, pcb_Output.Width, pcb_Output.Height);
                     rtb_Debug.AppendText(">" + txb_Command.Text + "\n");
+                    if (txb_Command.Text == "Clear") crrMolecule = new Molecule("name", "MolecularParts");
                 }
                 catch(Exception ex)
                 {

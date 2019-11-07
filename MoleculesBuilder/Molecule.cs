@@ -43,13 +43,14 @@ namespace MoleculesBuilder
         };
 
         string Name { get; set; }
-        const double L = 35; // Длина связи C-C
+        const double L = 30; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
         public List<Atom> atoms = new List<Atom>();
         List<string> InvAtomPairs = new List<string>();
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
+        public string MolecularPartsDir { get; set; }
 
         //Вспомагательные методы
         private static string AddStrings(string strToSum) 
@@ -66,9 +67,12 @@ namespace MoleculesBuilder
             else if (strToSum.Contains("-"))
             {
                 string[] comp = strToSum.Split('-');
-                sum = double.Parse(comp[0]);
+                if (comp[0] == "") sum = 0;
+                else sum = double.Parse(comp[0]);
+
                 for (int i = 1; i < comp.Length; i++)
                 {
+                    if (comp[i] == "") continue;
                     sum -= double.Parse(comp[i]);
                 }
             }
@@ -76,11 +80,15 @@ namespace MoleculesBuilder
             
             return Convert.ToString(sum);
         }
-        private static bool ContainsNotNumbers(string str)
+        private static bool ContainsNotNumbers(string str, char exc = '*')
         {
             foreach(char c in str)
             {
-                if (!char.IsNumber(c)) return true;
+                if (!char.IsNumber(c))
+                {
+                    if (c == exc) continue;
+                    else return true;
+                }
             }
             return false;
         }
@@ -225,20 +233,22 @@ namespace MoleculesBuilder
                         string[] parts = type.Split('-');
                         int n = int.Parse(parts[1]);
                         PointF vec = RotateVector(ang, new PointF(0, 2 * (float)L));
-                        PointF[] MainAcyclicChain = DrawPoly(L, new PointF(targetPos.X, (float)(targetPos.Y - vec.Y)), n);
+                        PointF[] MainAcyclicChain = DrawPoly(L, new PointF(targetPos.X - vec.X, targetPos.Y - vec.Y), n);
                         int p = subPos;
                         int s = 0;
                         for (int i = 0; i < MainAcyclicChain.Length; i++)
                         {
-
-                            Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
-                            crrMolecule.AddAtom(atom, 1, p);
+                            //if (i != MainAcyclicChain.Length - 1)
+                            //{
+                                Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
+                                crrMolecule.AddAtom(atom, 1, p);
+                            //}
                             p = crrMolecule.atoms.Count;
                             if (s == 0) s = p;
                         }
                         crrMolecule.ConnectAtoms(s, p, 1);
                     }
-                    break;
+                    return;
             }
 
             int prev = subPos;
@@ -264,18 +274,20 @@ namespace MoleculesBuilder
         /// <returns></returns>
         public static Bitmap RunCommand(ref Molecule crrMolecule, string comm, int bmWidth, int bmHeight)
         {
+            if (crrMolecule == null)
+                throw new Exception("Молекула не создана!");
             Bitmap result = new Bitmap(bmWidth, bmHeight);
             string command = comm.Trim(new char[] { '\n' });
             string[] el = command.Split(' ');
             switch (el[0])
             {
-                case "Create":
-                    if (crrMolecule == null)
-                    {
-                        crrMolecule = new Molecule(el[1]);
-                    }
-                    else MessageBox.Show("Молекула уже создана. Имя: " + crrMolecule);
-                    break;
+                //case "Create":
+                //    if (crrMolecule == null)
+                //    {
+                //        crrMolecule = new Molecule(el[1]);
+                //    }
+                //    else MessageBox.Show("Молекула уже создана. Имя: " + crrMolecule);
+                //    break;
 
                 case "Add":
                     if (crrMolecule != null && el[2].ToLower() == "at")
@@ -297,6 +309,8 @@ namespace MoleculesBuilder
                         string path = el[1].Remove(0, 1);
                         path = path.Remove(path.Length - 1, 1);
                         if (!path.Contains(".txt")) path += ".txt";
+                        if (!string.IsNullOrEmpty(crrMolecule.MolecularPartsDir))
+                            path = crrMolecule.MolecularPartsDir + @"\" + path;
                         if (File.Exists(path))
                         {
                             FileStream read = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -310,6 +324,12 @@ namespace MoleculesBuilder
                                     str = reader.ReadLine();
                                     if (!string.IsNullOrEmpty(str) && !str.Contains("AddFromFile"))
                                     {
+                                        if (str.Contains("//"))
+                                        {
+                                            int num = str.IndexOf('/');
+                                            str = str.Remove(num);
+                                            if (str == "") continue;
+                                        }
                                         if (str[0] == '(')
                                         {
                                             str = str.Remove(0, 1);
@@ -317,11 +337,6 @@ namespace MoleculesBuilder
                                             ind = str.Split(',');
                                             if (ind.Length != el.Length - 2) throw new Exception("Не хватает параметров!");
                                             continue;
-                                        }
-                                        if (str.Contains("//"))
-                                        {
-                                            int num = str.IndexOf('/');
-                                            str = str.Remove(num);
                                         }
                                         if (str.Contains("{"))
                                         {
@@ -476,9 +491,10 @@ namespace MoleculesBuilder
             return result;
         }
 
-        public Molecule(string name)
+        public Molecule(string name, string dir)
         {
             Name = name;
+            MolecularPartsDir = dir;
             ShowAtomNumbers = true;
             DrawAtomCircle = true;
         }
