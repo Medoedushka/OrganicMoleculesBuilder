@@ -699,13 +699,15 @@ namespace MoleculesBuilder
             
             if (IsInvPair(atBase.Index, atNeighbour.Index))
             {
-                pt1 = new PointF(atBase.Position.X + p * moveVector.X, atBase.Position.Y + p * moveVector.Y);
-                pt2 = new PointF(atNeighbour.Position.X + p * moveVector.X, atNeighbour.Position.Y + p * moveVector.Y);
+                pt1 = new PointF(atBase.Position.X + p * moveVector.X - vector.X * 0.7f, atBase.Position.Y + p * moveVector.Y - vector.Y * 0.7f);
+                pt2 = new PointF(atNeighbour.Position.X + p * moveVector.X - vector.X * 0.7f, atNeighbour.Position.Y + p * moveVector.Y - vector.Y * 0.7f);
             }
             else
             {
-                pt1 = new PointF(atBase.Position.X - p * moveVector.X, atBase.Position.Y - p * moveVector.Y);
-                pt2 = new PointF(atNeighbour.Position.X - p * moveVector.X, atNeighbour.Position.Y - p * moveVector.Y);
+                //pt1 = new PointF(atBase.Position.X - p * moveVector.X, atBase.Position.Y - p * moveVector.Y);
+                //pt2 = new PointF(atNeighbour.Position.X - p * moveVector.X, atNeighbour.Position.Y - p * moveVector.Y);
+                pt1 = new PointF(atBase.Position.X - p * moveVector.X + vector.X * 0.9f, atBase.Position.Y - p * moveVector.Y + vector.Y * 0.9f);
+                pt2 = new PointF(atNeighbour.Position.X - p * moveVector.X - vector.X * 0.9f, atNeighbour.Position.Y - p * moveVector.Y - vector.Y * 0.9f);
             }
         }
 
@@ -728,7 +730,16 @@ namespace MoleculesBuilder
                             int numBonds = Bonds(at.Index, at.Neighbours[i].Index, true);
                             if (numBonds == 1 && IsInvPair(at.Index, at.Neighbours[i].Index))
                             {
-                                PointF vector = new PointF(at.Neighbours[i].Position.X - at.Position.X, at.Neighbours[i].Position.Y - at.Position.Y);
+                                PointF vector;
+                                if (DrawAtomCircle == false)
+                                {
+                                    float m = 0.67f;
+                                    vector = new PointF((at.Neighbours[i].Position.X - at.Position.X) * m, (at.Neighbours[i].Position.Y - at.Position.Y) * m);
+                                }
+                                else
+                                {
+                                    vector = new PointF(at.Neighbours[i].Position.X- at.Position.X, at.Neighbours[i].Position.Y - at.Position.Y);
+                                }
                                 string type = "";
                                 foreach (string s in InvAtomPairs)
                                 {
@@ -747,30 +758,32 @@ namespace MoleculesBuilder
                                     PointF moveVector = new PointF((float)n_x, (float)n_y);
                                     PointF[] pts =
                                     {
-                                    new PointF(at.Neighbours[i].Position.X - moveVector.X, at.Neighbours[i].Position.Y - moveVector.Y),
-                                    new PointF(at.Neighbours[i].Position.X + moveVector.X, at.Neighbours[i].Position.Y + moveVector.Y),
+                                    new PointF(at.Position.X + vector.X - moveVector.X, at.Position.Y + vector.Y - moveVector.Y),
+                                    new PointF(at.Position.X + vector.X + moveVector.X, at.Position.Y + vector.Y + moveVector.Y),
                                     at.Position
                                 };
                                     g.FillPolygon(new SolidBrush(Color.Black), pts);
                                 }
                                 else if (type == "hw")
                                 {
-                                    for(int n = 1; n <= 5; n++)
+                                    for(int n = 1; n <= 10; n++)
                                     {
-                                        double n_y = vector.X * n / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                                        double n_x = -vector.Y * n / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+                                        double n_y = vector.X * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
+                                        double n_x = -vector.Y * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
                                         PointF moveVector = new PointF((float)n_x, (float)n_y);
-                                        PointF pt = new PointF(at.Position.X + vector.X * 1/5 * n , at.Position.Y + vector.Y * 1 / 5 * n);
+                                        PointF pt = new PointF(at.Position.X + vector.X * 1/10 * n , at.Position.Y + vector.Y * 1 / 10 * n);
                                         g.DrawLine(new Pen(Color.Black), new PointF(pt.X - moveVector.X, pt.Y - moveVector.Y), new PointF(pt.X + moveVector.X, pt.Y + moveVector.Y));
                                     }
                                 }
                             }
                             else 
                                 g.DrawLine(new Pen(Color.Black), at.Position, at.Neighbours[i].Position);
+
                             PointF pt1, pt2;
                             if (numBonds >= 2)
                             {
                                 MultiBonds(1, at, at.Neighbours[i], out pt1, out pt2);
+                                g.DrawLine(new Pen(Color.Black), pt1, pt2);
                                 if (numBonds == 3) MultiBonds(-1, at, at.Neighbours[i], out pt1, out pt2);
                                 g.DrawLine(new Pen(Color.Black), pt1, pt2);
                             }
@@ -781,7 +794,7 @@ namespace MoleculesBuilder
                         {
                             int hidrNum = Bonds(at.Index, 0, false);
                             string symbol = hidrNum > 1 ? at.ToString() + "H" + hidrNum : at.ToString() + (hidrNum == 0 ? "" : "H");
-                            Font symbolFont = new Font("Arial", 10);
+                            Font symbolFont = new Font("Arial", 9);
                             SizeF size = g.MeasureString(symbol, symbolFont);
                             g.FillRectangle(new SolidBrush(Color.White), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));
                             g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2);
