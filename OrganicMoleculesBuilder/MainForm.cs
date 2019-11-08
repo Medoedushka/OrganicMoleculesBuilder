@@ -58,6 +58,7 @@ namespace OrganicMoleculesBuilder
             {
                 txb_Command.Text = string.Empty;
                 txb_Command.Text = lastCommand;
+                txb_Command.SelectionStart = txb_Command.Text.Length;
             }
         }
         
@@ -84,6 +85,7 @@ namespace OrganicMoleculesBuilder
 
         private void Hightlight(MatchCollection matches, Color hightlight, Font font ,RichTextBox rtb)
         {
+            int save = rtb.SelectionStart;
             foreach (Match m in matches)
             {
                 if (m.Value == "") continue;
@@ -96,11 +98,11 @@ namespace OrganicMoleculesBuilder
                     rtb.SelectionFont = font;
                     temp = temp.Remove(rtb.SelectionStart, m.Value.Length);
                     temp = temp.Insert(rtb.SelectionStart, new string('*', m.Value.Length));
-                    
                 }
                 
             }
-            rtb.SelectionStart = rtb.Text.Length;
+            rtb.SelectionStart = save;
+            rtb.SelectionLength = 0;
             rtb.SelectionColor = Color.Black;
             rtb.SelectionFont = new Font("Arial", 10);
         }

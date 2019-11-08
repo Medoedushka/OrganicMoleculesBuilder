@@ -33,7 +33,7 @@ namespace MoleculesBuilder
         {
             "Me",
             "Et",
-            "OH",
+            "O",
             "N",
             "F",
             "Cl",
@@ -43,7 +43,7 @@ namespace MoleculesBuilder
         };
 
         string Name { get; set; }
-        const double L = 30; // Длина связи C-C
+        const double L = 35; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
         public List<Atom> atoms = new List<Atom>();
@@ -199,11 +199,11 @@ namespace MoleculesBuilder
                     el = Element.C;
                     val = 4;
                     break;
-                case "OH":
+                case "O":
                     el = Element.O;
                     val = 2;
                     break;
-                case "NH2":
+                case "N":
                     el = Element.N;
                     val = 3;
                     break;
@@ -281,14 +281,6 @@ namespace MoleculesBuilder
             string[] el = command.Split(' ');
             switch (el[0])
             {
-                //case "Create":
-                //    if (crrMolecule == null)
-                //    {
-                //        crrMolecule = new Molecule(el[1]);
-                //    }
-                //    else MessageBox.Show("Молекула уже создана. Имя: " + crrMolecule);
-                //    break;
-
                 case "Add":
                     if (crrMolecule != null && el[2].ToLower() == "at")
                     {
@@ -401,8 +393,13 @@ namespace MoleculesBuilder
                     {
                         if (ContainsNotNumbers(el[1])) el[1] = AddStrings(el[1]);
                         if (ContainsNotNumbers(el[2])) el[2] = AddStrings(el[2]);
-
-                        crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
+                        if (char.IsDigit(el[4][0]))
+                            crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
+                        else
+                        {
+                            crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), 1);
+                            crrMolecule.AddInvPair(int.Parse(el[1]), int.Parse(el[2]), el[4]);
+                        }
 
                         if (el.Length == 6 && el[5].TrimEnd(new char[] { '\n' }) == "inv")
                             crrMolecule.AddInvPair(int.Parse(el[1]), int.Parse(el[2]));
@@ -499,14 +496,14 @@ namespace MoleculesBuilder
             DrawAtomCircle = true;
         }
 
-        public void AddInvPair(int ind1, int ind2)
+        public void AddInvPair(int ind1, int ind2, string type = "")
         {
             if (IsInvPair(ind1, ind2))
                 return;
-
-            InvAtomPairs.Add(ind1 + "-" + ind2);
+            if (type == "")
+                InvAtomPairs.Add(ind1 + "-" + ind2);
+            else InvAtomPairs.Add(ind1 + "-" + ind2 + "-" + type);
         }
-
         private bool IsInvPair(int ind1, int ind2)
         {
             foreach(string str in InvAtomPairs)
@@ -598,6 +595,8 @@ namespace MoleculesBuilder
                 {
                     InvAtomPairs.Remove(firstInd + "-" + secondInd);
                     InvAtomPairs.Remove(secondInd + "-" + firstInd);
+                    InvAtomPairs.Remove(firstInd + "-" + secondInd + "-w");
+                    InvAtomPairs.Remove(secondInd + "-" + firstInd + "-hw");
                 }
 
                 if (!AtomExists(firstInd) || !AtomExists(secondInd))
@@ -727,7 +726,47 @@ namespace MoleculesBuilder
                         if (at.Neighbours[i] != null && at.Index < at.Neighbours[i].Index)
                         {
                             int numBonds = Bonds(at.Index, at.Neighbours[i].Index, true);
-                            g.DrawLine(new Pen(Color.Black), at.Position, at.Neighbours[i].Position);
+                            if (numBonds == 1 && IsInvPair(at.Index, at.Neighbours[i].Index))
+                            {
+                                PointF vector = new PointF(at.Neighbours[i].Position.X - at.Position.X, at.Neighbours[i].Position.Y - at.Position.Y);
+                                string type = "";
+                                foreach (string s in InvAtomPairs)
+                                {
+                                    if (s.Contains(at.Index + "-" + at.Neighbours[i].Index) || s.Contains(at.Neighbours[i].Index + "-" + at.Index))
+                                    {
+                                        string[] el = s.Split('-');
+                                        type = el[2];
+                                    }
+                                }
+                                if (type == "w")
+                                {
+                                    int d = 5;
+                                    
+                                    double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+                                    double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+                                    PointF moveVector = new PointF((float)n_x, (float)n_y);
+                                    PointF[] pts =
+                                    {
+                                    new PointF(at.Neighbours[i].Position.X - moveVector.X, at.Neighbours[i].Position.Y - moveVector.Y),
+                                    new PointF(at.Neighbours[i].Position.X + moveVector.X, at.Neighbours[i].Position.Y + moveVector.Y),
+                                    at.Position
+                                };
+                                    g.FillPolygon(new SolidBrush(Color.Black), pts);
+                                }
+                                else if (type == "hw")
+                                {
+                                    for(int n = 1; n <= 5; n++)
+                                    {
+                                        double n_y = vector.X * n / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+                                        double n_x = -vector.Y * n / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+                                        PointF moveVector = new PointF((float)n_x, (float)n_y);
+                                        PointF pt = new PointF(at.Position.X + vector.X * 1/5 * n , at.Position.Y + vector.Y * 1 / 5 * n);
+                                        g.DrawLine(new Pen(Color.Black), new PointF(pt.X - moveVector.X, pt.Y - moveVector.Y), new PointF(pt.X + moveVector.X, pt.Y + moveVector.Y));
+                                    }
+                                }
+                            }
+                            else 
+                                g.DrawLine(new Pen(Color.Black), at.Position, at.Neighbours[i].Position);
                             PointF pt1, pt2;
                             if (numBonds >= 2)
                             {
@@ -742,7 +781,7 @@ namespace MoleculesBuilder
                         {
                             int hidrNum = Bonds(at.Index, 0, false);
                             string symbol = hidrNum > 1 ? at.ToString() + "H" + hidrNum : at.ToString() + (hidrNum == 0 ? "" : "H");
-                            Font symbolFont = new Font("Arial", 8);
+                            Font symbolFont = new Font("Arial", 10);
                             SizeF size = g.MeasureString(symbol, symbolFont);
                             g.FillRectangle(new SolidBrush(Color.White), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));
                             g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2);
