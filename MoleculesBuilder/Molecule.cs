@@ -704,8 +704,6 @@ namespace MoleculesBuilder
             }
             else
             {
-                //pt1 = new PointF(atBase.Position.X - p * moveVector.X, atBase.Position.Y - p * moveVector.Y);
-                //pt2 = new PointF(atNeighbour.Position.X - p * moveVector.X, atNeighbour.Position.Y - p * moveVector.Y);
                 pt1 = new PointF(atBase.Position.X - p * moveVector.X + vector.X * 0.9f, atBase.Position.Y - p * moveVector.Y + vector.Y * 0.9f);
                 pt2 = new PointF(atNeighbour.Position.X - p * moveVector.X - vector.X * 0.9f, atNeighbour.Position.Y - p * moveVector.Y - vector.Y * 0.9f);
             }
@@ -733,13 +731,14 @@ namespace MoleculesBuilder
                                 PointF vector;
                                 if (DrawAtomCircle == false)
                                 {
-                                    float m = 0.67f;
+                                    float m = 0.6f;
                                     vector = new PointF((at.Neighbours[i].Position.X - at.Position.X) * m, (at.Neighbours[i].Position.Y - at.Position.Y) * m);
                                 }
                                 else
                                 {
                                     vector = new PointF(at.Neighbours[i].Position.X- at.Position.X, at.Neighbours[i].Position.Y - at.Position.Y);
                                 }
+
                                 string type = "";
                                 foreach (string s in InvAtomPairs)
                                 {
@@ -752,7 +751,6 @@ namespace MoleculesBuilder
                                 if (type == "w")
                                 {
                                     int d = 5;
-                                    
                                     double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
                                     double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
                                     PointF moveVector = new PointF((float)n_x, (float)n_y);

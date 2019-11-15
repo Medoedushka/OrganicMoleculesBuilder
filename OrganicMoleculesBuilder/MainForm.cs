@@ -40,12 +40,14 @@ namespace OrganicMoleculesBuilder
                     string command = txb_Command.Text.TrimEnd(new char[] { ' ' }).TrimStart(new char[] { ' ' });
                     pcb_Output.Image = Molecule.RunCommand(ref crrMolecule, command, pcb_Output.Width, pcb_Output.Height);
                     rtb_Debug.AppendText(">" + txb_Command.Text + "\n");
+                    
                     if (txb_Command.Text == "Clear") crrMolecule = new Molecule("name", "MolecularParts");
                 }
                 catch(Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Ошибка выполнения команды!", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                 }
+                if (txb_Command.Text == "Mass") MessageBox.Show(Quantitative.CountMolecularWeight(crrMolecule).ToString());
                 lastCommand = txb_Command.Text;
                 txb_Command.Text = string.Empty;
             }
