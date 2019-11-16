@@ -232,21 +232,22 @@ namespace MoleculesBuilder
                     {
                         string[] parts = type.Split('-');
                         int n = int.Parse(parts[1]);
-                        PointF vec = RotateVector(ang, new PointF(0, 2 * (float)L));
+                        PointF vec = new PointF(0, 2 * (float)L);
                         PointF[] MainAcyclicChain = DrawPoly(L, new PointF(targetPos.X - vec.X, targetPos.Y - vec.Y), n);
                         int p = subPos;
                         int s = 0;
+                        int[] ind = new int[n];
                         for (int i = 0; i < MainAcyclicChain.Length; i++)
                         {
-                            //if (i != MainAcyclicChain.Length - 1)
-                            //{
-                                Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
-                                crrMolecule.AddAtom(atom, 1, p);
-                            //}
+                            ind[i] = crrMolecule.atoms.Count + 1;
+                            Atom atom = new Atom(Element.C, 4, crrMolecule.atoms.Count + 1, new PointF(MainAcyclicChain[i].X, MainAcyclicChain[i].Y));
+                            crrMolecule.AddAtom(atom, 1, p);
+                            
                             p = crrMolecule.atoms.Count;
                             if (s == 0) s = p;
                         }
                         crrMolecule.ConnectAtoms(s, p, 1);
+                        RotateMolecularPart(crrMolecule, ind, subPos, ang);
                     }
                     return;
             }
@@ -314,7 +315,7 @@ namespace MoleculesBuilder
                                 while (str != null)
                                 {
                                     str = reader.ReadLine();
-                                    if (!string.IsNullOrEmpty(str) && !str.Contains("AddFromFile"))
+                                    if (!string.IsNullOrEmpty(str))
                                     {
                                         if (str.Contains("//"))
                                         {

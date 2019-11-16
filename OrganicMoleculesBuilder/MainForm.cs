@@ -47,7 +47,11 @@ namespace OrganicMoleculesBuilder
                 {
                     MessageBox.Show(ex.Message, "Ошибка выполнения команды!", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                 }
-                if (txb_Command.Text == "Mass") MessageBox.Show(Quantitative.CountMolecularWeight(crrMolecule).ToString());
+                if (txb_Command.Text == "Mass")
+                {
+                    Analysis analysis = new Analysis(Quantitative.GetAtomPercents(crrMolecule));
+                    analysis.Show();
+                }
                 lastCommand = txb_Command.Text;
                 txb_Command.Text = string.Empty;
             }
