@@ -47,11 +47,6 @@ namespace OrganicMoleculesBuilder
                 {
                     MessageBox.Show(ex.Message, "Ошибка выполнения команды!", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                 }
-                if (txb_Command.Text == "Mass")
-                {
-                    Analysis analysis = new Analysis(Quantitative.GetAtomPercents(crrMolecule));
-                    analysis.Show();
-                }
                 lastCommand = txb_Command.Text;
                 txb_Command.Text = string.Empty;
             }
@@ -172,6 +167,15 @@ namespace OrganicMoleculesBuilder
                     }
                     MessageBox.Show("Код успешно сохранён!", "Сохранение", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+            }
+        }
+
+        private void atomicCompositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (crrMolecule.atoms.Count != 0)
+            {
+                Analysis analysis = new Analysis(Quantitative.GetAtomPercents(crrMolecule));
+                analysis.Show();
             }
         }
     }

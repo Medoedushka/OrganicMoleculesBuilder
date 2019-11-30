@@ -13,7 +13,7 @@ namespace MoleculesBuilder
     {
         public static string[] Keywords =
         {
-            "Create",
+            //"Create",
             "Add",
             "Insert",
             "at",
@@ -658,7 +658,7 @@ namespace MoleculesBuilder
 
             }       
         }
-
+            
         public void RemoveAtom(int index)
         {
             foreach(Atom at in atoms)

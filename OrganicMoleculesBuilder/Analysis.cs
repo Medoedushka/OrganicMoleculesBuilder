@@ -14,21 +14,14 @@ namespace OrganicMoleculesBuilder
     public partial class Analysis : Form
     {
         CircleDiagram cd;
-        PointsGraphic pg;
         string _data;
         public Analysis(string data)
         {
             InitializeComponent();
             cd = new CircleDiagram(pictureBox1);
-            //pg = new PointsGraphic(pictureBox1, AxesMode.Static, AxesPosition.AllQuarters);
-            //pg.AddCurve(new Curves(new PointF[] { new PointF(4, 4), new PointF(10, 10) }, Color.Red));
-            //pg.DrawDiagram();
             cd.AddDiagramLegend = true;
             _data = data;
         }
-
-        
-
         private void Analysis_Load(object sender, EventArgs e)
         {
             string[] parts = _data.Split('\n');
@@ -44,10 +37,7 @@ namespace OrganicMoleculesBuilder
                 else if (el[0] == "S") color = Color.FromArgb(127, 127, 0);
                 cd.AddSector(new Sectors(double.Parse(el[1]), color, el[0]));
             }
-            //pictureBox1.Invalidate();
-
             cd.DrawDiagram();
-           // button1_Click(new object(), new EventArgs());
         }
       
     }

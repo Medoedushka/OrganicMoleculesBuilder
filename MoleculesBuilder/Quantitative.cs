@@ -53,6 +53,7 @@ namespace MoleculesBuilder
             {
                 res += pair.Key + ":" + Math.Round(pair.Value * (int)pair.Key / weight * 100, 4) + "\n"; 
             }
+            res = res.Remove(res.Length - 1, 1);
             return res;
         }
     }

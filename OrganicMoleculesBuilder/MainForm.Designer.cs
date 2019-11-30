@@ -36,6 +36,9 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_saveCode = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.analysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.atomicCompositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Output)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -113,7 +116,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(461, 24);
@@ -131,9 +135,32 @@
             // btn_saveCode
             // 
             this.btn_saveCode.Name = "btn_saveCode";
-            this.btn_saveCode.Size = new System.Drawing.Size(180, 22);
+            this.btn_saveCode.Size = new System.Drawing.Size(127, 22);
             this.btn_saveCode.Text = "Save code";
             this.btn_saveCode.Click += new System.EventHandler(this.btn_saveCode_Click);
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.analysisToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // analysisToolStripMenuItem
+            // 
+            this.analysisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.atomicCompositionToolStripMenuItem});
+            this.analysisToolStripMenuItem.Name = "analysisToolStripMenuItem";
+            this.analysisToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.analysisToolStripMenuItem.Text = "Analysis";
+            // 
+            // atomicCompositionToolStripMenuItem
+            // 
+            this.atomicCompositionToolStripMenuItem.Name = "atomicCompositionToolStripMenuItem";
+            this.atomicCompositionToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.atomicCompositionToolStripMenuItem.Text = "Atomic composition";
+            this.atomicCompositionToolStripMenuItem.Click += new System.EventHandler(this.atomicCompositionToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -165,6 +192,9 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem btn_saveCode;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analysisToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem atomicCompositionToolStripMenuItem;
     }
 }
 
