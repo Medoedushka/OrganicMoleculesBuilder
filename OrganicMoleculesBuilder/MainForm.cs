@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using MoleculesBuilder;
 
@@ -177,6 +178,33 @@ namespace OrganicMoleculesBuilder
                 Analysis analysis = new Analysis(Quantitative.GetAtomPercents(crrMolecule));
                 analysis.Show();
             }
+        }
+
+        private void saveWorkspaceAsPictureToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string path = ""; DialogResult res;
+            using (SaveFileDialog save = new SaveFileDialog())
+            {
+                res = save.ShowDialog();
+                path = save.FileName;
+            }
+            if (path != "" && res == DialogResult.OK)
+            {
+                Thread.Sleep(1000);
+                Bitmap bitmap = DrawControlToBitMap(pcb_Output);
+                bitmap.Save(path + ".png");
+                MessageBox.Show("Data has been saved successfully!", "Saving workspace...", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private static Bitmap DrawControlToBitMap(Control control)
+        {
+            Bitmap bitmap = new Bitmap(control.Width, control.Height);
+            Graphics g = Graphics.FromImage(bitmap);
+            System.Drawing.Rectangle rect = control.RectangleToScreen(control.ClientRectangle);
+            g.CopyFromScreen(rect.Location, System.Drawing.Point.Empty, control.Size);
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+            return bitmap;
         }
     }
 }
