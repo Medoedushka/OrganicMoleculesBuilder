@@ -100,13 +100,14 @@ namespace MoleculesBuilder
         }
 
         //Расчитывает точки для правильного n-угольника
-        private static PointF[] DrawPoly(double l, PointF center, int n = 5)
+        private static PointF[] DrawPoly(double l, PointF center, int n = 6)
         {
             PointF[] pt = new PointF[n];
+            double R = l / (2 * Math.Sin(Math.PI / n));
             for (int i = 0; i < pt.Length; i++)
             {
-                pt[i].X = (float)(l * Math.Sin(i * 360 / n * K) + center.X);
-                pt[i].Y = (float)(l * Math.Cos(i * 360 / n * K) + center.Y);
+                pt[i].X = (float)(R * Math.Sin(i * 360 / n * K) + center.X);
+                pt[i].Y = (float)(R * Math.Cos(i * 360 / n * K) + center.Y);
             }
 
             return pt;
@@ -700,8 +701,8 @@ namespace MoleculesBuilder
             
             if (IsInvPair(atBase.Index, atNeighbour.Index))
             {
-                pt1 = new PointF(atBase.Position.X + p * moveVector.X - vector.X * 0.7f, atBase.Position.Y + p * moveVector.Y - vector.Y * 0.7f);
-                pt2 = new PointF(atNeighbour.Position.X + p * moveVector.X - vector.X * 0.7f, atNeighbour.Position.Y + p * moveVector.Y - vector.Y * 0.7f);
+                pt1 = new PointF(atBase.Position.X + p * moveVector.X + vector.X * 0.9f, atBase.Position.Y + p * moveVector.Y + vector.Y * 0.9f);
+                pt2 = new PointF(atNeighbour.Position.X + p * moveVector.X - vector.X * 0.9f, atNeighbour.Position.Y + p * moveVector.Y - vector.Y * 0.9f);
             }
             else
             {
