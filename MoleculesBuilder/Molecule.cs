@@ -598,7 +598,9 @@ namespace MoleculesBuilder
                     InvAtomPairs.Remove(firstInd + "-" + secondInd);
                     InvAtomPairs.Remove(secondInd + "-" + firstInd);
                     InvAtomPairs.Remove(firstInd + "-" + secondInd + "-w");
+                    InvAtomPairs.Remove(secondInd + "-" + firstInd + "-w");
                     InvAtomPairs.Remove(secondInd + "-" + firstInd + "-hw");
+                    InvAtomPairs.Remove(firstInd + "-" + secondInd + "-hw");
                 }
 
                 if (!AtomExists(firstInd) || !AtomExists(secondInd))
@@ -728,6 +730,8 @@ namespace MoleculesBuilder
                         if (at.Neighbours[i] != null && at.Index < at.Neighbours[i].Index)
                         {
                             int numBonds = Bonds(at.Index, at.Neighbours[i].Index, true);
+
+                            //Проверка на наличие клиновидной связи
                             if (numBonds == 1 && IsInvPair(at.Index, at.Neighbours[i].Index))
                             {
                                 PointF vector;
@@ -750,7 +754,7 @@ namespace MoleculesBuilder
                                         type = el[2];
                                     }
                                 }
-                                if (type == "w")
+                                if (type == "w") //wedged bond
                                 {
                                     int d = 5;
                                     double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
@@ -764,7 +768,7 @@ namespace MoleculesBuilder
                                 };
                                     g.FillPolygon(new SolidBrush(Color.Black), pts);
                                 }
-                                else if (type == "hw")
+                                else if (type == "hw") //hashed wadged bond
                                 {
                                     for(int n = 1; n <= 10; n++)
                                     {
