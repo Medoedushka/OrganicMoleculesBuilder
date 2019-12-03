@@ -591,7 +591,7 @@ namespace MoleculesBuilder
 
         public void ConnectAtoms(int firstInd, int secondInd, int order)
         {
-            if (order > 0 && order < 4)
+            if (order >= 0 && order < 4)
             {
                 if (order == 1 && IsInvPair(firstInd, secondInd))
                 {
@@ -602,9 +602,24 @@ namespace MoleculesBuilder
                     InvAtomPairs.Remove(secondInd + "-" + firstInd + "-hw");
                     InvAtomPairs.Remove(firstInd + "-" + secondInd + "-hw");
                 }
-
                 if (!AtomExists(firstInd) || !AtomExists(secondInd))
                     throw new ArgumentOutOfRangeException("Передаваемые индексы атомов не существуют!");
+
+                if (order == 0)
+                {
+                    for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
+                    {
+                        if (atoms[firstInd - 1].Neighbours[i] == atoms[secondInd - 1])
+                            atoms[firstInd - 1].Neighbours[i] = null;
+                    }
+                    for (int i = 0; i < atoms[secondInd - 1].Neighbours.Length; i++)
+                    {
+                        if (atoms[secondInd - 1].Neighbours[i] == atoms[firstInd - 1])
+                            atoms[secondInd - 1].Neighbours[i] = null;
+                    }
+                    return;
+                }
+
                 int d = order - Bonds(firstInd, secondInd, true);
                 if (d > 0)
                 {
