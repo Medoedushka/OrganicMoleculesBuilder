@@ -11,7 +11,10 @@ namespace OrganicMoleculesBuilder
 {
     public partial class MainForm : Form
     {
-        string lastCommand;
+        List<string> lastCommand = new List<string>();
+        int counter = 0;
+        int keyDownCounter = 1;
+        //string lastCommand;
         string regexKeyWords;
         string regexSubs;
         Molecule crrMolecule;
@@ -43,24 +46,28 @@ namespace OrganicMoleculesBuilder
                     rtb_Debug.AppendText(">" + txb_Command.Text + "\n");
                     
                     if (txb_Command.Text == "Clear") crrMolecule = new Molecule("name", "MolecularParts");
+                    lastCommand.Add(txb_Command.Text);
+                    keyDownCounter = 1;
+                    txb_Command.Text = string.Empty;
                 }
                 catch(Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Ошибка выполнения команды!", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                 }
-                lastCommand = txb_Command.Text;
-                txb_Command.Text = string.Empty;
+                
             }
             
         }
-
         private void txb_Command_KeyDown(object sender, KeyEventArgs e)
         {
+            
             if (e.KeyCode == Keys.Up)
             {
                 txb_Command.Text = string.Empty;
-                txb_Command.Text = lastCommand;
+                txb_Command.Text = lastCommand[lastCommand.Count - keyDownCounter];
                 txb_Command.SelectionStart = txb_Command.Text.Length;
+                keyDownCounter++;
+                if (keyDownCounter > lastCommand.Count) keyDownCounter = 1;
             }
         }
         
