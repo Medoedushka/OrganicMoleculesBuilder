@@ -381,12 +381,27 @@ namespace MoleculesBuilder
                 case "Rotate":
                     if (crrMolecule != null && el[2].ToLower() == "base")
                     {
-                        string[] parts = el[1].Split(',');
-                        int[] indexes = new int[parts.Length];
-                        for (int i = 0; i < indexes.Length; i++)
+                        int[] indexes;
+                        if (el[1] == "all")
                         {
-                            indexes[i] = int.Parse(parts[i]);
+                            indexes = new int[crrMolecule.atoms.Count - 1];
+                            for(int i = 0; i < indexes.Length; i++)
+                            {
+                                if (crrMolecule.atoms[i].Index != int.Parse(el[3])) indexes[i] = crrMolecule.atoms[i].Index;
+                                else indexes[i] = crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index;
+                            }
                         }
+                        else
+                        {
+                            string[] parts = el[1].Split(',');
+                            indexes = new int[parts.Length];
+                            for (int i = 0; i < indexes.Length; i++)
+                            {
+                                indexes[i] = int.Parse(parts[i]);
+                            }
+                        }
+
+                        
                         RotateMolecularPart(crrMolecule, indexes, int.Parse(el[3]), double.Parse(el[4]));
                     }
                     break;
