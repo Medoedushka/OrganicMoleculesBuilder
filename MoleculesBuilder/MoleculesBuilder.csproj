@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Atom.cs" />
+    <Compile Include="Bond.cs" />
     <Compile Include="Molecule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quantitative.cs" />

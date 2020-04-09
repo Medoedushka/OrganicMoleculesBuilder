@@ -47,6 +47,7 @@ namespace MoleculesBuilder
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
         public List<Atom> atoms = new List<Atom>();
+        public List<Bond> bonds = new List<Bond>();
         List<string> InvAtomPairs = new List<string>();
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
@@ -577,8 +578,6 @@ namespace MoleculesBuilder
 
         public void AddAtom(Atom newAtom, int order, int pos)
         {
-            //if (order > newAtom.Valence) throw new ArgumentOutOfRangeException("order", "order > valence", "Валентность не может быть меньше указаного порядка связи!");
-
             if (atoms.Count == 0) atoms.Add(newAtom);
             else
             {
@@ -782,7 +781,7 @@ namespace MoleculesBuilder
             
             if (IsInvPair(atBase.Index, atNeighbour.Index))
             {
-                pt1 = new PointF(atBase.Position.X + p * moveVector.X + vector.X * 0.9f, atBase.Position.Y + p * moveVector.Y + vector.Y * 0.9f);
+                pt1 = new PointF(atBase.Position.X + p * moveVector.X + vector.X , atBase.Position.Y + p * moveVector.Y + vector.Y * 0.9f);
                 pt2 = new PointF(atNeighbour.Position.X + p * moveVector.X - vector.X * 0.9f, atNeighbour.Position.Y + p * moveVector.Y - vector.Y * 0.9f);
             }
             else
@@ -792,24 +791,40 @@ namespace MoleculesBuilder
             }
         }
 
+        private bool ExistBond(Atom A1, Atom A2)
+        {
+            if (bonds.Count > 0)
+            {
+                foreach(Bond b in bonds)
+                {
+                    if (b.A.Index == A1.Index && b.B.Index == A2.Index)
+                        return true;
+                }
+            }
+            else return false;
+
+            return false;
+        }
+
         public Bitmap ReturnPic(int width, int height)
         {
             Bitmap bm = new Bitmap(width, height);
             Color roundColor = Color.Red; int r = 4;
             Font font = new Font("Arial", 7);
+
             using (Graphics g = Graphics.FromImage(bm))
             {
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
                 foreach(Atom at in atoms)
                 {
-                    
                     for(int i = 0; i < at.Neighbours.Length; i++)
                     {
                         if (at.Neighbours[i] != null && at.Index < at.Neighbours[i].Index)
                         {
                             int numBonds = Bonds(at.Index, at.Neighbours[i].Index, true);
-
+                            
                             //Проверка на наличие клиновидной связи
                             if (numBonds == 1 && IsInvPair(at.Index, at.Neighbours[i].Index))
                             {
@@ -859,20 +874,38 @@ namespace MoleculesBuilder
                                     }
                                 }
                             }
-                            else 
-                                g.DrawLine(new Pen(Color.Black), at.Position, at.Neighbours[i].Position);
+                            //else 
+                            //    g.DrawLine(new Pen(Color.Black, 1), at.Position, at.Neighbours[i].Position);
+                            if (!ExistBond(at, at.Neighbours[i]))
+                            {
+                                Bond bond = new Bond(at, at.Neighbours[i], Order.Second);
+                                bond.InverseBond = true;
+                                bonds.Add(bond);
+                                bond.DrawBond(g);
+                            }
+                            else
+                            {
+                                foreach(Bond b in bonds)
+                                {
+                                    if (b.A.Index == at.Index && b.B.Index == at.Neighbours[i].Index)
+                                    {
+                                        b.InverseBond = true;
+                                        b.DrawBond(g);
+                                        break;
+                                    }
+                                }
+                            }
 
                             PointF pt1, pt2;
                             if (numBonds >= 2)
                             {
                                 MultiBonds(1, at, at.Neighbours[i], out pt1, out pt2);
-                                g.DrawLine(new Pen(Color.Black), pt1, pt2);
+                                g.DrawLine(new Pen(Color.Black, 1), pt1, pt2);
                                 if (numBonds == 3) MultiBonds(-1, at, at.Neighbours[i], out pt1, out pt2);
-                                g.DrawLine(new Pen(Color.Black), pt1, pt2);
+                                g.DrawLine(new Pen(Color.Black, 1), pt1, pt2);
                             }
                         }
-
-
+                        
                         if (at.ToString() != "C" && DrawAtomCircle == false)
                         {
                             int hidrNum = Bonds(at.Index, 0, false);

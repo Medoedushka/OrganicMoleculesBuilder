@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.txb_Command = new System.Windows.Forms.RichTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.chb_CommandsDebug = new System.Windows.Forms.CheckBox();
@@ -35,12 +36,13 @@
             this.rtb_Debug = new System.Windows.Forms.RichTextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.analysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.atomicCompositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveWorkspaceAsPictureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.analysisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.atomicCompositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Output)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -134,6 +136,29 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveWorkspaceAsPictureToolStripMenuItem,
+            this.saveCodeToolStripMenuItem});
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.saveToolStripMenuItem.Text = "Save...";
+            // 
+            // saveWorkspaceAsPictureToolStripMenuItem
+            // 
+            this.saveWorkspaceAsPictureToolStripMenuItem.Name = "saveWorkspaceAsPictureToolStripMenuItem";
+            this.saveWorkspaceAsPictureToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.saveWorkspaceAsPictureToolStripMenuItem.Text = "Save workspace as picture";
+            this.saveWorkspaceAsPictureToolStripMenuItem.Click += new System.EventHandler(this.saveWorkspaceAsPictureToolStripMenuItem_Click);
+            // 
+            // saveCodeToolStripMenuItem
+            // 
+            this.saveCodeToolStripMenuItem.Name = "saveCodeToolStripMenuItem";
+            this.saveCodeToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.saveCodeToolStripMenuItem.Text = "Save code";
+            this.saveCodeToolStripMenuItem.Click += new System.EventHandler(this.btn_saveCode_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -157,28 +182,10 @@
             this.atomicCompositionToolStripMenuItem.Text = "Atomic composition";
             this.atomicCompositionToolStripMenuItem.Click += new System.EventHandler(this.atomicCompositionToolStripMenuItem_Click);
             // 
-            // saveToolStripMenuItem
+            // contextMenuStrip1
             // 
-            this.saveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveWorkspaceAsPictureToolStripMenuItem,
-            this.saveCodeToolStripMenuItem});
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveToolStripMenuItem.Text = "Save...";
-            // 
-            // saveWorkspaceAsPictureToolStripMenuItem
-            // 
-            this.saveWorkspaceAsPictureToolStripMenuItem.Name = "saveWorkspaceAsPictureToolStripMenuItem";
-            this.saveWorkspaceAsPictureToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-            this.saveWorkspaceAsPictureToolStripMenuItem.Text = "Save workspace as picture";
-            this.saveWorkspaceAsPictureToolStripMenuItem.Click += new System.EventHandler(this.saveWorkspaceAsPictureToolStripMenuItem_Click);
-            // 
-            // saveCodeToolStripMenuItem
-            // 
-            this.saveCodeToolStripMenuItem.Name = "saveCodeToolStripMenuItem";
-            this.saveCodeToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-            this.saveCodeToolStripMenuItem.Text = "Save code";
-            this.saveCodeToolStripMenuItem.Click += new System.EventHandler(this.btn_saveCode_Click);
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // MainForm
             // 
@@ -215,6 +222,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveWorkspaceAsPictureToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveCodeToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     }
 }
 

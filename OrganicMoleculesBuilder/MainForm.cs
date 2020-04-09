@@ -37,8 +37,10 @@ namespace OrganicMoleculesBuilder
         }
         private void rtb_Command_KeyPress(object sender, KeyPressEventArgs e)
         {
+            
             if (e.KeyChar == (char)Keys.Enter && txb_Command.Text != "")
             {
+                
                 try
                 {
                     string command = txb_Command.Text.TrimEnd(new char[] { ' ' }).TrimStart(new char[] { ' ' });
