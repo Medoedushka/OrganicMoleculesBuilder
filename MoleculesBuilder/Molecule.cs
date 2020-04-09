@@ -92,13 +92,6 @@ namespace MoleculesBuilder
             }
             return false;
         }
-        private static void GetCoord(double a, out PointF[] newVec, out PointF[] subPt)
-        {
-            newVec = new PointF[1];
-            newVec[0] = RotateVector(a, new PointF(0, (float)-L));
-            subPt = new PointF[2];
-        }
-
         //Расчитывает точки для правильного n-угольника
         private static PointF[] DrawPoly(double l, PointF center, int n = 6)
         {
@@ -149,24 +142,27 @@ namespace MoleculesBuilder
 
                 }
             }
-
-            //pcb_Output.Image = crrMolecule.ReturnPic(pcb_Output.Width, pcb_Output.Height);
         }
+
         //Добавление нового заместителя в молекулу
         private static void DrawSub(Molecule crrMolecule, string type, string pos, double ang)
         {
-            PointF[] subPt = new PointF[1];
-            PointF targetPos = new PointF(0, 0);
-            PointF[] newVector = new PointF[1];
-            int subPos;
+            PointF targetPos = new PointF(0, 0); // Точка или индекс атома, к которому будет цепляться заместитель (целевой атома).
+            PointF[] newVector = new PointF[1]; // Массив векторов, которые соответствуют атомам заместителя.
+            PointF[] subPt = new PointF[1]; /* Массив точек атомов заместителя, который получается путём перемемещения 
+                                                целевого атома на соотв етствующий вектор.*/
+
+            int subPos; // Индекс атома, к которму будет цепляться заместитель.
             Element el = Element.C;
             int val = 4;
 
-            //Поиск координат атома, к которому будет цепляться заместитель
-            if (pos.Contains(";"))
+            // Поиск координат атома, к которому будет цепляться заместитель.
+            if (pos.Contains(";")) // в случае добавление первого заместителя
             {
                 string[] parts = pos.Split(';');
-                if (ContainsNotNumbers(parts[0])) parts[0] = AddStrings(parts[0]);
+
+                /*Проверки на сумму или разность*/
+                if (ContainsNotNumbers(parts[0])) parts[0] = AddStrings(parts[0]); 
                 if (ContainsNotNumbers(parts[1])) parts[1] = AddStrings(parts[1]);
                 targetPos = new PointF(float.Parse(parts[0]), float.Parse(parts[1]));
                 subPos = 0;
@@ -184,7 +180,15 @@ namespace MoleculesBuilder
                     }
                 }
             }
-                GetCoord(ang, out newVector, out subPt);
+           
+            // Рассчёт расположения заместителя, который состоит из одного атома.
+            if (type != "Et")
+            {
+                newVector = new PointF[1];
+                newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                subPt = new PointF[2];
+            }
+
             switch (type)
             {
                 case "Me":
@@ -256,10 +260,11 @@ namespace MoleculesBuilder
             int prev = subPos;
             for (int i = 1; i < subPt.Length; i++)
             {
+                // получение координат каждого атома в заместителе.
                 subPt[i].X = targetPos.X + newVector[i - 1].X;
                 subPt[i].Y = targetPos.Y + newVector[i - 1].Y;
                 Atom atom = new Atom(el, val, crrMolecule.atoms.Count + 1, new PointF(subPt[i].X, subPt[i].Y));
-                crrMolecule.AddAtom(atom, 1, prev);
+                crrMolecule.AddAtom(atom, 1, prev); // Добавление атома в молекулу.
                 prev = crrMolecule.atoms.Count;
             }
 
@@ -278,23 +283,28 @@ namespace MoleculesBuilder
         {
             if (crrMolecule == null)
                 throw new Exception("Молекула не создана!");
+
             Bitmap result = new Bitmap(bmWidth, bmHeight);
+
             string command = comm.Trim(new char[] { '\n' });
-            string[] el = command.Split(' ');
+            string[] el = command.Split(' '); // получение массива ключевых слов и передаваемых значений
             switch (el[0])
             {
                 case "Add":
                     if (crrMolecule != null && el[2].ToLower() == "at")
                     {
+                        /* el[3] содержит координату области построения в случае если молкула не содержит ни одного атома или
+                         * индекс атома, к которому будет прицеплен заместитель.
+                         * e[1] представляет заместитель или, если молекула не содержит ни одного атома, молекулу
+                        */
+
+                        /* Строка координат может содержать арифметические операции сложения/вычетания
+                         * Здесь проверятеся наличие в строке координат символов, которые относятся к сложению/вычитанию.*/
                         if (ContainsNotNumbers(el[4])) el[4] = AddStrings(el[4]);
+
                         if (el[3].Contains(";") && crrMolecule.atoms.Count != 0)
-                        {
                             throw new Exception("Начальная точка уже была построена.");
-                        }
-                        else
-                        {
-                            DrawSub(crrMolecule, el[1], el[3], double.Parse(el[4]));
-                        }
+                        else DrawSub(crrMolecule, el[1], el[3], double.Parse(el[4]));
                     }
                     break;
                 case "AddFromFile":
@@ -564,44 +574,83 @@ namespace MoleculesBuilder
             }
         }
 
+
         public void AddAtom(Atom newAtom, int order, int pos)
         {
-            if (order > newAtom.Valence) throw new ArgumentOutOfRangeException("order", "order > valence", "Валентность не может быть меньше указаного порядка связи!");
+            //if (order > newAtom.Valence) throw new ArgumentOutOfRangeException("order", "order > valence", "Валентность не может быть меньше указаного порядка связи!");
 
             if (atoms.Count == 0) atoms.Add(newAtom);
             else
             {
-                for(int i = 0; i < atoms.Count; i++)
+                for (int i = 0; i < atoms.Count; i++)
                 {
                     if (atoms[i].Index == pos)
                     {
-                        int freeBons = 0;
-                        for(int j = 0; j < atoms[i].Neighbours.Length; j++)
+                        int freeBons = 0; // поиск свободных валентностей у атома, к которому будет цепляться заместитель.
+                        for (int j = 0; j < atoms[i].Neighbours.Length; j++)
                         {
                             if (atoms[i].Neighbours[j] == null) freeBons++;
                         }
 
                         if (freeBons >= order)
                         {
-                            int k = 0;
+                            Atom oldAtom;
+                            // Заполнение свободных валентностей целевого атома, с учётом порядка связи.
                             for (int j = 0; j < atoms[i].Neighbours.Length; j++)
                             {
-                                if (atoms[i].Neighbours[j] == null && k < order)
+                                if (atoms[i].Neighbours[j] == null)
                                 {
-                                    
-                                    atoms[i].Neighbours[j] = newAtom;
-                                    newAtom.Neighbours[k] = atoms[i];
-                                    k++;
+                                    if (SameCoords(newAtom, out oldAtom))
+                                    {
+                                        atoms[i].Neighbours[j] = oldAtom;
+                                        for (int k = 0; k < oldAtom.Neighbours.Length; k++)
+                                        {
+                                            if (oldAtom.Neighbours[k] == null)
+                                            {
+                                                oldAtom.Neighbours[k] = atoms[i];
+                                                return;
+                                            }
+                                                
+                                        }
+                                    }
+                                    else
+                                    {
+                                        atoms[i].Neighbours[j] = newAtom;
+                                        newAtom.Neighbours[0] = atoms[i];
+                                        atoms.Add(newAtom);
+                                        return;
+                                    }
                                 }
-                              
+
                             }
-                            atoms.Add(newAtom);
-                            return;
+
                         }
                         else throw new ArgumentOutOfRangeException("freeBonds", "order > freeBonds", "У атома с индексом " + pos + " недостаточно свободных валентностей для образования связи!");
                     }
                 }
             }
+        }
+
+        // Метод для проверки совпадения координат добавляемого атома с координатами уже существующего атома.
+        private bool SameCoords(Atom newAtom, out Atom createdAtom)
+        {
+            foreach(Atom a in atoms)
+            {
+                if (Math.Abs(a.Position.X - newAtom.Position.X) <= 0.0001 && Math.Abs(a.Position.Y - newAtom.Position.Y) <= 0.0001)
+                {
+                    for (int k = 0; k < a.Neighbours.Length; k++)
+                    {
+                        if (a.Neighbours[k] == null)
+                        {
+                            createdAtom = a;
+                            return true;
+                        }
+
+                    }
+                }
+            }
+            createdAtom = null;
+            return false;
         }
 
         public void ConnectAtoms(int firstInd, int secondInd, int order)
