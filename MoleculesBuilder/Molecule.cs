@@ -425,14 +425,21 @@ namespace MoleculesBuilder
                             crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
                         else
                         {
-                            crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), 1);
-                            crrMolecule.AddInvPair(int.Parse(el[1]), int.Parse(el[2]), el[4]);
+                            Bond b1;
+                            crrMolecule.ExistBond(int.Parse(el[1]), int.Parse(el[2]), out b1);
+                            if (b1 != null && b1.BondType != BondType.Default)
+                                b1.InverseBond = !b1.InverseBond;
+                            else if (b1 != null && el[4] == "w")
+                                b1.BondType = BondType.Wedget;
                         }
 
                         if (el.Length == 6 && el[5].TrimEnd(new char[] { '\n' }) == "inv")
                             crrMolecule.AddInvPair(int.Parse(el[1]), int.Parse(el[2]));
 
-
+                        Bond b;
+                        crrMolecule.ExistBond(int.Parse(el[1]), int.Parse(el[2]), out b);
+                        if (b != null && el[4] == "2")
+                            b.InverseBond = !b.InverseBond;
                     }
                     break;
                 case "Delete":
@@ -521,7 +528,7 @@ namespace MoleculesBuilder
             Name = name;
             MolecularPartsDir = dir;
             ShowAtomNumbers = true;
-            DrawAtomCircle = true;
+            DrawAtomCircle = false;
         }
 
         public void AddInvPair(int ind1, int ind2, string type = "")
@@ -553,8 +560,10 @@ namespace MoleculesBuilder
             return false;
         }
 
+
         private int Bonds(int firstInd, int secondInd, bool mode)
         {
+            // поиск кратности связи между атомами firstInd и secondInd
             if (mode == true)
             {
                 int count = 0;
@@ -564,7 +573,7 @@ namespace MoleculesBuilder
                 }
                 return count;
             }
-            else
+            else // поиск свободных валентностей
             {
                 int count = 0;
                 for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
@@ -601,12 +610,18 @@ namespace MoleculesBuilder
                                 {
                                     if (SameCoords(newAtom, out oldAtom))
                                     {
+                                        // ничего не делать если одинарная связь уже существует
+                                        if (ExistBond(oldAtom.Index, atoms[i].Index))
+                                            return;
+
                                         atoms[i].Neighbours[j] = oldAtom;
                                         for (int k = 0; k < oldAtom.Neighbours.Length; k++)
                                         {
                                             if (oldAtom.Neighbours[k] == null)
                                             {
                                                 oldAtom.Neighbours[k] = atoms[i];
+                                                Bond bond1 = new Bond(oldAtom, atoms[i], Order.First);
+                                                bonds.Add(bond1);
                                                 return;
                                             }
                                                 
@@ -617,12 +632,27 @@ namespace MoleculesBuilder
                                         atoms[i].Neighbours[j] = newAtom;
                                         newAtom.Neighbours[0] = atoms[i];
                                         atoms.Add(newAtom);
+                                        int num2 = Bonds(newAtom.Index, pos, true);
+                                        Bond bond2 = new Bond(atoms[pos - 1], newAtom, Order.First);
+                                        if (num2 == 1)
+                                            bond2.Order = Order.First;
+                                        else if (num2 == 2)
+                                            bond2.Order = Order.Second;
+                                        else bond2.Order = Order.Third;
+                                        bonds.Add(bond2);
                                         return;
                                     }
                                 }
 
                             }
-
+                            int num = Bonds(newAtom.Index, pos, true);
+                            Bond bond = new Bond(atoms[pos - 1], newAtom, Order.First);
+                            if (num == 1)
+                                bond.Order = Order.First;
+                            else if (num == 2)
+                                bond.Order = Order.Second;
+                            else bond.Order = Order.Third;
+                            bonds.Add(bond);
                         }
                         else throw new ArgumentOutOfRangeException("freeBonds", "order > freeBonds", "У атома с индексом " + pos + " недостаточно свободных валентностей для образования связи!");
                     }
@@ -656,19 +686,7 @@ namespace MoleculesBuilder
         {
             if (order >= 0 && order < 4)
             {
-                if (order == 1 && IsInvPair(firstInd, secondInd))
-                {
-                    InvAtomPairs.Remove(firstInd + "-" + secondInd);
-                    InvAtomPairs.Remove(secondInd + "-" + firstInd);
-                    InvAtomPairs.Remove(firstInd + "-" + secondInd + "-w");
-                    InvAtomPairs.Remove(secondInd + "-" + firstInd + "-w");
-                    InvAtomPairs.Remove(secondInd + "-" + firstInd + "-hw");
-                    InvAtomPairs.Remove(firstInd + "-" + secondInd + "-hw");
-                }
-                if (!AtomExists(firstInd) || !AtomExists(secondInd))
-                    throw new ArgumentOutOfRangeException("Передаваемые индексы атомов не существуют!");
-
-                if (order == 0)
+                if (order == 0) // сброс ссылок каждого атома из пары
                 {
                     for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
                     {
@@ -680,37 +698,45 @@ namespace MoleculesBuilder
                         if (atoms[secondInd - 1].Neighbours[i] == atoms[firstInd - 1])
                             atoms[secondInd - 1].Neighbours[i] = null;
                     }
+                    Bond b;
+                    if (ExistBond(atoms[firstInd - 1].Index, atoms[secondInd - 1].Index, out b))
+                    {
+                        if (b != null)
+                            bonds.Remove(b);
+                    }
+
                     return;
                 }
 
-                int d = order - Bonds(firstInd, secondInd, true);
-                if (d > 0)
+                int d = order - Bonds(firstInd, secondInd, true); // кол-во связей, которые нужно создать между атомами
+
+                // проверка кол-ва связей, которые нужно создать кол-ву свободных валентностей каждого атома.
+                if (d <= Bonds(firstInd, 0, false) && d <= Bonds(secondInd, 0, false))
                 {
-                    if (d <= Bonds(firstInd, 0, false) && d <= Bonds(secondInd, 0, false))
+                    // заполнение ссылок на атом firstInd
+                    int count = 0;
+                    for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
                     {
-                        int count = 0;
-                        for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
+                        if (atoms[firstInd - 1].Neighbours[i] == null && count < d)
                         {
-                            if (atoms[firstInd - 1].Neighbours[i] == null && count < d)
-                            {
-                                atoms[firstInd - 1].Neighbours[i] = atoms[secondInd - 1];
-                                count++;
-                            }
-
+                            atoms[firstInd - 1].Neighbours[i] = atoms[secondInd - 1];
+                            count++;
                         }
-                        count = 0;
-                        for (int i = 0; i < atoms[secondInd - 1].Neighbours.Length; i++)
+
+                    }
+                    // заполнение ссылок на атом secondInd
+                    count = 0;
+                    for (int i = 0; i < atoms[secondInd - 1].Neighbours.Length; i++)
+                    {
+                        if (atoms[secondInd - 1].Neighbours[i] == null && count < d)
                         {
-                            if (atoms[secondInd - 1].Neighbours[i] == null && count < d)
-                            {
-                                atoms[secondInd - 1].Neighbours[i] = atoms[firstInd - 1];
-                                count++;
-                            }
-
+                            atoms[secondInd - 1].Neighbours[i] = atoms[firstInd - 1];
+                            count++;
                         }
+
                     }
                 }
-                else
+                else // удалить лишние связи если d < 0
                 {
                     if (Math.Abs(d) <= Bonds(firstInd, secondInd, true) && d <= Bonds(secondInd, firstInd, true))
                     {
@@ -736,7 +762,19 @@ namespace MoleculesBuilder
                         }
                     }
                 }
+                Bond bond;
+                if (!ExistBond(atoms[firstInd - 1].Index, atoms[secondInd - 1].Index, out bond))
+                {
+                    bond = new Bond(atoms[firstInd - 1], atoms[secondInd - 1], Order.First);
+                    bonds.Add(bond);
+                }
 
+                if (order == 1)
+                    bond.Order = Order.First;
+                else if (order == 2)
+                    bond.Order = Order.Second;
+                else bond.Order = Order.Third;
+                
             }       
         }
             
@@ -747,10 +785,28 @@ namespace MoleculesBuilder
                 for(int i = 0; i < at.Neighbours.Length; i++)
                 {
                     if (at.Neighbours[i] == atoms[index - 1])
+                    {
+                        List<Bond> delBonds = new List<Bond>();
+                        foreach(Bond b in bonds)
+                        {
+                            if (b.A == atoms[index - 1] || b.B == atoms[index - 1])
+                            {
+                                delBonds.Add(b);
+                            }
+                                
+                        }
+                        foreach (Bond bond in delBonds)
+                        {
+                            bonds.Remove(bond);
+                        }
+                        delBonds = null;
                         at.Neighbours[i] = null;
+                    }
+                        
                 }
             }
             atoms.Remove(atoms[index - 1]);
+            GC.Collect();
         }
 
         public void InsertAtom(string newAtom, int newAtomVal, int baseAtomInd)
@@ -771,38 +827,41 @@ namespace MoleculesBuilder
             }
         }
 
-        private void MultiBonds(int p, Atom atBase, Atom atNeighbour,  out PointF pt1, out PointF pt2)
-        {
-            int d = 5;
-            PointF vector = new PointF(atNeighbour.Position.X - atBase.Position.X, atNeighbour.Position.Y - atBase.Position.Y);
-            double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-            PointF moveVector = new PointF((float)n_x, (float)n_y);
-            
-            if (IsInvPair(atBase.Index, atNeighbour.Index))
-            {
-                pt1 = new PointF(atBase.Position.X + p * moveVector.X + vector.X , atBase.Position.Y + p * moveVector.Y + vector.Y * 0.9f);
-                pt2 = new PointF(atNeighbour.Position.X + p * moveVector.X - vector.X * 0.9f, atNeighbour.Position.Y + p * moveVector.Y - vector.Y * 0.9f);
-            }
-            else
-            {
-                pt1 = new PointF(atBase.Position.X - p * moveVector.X + vector.X * 0.9f, atBase.Position.Y - p * moveVector.Y + vector.Y * 0.9f);
-                pt2 = new PointF(atNeighbour.Position.X - p * moveVector.X - vector.X * 0.9f, atNeighbour.Position.Y - p * moveVector.Y - vector.Y * 0.9f);
-            }
-        }
 
-        private bool ExistBond(Atom A1, Atom A2)
+        private bool ExistBond(int A1, int A2, out Bond foundBond)
         {
             if (bonds.Count > 0)
             {
                 foreach(Bond b in bonds)
                 {
-                    if (b.A.Index == A1.Index && b.B.Index == A2.Index)
+                    if ((b.A.Index == A1 && b.B.Index == A2) || (b.A.Index == A2 && b.B.Index == A1))
+                    {
+                        foundBond = b;
                         return true;
+                    }
+                        
+                }
+            }
+            else
+            {
+                foundBond = null;
+                return false;
+            }
+            foundBond = null;
+            return false;
+        }
+        private bool ExistBond(int A1, int A2)
+        {
+            if (bonds.Count > 0)
+            {
+                foreach (Bond b in bonds)
+                {
+                    if ((b.A.Index == A1 && b.B.Index == A2) || (b.A.Index == A2 && b.B.Index == A1))
+                        return true;
+
                 }
             }
             else return false;
-
             return false;
         }
 
@@ -814,6 +873,7 @@ namespace MoleculesBuilder
 
             using (Graphics g = Graphics.FromImage(bm))
             {
+                g.Clear(Color.White);
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
@@ -821,99 +881,117 @@ namespace MoleculesBuilder
                 {
                     for(int i = 0; i < at.Neighbours.Length; i++)
                     {
+                        PointF bondVector = new PointF();
+                        if (at.Valence - Bonds(at.Index, 0, false) > 1)
+                            bondVector = new PointF(0, 0);
+                        else
+                        {
+                            for (int k = 0; k < at.Neighbours.Length; k++)
+                            {
+                                if (at.Neighbours[k] != null)
+                                {
+                                    bondVector = new PointF(at.Position.X - at.Neighbours[k].Position.X, at.Position.Y - at.Neighbours[k].Position.Y);
+                                    break;
+                                }
+                            }
+                        }
                         if (at.Neighbours[i] != null && at.Index < at.Neighbours[i].Index)
                         {
                             int numBonds = Bonds(at.Index, at.Neighbours[i].Index, true);
-                            
-                            //Проверка на наличие клиновидной связи
-                            if (numBonds == 1 && IsInvPair(at.Index, at.Neighbours[i].Index))
-                            {
-                                PointF vector;
-                                if (DrawAtomCircle == false)
-                                {
-                                    float m = 0.6f;
-                                    vector = new PointF((at.Neighbours[i].Position.X - at.Position.X) * m, (at.Neighbours[i].Position.Y - at.Position.Y) * m);
-                                }
-                                else
-                                {
-                                    vector = new PointF(at.Neighbours[i].Position.X- at.Position.X, at.Neighbours[i].Position.Y - at.Position.Y);
-                                }
 
-                                string type = "";
-                                foreach (string s in InvAtomPairs)
-                                {
-                                    if (s.Contains(at.Index + "-" + at.Neighbours[i].Index) || s.Contains(at.Neighbours[i].Index + "-" + at.Index))
-                                    {
-                                        string[] el = s.Split('-');
-                                        type = el[2];
-                                    }
-                                }
-                                if (type == "w") //wedged bond
-                                {
-                                    int d = 5;
-                                    double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                                    double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                                    PointF moveVector = new PointF((float)n_x, (float)n_y);
-                                    PointF[] pts =
-                                    {
-                                    new PointF(at.Position.X + vector.X - moveVector.X, at.Position.Y + vector.Y - moveVector.Y),
-                                    new PointF(at.Position.X + vector.X + moveVector.X, at.Position.Y + vector.Y + moveVector.Y),
-                                    at.Position
-                                };
-                                    g.FillPolygon(new SolidBrush(Color.Black), pts);
-                                }
-                                else if (type == "hw") //hashed wadged bond
-                                {
-                                    for(int n = 1; n <= 10; n++)
-                                    {
-                                        double n_y = vector.X * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
-                                        double n_x = -vector.Y * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
-                                        PointF moveVector = new PointF((float)n_x, (float)n_y);
-                                        PointF pt = new PointF(at.Position.X + vector.X * 1/10 * n , at.Position.Y + vector.Y * 1 / 10 * n);
-                                        g.DrawLine(new Pen(Color.Black), new PointF(pt.X - moveVector.X, pt.Y - moveVector.Y), new PointF(pt.X + moveVector.X, pt.Y + moveVector.Y));
-                                    }
-                                }
-                            }
-                            //else 
-                            //    g.DrawLine(new Pen(Color.Black, 1), at.Position, at.Neighbours[i].Position);
-                            if (!ExistBond(at, at.Neighbours[i]))
-                            {
-                                Bond bond = new Bond(at, at.Neighbours[i], Order.Second);
-                                bond.InverseBond = true;
-                                bonds.Add(bond);
-                                bond.DrawBond(g);
-                            }
-                            else
-                            {
-                                foreach(Bond b in bonds)
-                                {
-                                    if (b.A.Index == at.Index && b.B.Index == at.Neighbours[i].Index)
-                                    {
-                                        b.InverseBond = true;
-                                        b.DrawBond(g);
-                                        break;
-                                    }
-                                }
-                            }
+                            #region
+                            ////Проверка на наличие клиновидной связи
+                            //if (numBonds == 1 && IsInvPair(at.Index, at.Neighbours[i].Index))
+                            //{
+                            //    PointF vector;
+                            //    if (DrawAtomCircle == false)
+                            //    {
+                            //        float m = 0.6f;
+                            //        vector = new PointF((at.Neighbours[i].Position.X - at.Position.X) * m, (at.Neighbours[i].Position.Y - at.Position.Y) * m);
+                            //    }
+                            //    else
+                            //    {
+                            //        vector = new PointF(at.Neighbours[i].Position.X- at.Position.X, at.Neighbours[i].Position.Y - at.Position.Y);
+                            //    }
 
-                            PointF pt1, pt2;
-                            if (numBonds >= 2)
+                            //    string type = "";
+                            //    foreach (string s in InvAtomPairs)
+                            //    {
+                            //        if (s.Contains(at.Index + "-" + at.Neighbours[i].Index) || s.Contains(at.Neighbours[i].Index + "-" + at.Index))
+                            //        {
+                            //            string[] el = s.Split('-');
+                            //            type = el[2];
+                            //        }
+                            //    }
+                            //    if (type == "w") //wedged bond
+                            //    {
+                            //        int d = 5;
+                            //        double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+                            //        double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+                            //        PointF moveVector = new PointF((float)n_x, (float)n_y);
+                            //        PointF[] pts =
+                            //        {
+                            //        new PointF(at.Position.X + vector.X - moveVector.X, at.Position.Y + vector.Y - moveVector.Y),
+                            //        new PointF(at.Position.X + vector.X + moveVector.X, at.Position.Y + vector.Y + moveVector.Y),
+                            //        at.Position
+                            //    };
+                            //        g.FillPolygon(new SolidBrush(Color.Black), pts);
+                            //    }
+                            //    else if (type == "hw") //hashed wadged bond
+                            //    {
+                            //        for(int n = 1; n <= 10; n++)
+                            //        {
+                            //            double n_y = vector.X * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
+                            //            double n_x = -vector.Y * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
+                            //            PointF moveVector = new PointF((float)n_x, (float)n_y);
+                            //            PointF pt = new PointF(at.Position.X + vector.X * 1/10 * n , at.Position.Y + vector.Y * 1 / 10 * n);
+                            //            g.DrawLine(new Pen(Color.Black), new PointF(pt.X - moveVector.X, pt.Y - moveVector.Y), new PointF(pt.X + moveVector.X, pt.Y + moveVector.Y));
+                            //        }
+                            //    }
+                            //}
+                            #endregion
+
+                            foreach (Bond b in bonds)
                             {
-                                MultiBonds(1, at, at.Neighbours[i], out pt1, out pt2);
-                                g.DrawLine(new Pen(Color.Black, 1), pt1, pt2);
-                                if (numBonds == 3) MultiBonds(-1, at, at.Neighbours[i], out pt1, out pt2);
-                                g.DrawLine(new Pen(Color.Black, 1), pt1, pt2);
+                                Bond temp;
+                                if (ExistBond(at.Index, at.Neighbours[i].Index, out temp))
+                                {
+                                    temp.DrawBond(g);
+                                    break;
+                                }
                             }
                         }
                         
                         if (at.ToString() != "C" && DrawAtomCircle == false)
                         {
                             int hidrNum = Bonds(at.Index, 0, false);
-                            string symbol = hidrNum > 1 ? at.ToString() + "H" + hidrNum : at.ToString() + (hidrNum == 0 ? "" : "H");
+                            string symbol;
+                            if ((bondVector.X < 0 && bondVector.Y < 0) || (bondVector.X < 0 && bondVector.Y > 0))
+                            {
+                                symbol = hidrNum > 1 ? hidrNum + "H" + at.ToString() : (hidrNum == 0 ? "" : "H") + at.ToString();
+                            }
+                            else symbol = hidrNum > 1 ? at.ToString() + "H" + hidrNum : at.ToString() + (hidrNum == 0 ? "" : "H");
+
                             Font symbolFont = new Font("Arial", 9);
                             SizeF size = g.MeasureString(symbol, symbolFont);
-                            g.FillRectangle(new SolidBrush(Color.White), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));
-                            g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2);
+                            g.FillRectangle(new SolidBrush(Color.Transparent), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));
+
+                            if (bondVector.X == 0 && bondVector.Y == 0)
+                            {
+                                g.FillRectangle(new SolidBrush(Color.White), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));
+                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2);
+                            }
+                            else if (bondVector.X > 0 && bondVector.Y < 0)
+                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X, at.Position.Y - size.Height / 2);
+                            else if (bondVector.X > 0 && bondVector.Y > 0)
+                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X, at.Position.Y);
+                            else if (bondVector.X < 0 && bondVector.Y < 0)
+                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width, at.Position.Y - size.Height / 2);
+                            else if (bondVector.X < 0 && bondVector.Y > 0)
+                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width, at.Position.Y);
+                            else if (bondVector.X == 0 && bondVector.Y > 0)
+                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 4, at.Position.Y);
+                            else g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 4, at.Position.Y - size.Height);
                         }
 
                         if (DrawAtomCircle)
@@ -932,7 +1010,9 @@ namespace MoleculesBuilder
                             SizeF s = g.MeasureString(at.Index.ToString(), font);
                             g.DrawString(at.Index.ToString(), font, new SolidBrush(Color.Black), at.Position.X - s.Width, at.Position.Y - s.Height);
                         }
+
                         
+
                     }
                 }
             }
