@@ -46,10 +46,9 @@ namespace MoleculesBuilder
         public const double L = 35; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
-        public List<Atom> atoms = new List<Atom>();
-        public List<Bond> bonds = new List<Bond>();
+        public List<Atom> atoms { get; set; }
+        public List<Bond> bonds { get; set; }
         
-        List<string> InvAtomPairs = new List<string>();
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
         public string MolecularPartsDir { get; set; }
@@ -58,6 +57,8 @@ namespace MoleculesBuilder
         {
             Name = name;
             MolecularPartsDir = dir;
+            atoms = new List<Atom>();
+            bonds = new List<Bond>();
             ShowAtomNumbers = true;
             DrawAtomCircle = false;
         }
