@@ -35,6 +35,7 @@ namespace MoleculesBuilder
                 
             }
         }
+
         public double AtomWeight { get; private set; }
         public PointF Position { get; set; }
         public Atom[] Neighbours;

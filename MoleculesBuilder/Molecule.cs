@@ -48,10 +48,19 @@ namespace MoleculesBuilder
         const double K = Math.PI / 180;
         public List<Atom> atoms = new List<Atom>();
         public List<Bond> bonds = new List<Bond>();
+        
         List<string> InvAtomPairs = new List<string>();
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
         public string MolecularPartsDir { get; set; }
+
+        public Molecule(string name, string dir)
+        {
+            Name = name;
+            MolecularPartsDir = dir;
+            ShowAtomNumbers = true;
+            DrawAtomCircle = false;
+        }
 
         //Вспомагательные методы
         private static string AddStrings(string strToSum) 
@@ -114,7 +123,6 @@ namespace MoleculesBuilder
             y = (float)(vec.X * Math.Sin(ang * K) + vec.Y * Math.Cos(ang * K));
             return new PointF(x, y);
         }
-        
         //Вращение указанных вершин молекулы относительно базовой вершины на угол ang
         private static void RotateMolecularPart(Molecule crrMolecule, int[] rotInd, int baseInd, double ang)
         {
@@ -144,7 +152,6 @@ namespace MoleculesBuilder
                 }
             }
         }
-
         //Добавление нового заместителя в молекулу
         private static void DrawSub(Molecule crrMolecule, string type, string pos, double ang)
         {
@@ -207,11 +214,11 @@ namespace MoleculesBuilder
                     break;
                 case "O":
                     el = Element.O;
-                    val = 2;
+                    val = 3;
                     break;
                 case "N":
                     el = Element.N;
-                    val = 3;
+                    val = 4;
                     break;
                 case "F":
                     el = Element.F;
@@ -422,25 +429,31 @@ namespace MoleculesBuilder
                         if (ContainsNotNumbers(el[1])) el[1] = AddStrings(el[1]);
                         if (ContainsNotNumbers(el[2])) el[2] = AddStrings(el[2]);
                         if (char.IsDigit(el[4][0]))
+                        {
+                            Bond b1 = null;
+                            crrMolecule.ExistBond(int.Parse(el[1]), int.Parse(el[2]), out b1);
+                            if (b1 != null && el[4] == "2")
+                                b1.InverseBond = !b1.InverseBond;
+                            b1.BondType = BondType.Default;
                             crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
+                        }
                         else
                         {
                             Bond b1;
                             crrMolecule.ExistBond(int.Parse(el[1]), int.Parse(el[2]), out b1);
-                            if (b1 != null && b1.BondType != BondType.Default)
-                                b1.InverseBond = !b1.InverseBond;
-                            else if (b1 != null && el[4] == "w")
+                            if (b1 != null && el[4] == "w")
                                 b1.BondType = BondType.Wedget;
                             else if (b1 != null && el[4] == "hw")
                                 b1.BondType = BondType.HashedWedget;
                             else if (b1 != null && el[4] == "wavy")
                                 b1.BondType = BondType.Wavy;
-                        }
-                        Bond b;
-                        crrMolecule.ExistBond(int.Parse(el[1]), int.Parse(el[2]), out b);
-                        if (b != null && el[4] == "2")
-                            b.InverseBond = !b.InverseBond;
+                            else if (b1 != null && el[4] == "dashed")
+                                b1.BondType = BondType.Dashed;
+                            b1.Order = Order.First;
 
+                            if (b1 != null && b1.BondType != BondType.Default)
+                                b1.InverseBond = !b1.InverseBond;
+                        }
                     }
                     break;
                 case "Delete":
@@ -524,58 +537,7 @@ namespace MoleculesBuilder
             return result;
         }
 
-        public Molecule(string name, string dir)
-        {
-            Name = name;
-            MolecularPartsDir = dir;
-            ShowAtomNumbers = true;
-            DrawAtomCircle = false;
-        }
-
-
-
-        private bool AtomExists(int atomIndex)
-        {
-            foreach (Atom at in atoms)
-            {
-                if (at.Index == atomIndex) return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Поиск порядка связи между атомами для случае, когда mode == true; поиск свободных валентностей, когда mode == false
-        /// (в этом случае secondInd игнорируется).
-        /// </summary>
-        /// <param name="firstInd"></param>
-        /// <param name="secondInd"></param>
-        /// <param name="mode"></param>
-        /// <returns></returns>
-        private int Bonds(int firstInd, int secondInd, bool mode)
-        {
-            
-            if (mode == true)
-            {
-                int count = 0;
-                for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
-                {
-                    if (atoms[firstInd - 1].Neighbours[i]?.Index == atoms[secondInd - 1].Index) count++;
-                }
-                return count;
-            }
-            else
-            {
-                int count = 0;
-                for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
-                {
-                    if (atoms[firstInd - 1].Neighbours[i] == null) count++;
-                }
-                return count;
-            }
-        }
-
-
-        public void AddAtom(Atom newAtom, int order, int pos)
+        private void AddAtom(Atom newAtom, int order, int pos)
         {
             if (atoms.Count == 0) atoms.Add(newAtom);
             else
@@ -650,35 +612,7 @@ namespace MoleculesBuilder
             }
         }
 
-        /// <summary>
-        /// Метод для проверки совпадения координат добавляемого атома с координатами уже существующего атома.
-        /// В случае если такой атом найдет, метод возвращает объект уже существующего атома.
-        /// </summary>
-        /// <param name="newAtom"></param>
-        /// <param name="createdAtom"></param>
-        /// <returns></returns>
-        private bool SameCoords(Atom newAtom, out Atom createdAtom)
-        {
-            foreach(Atom a in atoms)
-            {
-                if (Math.Abs(a.Position.X - newAtom.Position.X) <= 0.0001 && Math.Abs(a.Position.Y - newAtom.Position.Y) <= 0.0001)
-                {
-                    for (int k = 0; k < a.Neighbours.Length; k++)
-                    {
-                        if (a.Neighbours[k] == null)
-                        {
-                            createdAtom = a;
-                            return true;
-                        }
-
-                    }
-                }
-            }
-            createdAtom = null;
-            return false;
-        }
-
-        public void ConnectAtoms(int firstInd, int secondInd, int order)
+        private void ConnectAtoms(int firstInd, int secondInd, int order)
         {
             if (order >= 0 && order < 4)
             {
@@ -788,7 +722,7 @@ namespace MoleculesBuilder
             }       
         }
             
-        public void RemoveAtom(int index)
+        private void RemoveAtom(int index)
         {
             foreach(Atom at in atoms)
             {
@@ -819,7 +753,7 @@ namespace MoleculesBuilder
             GC.Collect();
         }
 
-        public void InsertAtom(string newAtom, int newAtomVal, int baseAtomInd)
+        private void InsertAtom(string newAtom, int newAtomVal, int baseAtomInd)
         {
             int takenBonds = atoms[baseAtomInd - 1].Valence - Bonds(baseAtomInd, 0, false);
             if (newAtomVal < takenBonds)
@@ -831,6 +765,7 @@ namespace MoleculesBuilder
                 else if (newAtom == Element.N.ToString()) el = Element.N;
                 else if (newAtom == Element.O.ToString()) el = Element.O;
                 else if (newAtom == Element.S.ToString()) el = Element.S;
+                else if (newAtom == Element.H.ToString()) el = Element.H;
                 else throw new ArgumentException("Недопустимое название нового атома!", "newAtom");
                 atoms[baseAtomInd - 1].Type = el;
                 atoms[baseAtomInd - 1].ApdateValence(newAtomVal);
@@ -886,8 +821,73 @@ namespace MoleculesBuilder
             else return false;
             return false;
         }
+        /// <summary>
+        /// Поиск порядка связи между атомами для случае, когда mode == true; поиск свободных валентностей, когда mode == false
+        /// (в этом случае secondInd игнорируется).
+        /// </summary>
+        /// <param name="firstInd"></param>
+        /// <param name="secondInd"></param>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        private int Bonds(int firstInd, int secondInd, bool mode)
+        {
 
-        public Bitmap ReturnPic(int width, int height)
+            if (mode == true)
+            {
+                int count = 0;
+                for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
+                {
+                    if (atoms[firstInd - 1].Neighbours[i]?.Index == atoms[secondInd - 1].Index) count++;
+                }
+                return count;
+            }
+            else
+            {
+                int count = 0;
+                for (int i = 0; i < atoms[firstInd - 1].Neighbours.Length; i++)
+                {
+                    if (atoms[firstInd - 1].Neighbours[i] == null) count++;
+                }
+                return count;
+            }
+        }
+        /// <summary>
+        /// Метод для проверки совпадения координат добавляемого атома с координатами уже существующего атома.
+        /// В случае если такой атом найдет, метод возвращает объект уже существующего атома.
+        /// </summary>
+        /// <param name="newAtom"></param>
+        /// <param name="createdAtom"></param>
+        /// <returns></returns>
+        private bool SameCoords(Atom newAtom, out Atom createdAtom)
+        {
+            foreach (Atom a in atoms)
+            {
+                if (Math.Abs(a.Position.X - newAtom.Position.X) <= 0.0001 && Math.Abs(a.Position.Y - newAtom.Position.Y) <= 0.0001)
+                {
+                    for (int k = 0; k < a.Neighbours.Length; k++)
+                    {
+                        if (a.Neighbours[k] == null)
+                        {
+                            createdAtom = a;
+                            return true;
+                        }
+
+                    }
+                }
+            }
+            createdAtom = null;
+            return false;
+        }
+        //private bool AtomExists(int atomIndex)
+        //{
+        //    foreach (Atom at in atoms)
+        //    {
+        //        if (at.Index == atomIndex) return true;
+        //    }
+        //    return false;
+        //}
+
+        private Bitmap ReturnPic(int width, int height)
         {
             Bitmap bm = new Bitmap(width, height);
             Color roundColor = Color.Red; int r = 4;
@@ -921,7 +921,6 @@ namespace MoleculesBuilder
                                 }
                             }
                         }
-
                         if (at.Neighbours[i] != null && at.Index < at.Neighbours[i].Index)
                         {
                             foreach (Bond b in bonds)

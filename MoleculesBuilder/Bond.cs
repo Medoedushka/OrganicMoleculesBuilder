@@ -19,7 +19,8 @@ namespace MoleculesBuilder
         Default,
         Wedget,
         HashedWedget,
-        Wavy
+        Wavy,
+        Dashed
     }
 
     public class Bond
@@ -126,6 +127,13 @@ namespace MoleculesBuilder
                         temp[k].Y = A.Position.Y +  newVec.Y;
                     }
                     g.DrawLines(Pens.Black, temp);
+                }
+                else if (BondType == BondType.Dashed)
+                {
+                    Pen pen = new Pen(Color.Black);
+                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                    pen.DashPattern = new float[] { 4, 2 };
+                    g.DrawLine(pen, A.Position, B.Position);
                 }
                 else g.DrawLine(new Pen(Color.Black, 1), A.Position, B.Position);
             }   

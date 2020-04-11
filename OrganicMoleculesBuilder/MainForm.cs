@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -44,8 +45,12 @@ namespace OrganicMoleculesBuilder
                 try
                 {
                     string command = txb_Command.Text.TrimEnd(new char[] { ' ' }).TrimStart(new char[] { ' ' });
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
                     pcb_Output.Image = Molecule.RunCommand(ref crrMolecule, command, pcb_Output.Width, pcb_Output.Height);
-                    rtb_Debug.AppendText(">" + txb_Command.Text + "\n");
+                    s.Stop();
+                    //MessageBox.Show(s.ElapsedMilliseconds.ToString());
+                    //rtb_Debug.AppendText(">" + txb_Command.Text + "\n");
                     
                     if (txb_Command.Text == "Clear") crrMolecule = new Molecule("name", "MolecularParts");
                     lastCommand.Add(txb_Command.Text);
