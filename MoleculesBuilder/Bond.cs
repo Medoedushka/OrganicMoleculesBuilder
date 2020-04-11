@@ -53,16 +53,19 @@ namespace MoleculesBuilder
 
         public void DrawBond(Graphics g)
         {
+            int d = 5;
+            PointF pt1, pt2;
+            PointF vector = new PointF(B.Position.X - A.Position.X, B.Position.Y - A.Position.Y);
+           double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+            double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+            PointF moveVector = new PointF((float)n_x, (float)n_y);
+
             if (Order == Order.First)
             {
                 if (BondType == BondType.Wedget)
                 {
-                    int d = 5;
-                    PointF pt1, pt2;
-                    PointF vector = new PointF(B.Position.X - A.Position.X, B.Position.Y - A.Position.Y);
-                    double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                    double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                    PointF moveVector = new PointF((float)n_x, (float)n_y);
+                    n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
+                    n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
                     PointF[] draw;
                     int p = 1;
                     if (InverseBond)
@@ -79,17 +82,55 @@ namespace MoleculesBuilder
                     }
                     g.FillPolygon(new SolidBrush(Color.Black), draw);
                 }
+                else if (BondType == BondType.HashedWedget)
+                {
+                    if (InverseBond)
+                    {
+                        for (int n = 1; n <= 10; n++)
+                        {
+                            n_y = vector.X * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
+                            n_x = -vector.Y * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
+                            moveVector = new PointF((float)n_x, (float)n_y);
+                            PointF pt = new PointF(A.Position.X + vector.X * 1 / 10 * n, A.Position.Y + vector.Y * 1 / 10 * n);
+                            g.DrawLine(new Pen(Color.Black), new PointF(pt.X - moveVector.X, pt.Y - moveVector.Y),
+                                new PointF(pt.X + moveVector.X, pt.Y + moveVector.Y));
+                        }
+                    }
+                    else
+                    {
+                        for (int n = 1; n <= 10; n++)
+                        {
+                            n_y = vector.X * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
+                            n_x = -vector.Y * n / (2 * Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y));
+                            moveVector = new PointF((float)n_x, (float)n_y);
+                            PointF pt = new PointF(B.Position.X - vector.X * 1 / 10 * n, B.Position.Y - vector.Y * 1 / 10 * n);
+                            g.DrawLine(new Pen(Color.Black), new PointF(pt.X - moveVector.X, pt.Y - moveVector.Y),
+                                new PointF(pt.X + moveVector.X, pt.Y + moveVector.Y));
+                        }
+                    }
+
+                }
+                else if (BondType == BondType.Wavy)
+                {
+                    double d1 = vector.Y / vector.X;
+                    double vectorAng = Math.Atan(d1) * 180 / Math.PI;
+                    if (vector.X < 0) vectorAng += 180;
+                    double step = Molecule.L / 100;
+                    PointF[] temp = new PointF[101];
+                    for (int k = 0; k <= 100; k++)
+                    {
+                        float x = k * (float)step;
+                        float y = 4 * (float)Math.Sin(10 * Math.PI / Molecule.L * x);
+                        PointF newVec = Molecule.RotateVector(vectorAng, new PointF(x, y));
+                        temp[k].X = A.Position.X + newVec.X;
+                        temp[k].Y = A.Position.Y +  newVec.Y;
+                    }
+                    g.DrawLines(Pens.Black, temp);
+                }
                 else g.DrawLine(new Pen(Color.Black, 1), A.Position, B.Position);
             }   
             else
             {
-                int d = 5;
-                PointF pt1, pt2;
-                PointF vector = new PointF(B.Position.X - A.Position.X, B.Position.Y - A.Position.Y);
-                double n_y = vector.X * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                double n_x = -vector.Y * d / Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-                PointF moveVector = new PointF((float)n_x, (float)n_y);
-
                 int p = 1;
                 if (InverseBond)
                 {
