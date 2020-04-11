@@ -214,11 +214,11 @@ namespace MoleculesBuilder
                     break;
                 case "O":
                     el = Element.O;
-                    val = 3;
+                    val = 2;
                     break;
                 case "N":
                     el = Element.N;
-                    val = 4;
+                    val = 3;
                     break;
                 case "F":
                     el = Element.F;

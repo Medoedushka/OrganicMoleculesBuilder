@@ -36,6 +36,8 @@ namespace MoleculesBuilder
         public Order Order { get; set; }
         public bool InverseBond { get; set; }
 
+
+
         public Bond(Atom a, Atom b, Order _order)
         {
             A = a;
