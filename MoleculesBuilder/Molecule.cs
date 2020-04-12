@@ -43,7 +43,7 @@ namespace MoleculesBuilder
         };
 
         string Name { get; set; }
-        public const double L = 35; // Длина связи C-C
+        public const double L = 30; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
         public List<Atom> atoms { get; set; }
@@ -152,6 +152,49 @@ namespace MoleculesBuilder
 
                 }
             }
+
+             //Если при вращении заместитель совпадёт с же сущ. атомом, то атом-основание вращения соединяется с уже сущ. атомом.
+            if (rotInd.Length == 1)
+            {
+                Atom oldAtom;
+                if (crrMolecule.SameCoords(crrMolecule.atoms[rotInd[0] - 1], out oldAtom))
+                {
+                    // ничего не делать если одинарная связь уже существует
+                    if (crrMolecule.ExistBond(oldAtom.Index, crrMolecule.atoms[baseInd - 1].Index))
+                        return;
+                    int ind = 0;
+                    for(int i = 0; i < crrMolecule.atoms[baseInd - 1].Neighbours.Length; i++)
+                    {
+                        if (crrMolecule.atoms[baseInd - 1].Neighbours[i] == crrMolecule.atoms[rotInd[0] - 1])
+                        {
+                            crrMolecule.atoms[baseInd - 1].Neighbours[i] = null;
+                            ind = i;
+                        }
+                    }
+                    foreach (Bond b in crrMolecule.bonds)
+                    {
+                        if (b.A.Index == rotInd[0] || b.B.Index == rotInd[0])
+                        {
+                            crrMolecule.bonds.Remove(b);
+                            break;
+                        }
+                    }
+                    crrMolecule.atoms.Remove(crrMolecule.atoms[rotInd[0] - 1]);
+
+                    crrMolecule.atoms[baseInd - 1].Neighbours[ind] = oldAtom;
+                    for (int k = 0; k < oldAtom.Neighbours.Length; k++)
+                    {
+                        if (oldAtom.Neighbours[k] == null)
+                        {
+                            oldAtom.Neighbours[k] = crrMolecule.atoms[baseInd - 1];
+                            Bond bond1 = new Bond(oldAtom, crrMolecule.atoms[baseInd - 1], Order.First);
+                            crrMolecule.bonds.Add(bond1);
+                            return;
+                        }
+
+                    }
+                }
+            }
         }
         //Добавление нового заместителя в молекулу
         private static void DrawSub(Molecule crrMolecule, string type, string pos, double ang)
@@ -206,9 +249,17 @@ namespace MoleculesBuilder
                     break;
                 case "Et":
                     newVector = new PointF[2];
-                    newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
-                    newVector[1] = RotateVector(ang, new PointF((float)(2 * L * Math.Sin(K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
-                       (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
+                    if (crrMolecule.atoms.Count > 0)
+                    {
+                        newVector[0] = RotateVector(ang, new PointF(0, (float)-L));
+                        newVector[1] = RotateVector(ang, new PointF((float)(2 * L * Math.Sin(K * ANGLE / 2) * Math.Cos(Math.PI / 3)),
+                           (float)(-2 * L * Math.Sin(K * ANGLE / 2) * Math.Sin(Math.PI / 3))));
+                    }
+                    else
+                    {
+                        newVector[0] = RotateVector(ang, new PointF(0, 0));
+                        newVector[1] = RotateVector(60, new PointF(0, (float)-L));
+                    }
                     subPt = new PointF[3];
                     el = Element.C;
                     val = 4;
@@ -280,6 +331,26 @@ namespace MoleculesBuilder
 
         }
 
+        public static Rectangle GetRectangle(Molecule crrMolecule)
+        {
+            Rectangle rectangleF;
+            float minX = float.MaxValue, maxX = float.MinValue, minY = float.MaxValue, maxY = float.MinValue;
+            foreach(Atom a in crrMolecule.atoms)
+            {
+                if (a.Position.X < minX)
+                    minX = a.Position.X;
+                if (a.Position.X > maxX)
+                    maxX = a.Position.X;
+
+                if (a.Position.Y < minY)
+                    minY = a.Position.Y;
+                if (a.Position.Y > maxY)
+                    maxY = a.Position.Y;
+            }
+            int shift = 25;
+            return rectangleF = new Rectangle((int)minX - shift, (int)minY - shift, (int)(maxX - minX) + 2 * shift, (int)(maxY - minY) + 2 * shift);
+
+        }
         /// <summary>
         /// Выполняет команду по отрисовке молекулы. Возвращает картинку с отрисованной молекулой.
         /// </summary>
@@ -727,30 +798,55 @@ namespace MoleculesBuilder
         {
             foreach(Atom at in atoms)
             {
-                for(int i = 0; i < at.Neighbours.Length; i++)
+                List<Bond> delBonds = new List<Bond>();
+                foreach (Bond b in bonds)
                 {
-                    if (at.Neighbours[i] == atoms[index - 1])
+                    if (b.A == atoms[index - 1] || b.B == atoms[index - 1])
                     {
-                        List<Bond> delBonds = new List<Bond>();
-                        foreach(Bond b in bonds)
-                        {
-                            if (b.A == atoms[index - 1] || b.B == atoms[index - 1])
-                            {
-                                delBonds.Add(b);
-                            }
-                                
-                        }
-                        foreach (Bond bond in delBonds)
-                        {
-                            bonds.Remove(bond);
-                        }
-                        delBonds = null;
-                        at.Neighbours[i] = null;
+                        delBonds.Add(b);
                     }
-                        
+
+                }
+                foreach (Bond bond in delBonds)
+                {
+                    bonds.Remove(bond);
+                }
+                delBonds = null;
+
+                for (int i = 0; i < at.Neighbours.Length; i++)
+                {
+                    Atom checkAt = at.Neighbours[i];
+                    if (at.Neighbours[i] == atoms[index - 1])
+                        at.Neighbours[i] = null;
                 }
             }
+            int t = 1;
+            List<Atom> delAtoms = new List<Atom>();
+            foreach (Atom a in atoms)
+            {
+                if (a.GetFreeBonds() == a.Valence)
+                {
+                    delAtoms.Add(a);
+                }
+                if (a.GetFreeBonds() == a.Valence && index > a.Index)
+                {
+                    t++;
+                }
+            }
+
+            foreach (Atom atom in atoms)
+            {
+                if (atom.Index > index)
+                    atom.Index -= t;
+            }
+
             atoms.Remove(atoms[index - 1]);
+            foreach (Atom atom in delAtoms)
+            {
+                atoms.Remove(atom);
+            }
+            delAtoms = null;
+
             GC.Collect();
         }
 
@@ -767,6 +863,7 @@ namespace MoleculesBuilder
                 else if (newAtom == Element.O.ToString()) el = Element.O;
                 else if (newAtom == Element.S.ToString()) el = Element.S;
                 else if (newAtom == Element.H.ToString()) el = Element.H;
+                else if (newAtom == Element.F.ToString()) el = Element.F;
                 else throw new ArgumentException("Недопустимое название нового атома!", "newAtom");
                 atoms[baseAtomInd - 1].Type = el;
                 atoms[baseAtomInd - 1].ApdateValence(newAtomVal);
@@ -863,7 +960,7 @@ namespace MoleculesBuilder
         {
             foreach (Atom a in atoms)
             {
-                if (Math.Abs(a.Position.X - newAtom.Position.X) <= 0.0001 && Math.Abs(a.Position.Y - newAtom.Position.Y) <= 0.0001)
+                if (Math.Abs(a.Position.X - newAtom.Position.X) <= 0.01 && Math.Abs(a.Position.Y - newAtom.Position.Y) <= 0.01)
                 {
                     for (int k = 0; k < a.Neighbours.Length; k++)
                     {

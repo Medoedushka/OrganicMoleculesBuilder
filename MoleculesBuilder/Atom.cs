@@ -70,6 +70,17 @@ namespace MoleculesBuilder
             Valence = val;
         }
 
+        public int GetFreeBonds()
+        {
+            int count = 0;
+            foreach (Atom atom in Neighbours)
+            {
+                if (atom == null)
+                    count++;
+            }
+            return count;
+        }
+
         public override string ToString()
         {
             return Type.ToString();
