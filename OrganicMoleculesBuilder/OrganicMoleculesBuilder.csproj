@@ -52,23 +52,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Analysis.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Analysis.Designer.cs">
-      <DependentUpon>Analysis.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\Model.cs" />
+    <Compile Include="Presenter\Presenter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Analysis.resx">
-      <DependentUpon>Analysis.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="Viewer\IMainViewer.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -80,6 +74,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -93,6 +88,43 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\SolidBond.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SolidBond1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WedgetBond.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DashedBond.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DashedBond1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WavyBond.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WavyBond1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ChangeOrder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Связьб2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Связьб3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Связьб31.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Связьб4.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

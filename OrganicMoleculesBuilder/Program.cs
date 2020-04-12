@@ -16,7 +16,10 @@ namespace OrganicMoleculesBuilder
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            MainForm form = new MainForm();
+            Presenter.Presenter presenter = new Presenter.Presenter(form);
+
+            Application.Run(form);
         }
     }
 }

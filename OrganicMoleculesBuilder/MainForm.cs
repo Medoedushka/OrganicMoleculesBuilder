@@ -7,74 +7,28 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using MoleculesBuilder;
+using OrganicMoleculesBuilder.Viewer;
 
 namespace OrganicMoleculesBuilder
 {
-    enum ToolType
+    public partial class MainForm : Form, IMainViewer
     {
-        SolidBond,
-        ChangeOrder
-    }
+        //Molecule crrMolecule;
+        //ToolType toolType = ToolType.SolidBond;
+        //PointF mouseLoc;
+        //bool firstClick = true;
 
-    public partial class MainForm : Form
-    {
-        Molecule crrMolecule;
-        ToolType toolType = ToolType.SolidBond;
-        PointF mouseLoc;
-        bool firstClick = true;
-        Atom founAtom;
-        Bond foundBond;
-        int[] angles;
         public MainForm()
         {
             InitializeComponent();
-            crrMolecule = new Molecule("Name", "sfse");
-            crrMolecule.ShowAtomNumbers = false;
-            angles = new int[] { 0, 30, 60, 90, 120, 150, 180, -150, -120, -90, -60, -30};
-        }
+            //crrMolecule = new Molecule("Name", "sfse");
+            //crrMolecule.ShowAtomNumbers = false;
 
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-        {
-            mouseLoc = e.Location;
-            
-            foreach(Atom a in crrMolecule.atoms)
-            {
-                if (Math.Abs(a.Position.X - mouseLoc.X) <= 5 && Math.Abs(a.Position.Y - mouseLoc.Y) <= 5)
-                {
-                    founAtom = a;
-                    break;
-                }
-                else founAtom = null;
-            }
-            foreach (Bond b in crrMolecule.bonds)
-            {
-                if (Math.Abs(b.BondCenter.X - mouseLoc.X) <= 5 && Math.Abs(b.BondCenter.Y - mouseLoc.Y) <= 5)
-                {
-                    foundBond = b;
-                    break;
-                }
-                else foundBond = null;
-            }
-            
-            pictureBox1.Invalidate();
         }
-
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            if (founAtom != null)
-            {
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(120, Color.Blue)), founAtom.Position.X - 5, founAtom.Position.Y - 5, 10, 10);
-            }
-            if (foundBond != null)
-            {
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(120, Color.Red)), foundBond.BondCenter.X - 5, foundBond.BondCenter.Y - 5, 10, 10);
-            }
-            if (crrMolecule.atoms.Count > 2)
-            {
-                e.Graphics.DrawRectangle(Pens.Blue, Molecule.GetRectangle(crrMolecule));
-            }
-        }
-
+        public ToolType ToolType { get; set; }
+        public PictureBox DrawPlace => pictureBox1;
+        /*
+         * 
         bool check = true;
         int ang = 60;
         int order = 1;
@@ -95,38 +49,7 @@ namespace OrganicMoleculesBuilder
         int counter = 0;
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            string str;
-            if ((founAtom != null && toolType == ToolType.SolidBond) || (crrMolecule.atoms.Count == 0 && toolType == ToolType.SolidBond) )
-            {
-                if (crrMolecule.atoms.Count == 0)
-                {
-                    str = $"Add Et at {mouseLoc.X};{mouseLoc.Y} 0";
-                    pictureBox1.Image = Molecule.RunCommand(ref crrMolecule, str, pictureBox1.Width, pictureBox1.Height);
-                    return;
-                }
-
-                check = !check;
-                str = $"Add Me at {founAtom.Index} {angles[counter]}";
-                try
-                {
-                    pictureBox1.Image = Molecule.RunCommand(ref crrMolecule, str, pictureBox1.Width, pictureBox1.Height);
-                }
-                catch (ArgumentOutOfRangeException ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                counter++;
-                if (counter == angles.Length)
-                    counter = 0;
-            }
-            if (foundBond != null && toolType == ToolType.ChangeOrder)
-            {
-                order++;
-                if (order == 4)
-                    order = 1;
-                str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by {order}";
-                pictureBox1.Image = Molecule.RunCommand(ref crrMolecule, str, pictureBox1.Width, pictureBox1.Height);
-            }
+            
             
         }
 
@@ -212,5 +135,6 @@ namespace OrganicMoleculesBuilder
                     pictureBox1.Image = Molecule.RunCommand(ref crrMolecule, path, pictureBox1.Width, pictureBox1.Height);
             }
         }
+        */
     }
 }
