@@ -569,7 +569,7 @@ namespace MoleculesBuilder
                     if (crrMolecule != null)
                     {
                         int val = int.Parse(el[1].Substring(el[1].IndexOf('(') + 1, 1));
-                        string atom = Convert.ToString(el[1][0]);
+                        string atom = el[1].Remove(el[1].IndexOf('('));
                         int ind = int.Parse(el[2]);
                         crrMolecule.InsertAtom(atom, val, ind);
 
@@ -864,6 +864,9 @@ namespace MoleculesBuilder
                 else if (newAtom == Element.S.ToString()) el = Element.S;
                 else if (newAtom == Element.H.ToString()) el = Element.H;
                 else if (newAtom == Element.F.ToString()) el = Element.F;
+                else if (newAtom == Element.Cl.ToString()) el = Element.Cl;
+                else if (newAtom == Element.Br.ToString()) el = Element.Br;
+                else if (newAtom == Element.I.ToString()) el = Element.I;
                 else throw new ArgumentException("Недопустимое название нового атома!", "newAtom");
                 atoms[baseAtomInd - 1].Type = el;
                 atoms[baseAtomInd - 1].ApdateValence(newAtomVal);

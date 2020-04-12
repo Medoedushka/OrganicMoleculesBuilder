@@ -145,6 +145,7 @@
             this.pcb_ChangeOrder.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pcb_ChangeOrder.TabIndex = 0;
             this.pcb_ChangeOrder.TabStop = false;
+            this.pcb_ChangeOrder.Click += new System.EventHandler(this.pcb_ChangeOrder_Click);
             // 
             // pcb_WavyBond
             // 
@@ -156,6 +157,7 @@
             this.pcb_WavyBond.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pcb_WavyBond.TabIndex = 0;
             this.pcb_WavyBond.TabStop = false;
+            this.pcb_WavyBond.Click += new System.EventHandler(this.pcb_WavyBond_Click);
             // 
             // pcb_DashedBond
             // 
@@ -167,6 +169,7 @@
             this.pcb_DashedBond.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pcb_DashedBond.TabIndex = 0;
             this.pcb_DashedBond.TabStop = false;
+            this.pcb_DashedBond.Click += new System.EventHandler(this.pcb_DashedBond_Click);
             // 
             // pcb_HashedWedgetBond
             // 
@@ -178,6 +181,7 @@
             this.pcb_HashedWedgetBond.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pcb_HashedWedgetBond.TabIndex = 0;
             this.pcb_HashedWedgetBond.TabStop = false;
+            this.pcb_HashedWedgetBond.Click += new System.EventHandler(this.pcb_HashedWedgetBond_Click);
             // 
             // pcb_WedgetBond
             // 
@@ -189,6 +193,7 @@
             this.pcb_WedgetBond.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pcb_WedgetBond.TabIndex = 0;
             this.pcb_WedgetBond.TabStop = false;
+            this.pcb_WedgetBond.Click += new System.EventHandler(this.pcb_WedgetBond_Click);
             // 
             // pcb_SolidBond
             // 
@@ -200,6 +205,7 @@
             this.pcb_SolidBond.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pcb_SolidBond.TabIndex = 0;
             this.pcb_SolidBond.TabStop = false;
+            this.pcb_SolidBond.Click += new System.EventHandler(this.pcb_SolidBond_Click);
             // 
             // pictureBox1
             // 

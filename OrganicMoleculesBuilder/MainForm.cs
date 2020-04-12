@@ -27,114 +27,35 @@ namespace OrganicMoleculesBuilder
         }
         public ToolType ToolType { get; set; }
         public PictureBox DrawPlace => pictureBox1;
-        /*
-         * 
-        bool check = true;
-        int ang = 60;
-        int order = 1;
-        private void связьToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void pcb_SolidBond_Click(object sender, EventArgs e)
         {
-            toolType = ToolType.SolidBond;
-            связьToolStripMenuItem.Checked = true;
-            порядокСвязиToolStripMenuItem.Checked = false;
+            ToolType = ToolType.SolidBond;
         }
 
-        private void порядокСвязиToolStripMenuItem_Click(object sender, EventArgs e)
+        private void pcb_WedgetBond_Click(object sender, EventArgs e)
         {
-            toolType = ToolType.ChangeOrder;
-            связьToolStripMenuItem.Checked = false;
-            порядокСвязиToolStripMenuItem.Checked = true;
+            ToolType = ToolType.WedgetBond;
         }
 
-        int counter = 0;
-        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        private void pcb_HashedWedgetBond_Click(object sender, EventArgs e)
         {
-            
-            
+            ToolType = ToolType.HashedWedgetBond;
         }
 
-        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        private void pcb_DashedBond_Click(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
-            {
-                if (founAtom != null)
-                {
-                    //if (founAtom.Index == crrMolecule.atoms.Count)
-                    //{
-                    string str = $"Delete {founAtom.Index}";
-                    pictureBox1.Image = Molecule.RunCommand(ref crrMolecule, str, pictureBox1.Width, pictureBox1.Height);
-                    //}
-                }
-            }
-            else if (e.KeyCode == Keys.E)
-            {
-                counter++;
-                if (counter == angles.Length)
-                    counter = 0;
-
-                int secInd = 0;
-                foreach (Bond b in crrMolecule.bonds)
-                {
-                    if (b.A.Index == crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index)
-                        secInd = b.B.Index;
-                    if (b.B.Index == crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index)
-                        secInd = b.A.Index;
-                }
-                
-                crrMolecule.atoms[crrMolecule.atoms.Count - 1].Position = new PointF(crrMolecule.atoms[secInd - 1].Position.X,
-                    (float)(crrMolecule.atoms[secInd - 1].Position.Y - Molecule.L));
-
-                string str = $"Rotate {crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index} base {secInd} {angles[counter]}";
-                pictureBox1.Image = Molecule.RunCommand(ref crrMolecule, str, pictureBox1.Width, pictureBox1.Height);
-            }
-            else if (e.KeyCode == Keys.Q)
-            {
-                counter--;
-                if (counter < 0)
-                    counter = angles.Length - 1;
-
-                int secInd = 0;
-                foreach (Bond b in crrMolecule.bonds)
-                {
-                    if (b.A.Index == crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index)
-                        secInd = b.B.Index;
-                    if (b.B.Index == crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index)
-                        secInd = b.A.Index;
-                }
-
-                crrMolecule.atoms[crrMolecule.atoms.Count - 1].Position = new PointF(crrMolecule.atoms[secInd - 1].Position.X,
-                    (float)(crrMolecule.atoms[secInd - 1].Position.Y - Molecule.L));
-                string str = $"Rotate {crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index} base {secInd} {angles[counter]}";
-                pictureBox1.Image = Molecule.RunCommand(ref crrMolecule, str, pictureBox1.Width, pictureBox1.Height);
-            }
-        }
-        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
-        {
+            ToolType = ToolType.DashedBond;
         }
 
-        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        private void pcb_WavyBond_Click(object sender, EventArgs e)
         {
-            string path = "";
-            if (founAtom != null)
-            {
-                
-                if (e.KeyCode == Keys.O)
-                {
-                    path = $"Insert O(2) {founAtom.Index}";
-                }
-                if (e.KeyCode == Keys.N)
-                {
-                    path = $"Insert N(3) {founAtom.Index}";
-                }
-                if (e.KeyCode == Keys.F)
-                {
-                    path = $"Insert F(1) {founAtom.Index}";
-                }
-
-                if (!string.IsNullOrEmpty(path))
-                    pictureBox1.Image = Molecule.RunCommand(ref crrMolecule, path, pictureBox1.Width, pictureBox1.Height);
-            }
+            ToolType = ToolType.WavyBond;
         }
-        */
+
+        private void pcb_ChangeOrder_Click(object sender, EventArgs e)
+        {
+            ToolType = ToolType.ChangeOrder;
+        }
     }
 }

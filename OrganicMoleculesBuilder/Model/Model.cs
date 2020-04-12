@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MoleculesBuilder;
+using OrganicMoleculesBuilder.Viewer;
 
 namespace OrganicMoleculesBuilder.Model
 {
@@ -44,7 +45,7 @@ namespace OrganicMoleculesBuilder.Model
             return pictureBox.Image;
         }
 
-        public Image ChangeOrder(PictureBox pictureBox, PointF pos)
+        public Image ChangeOrder(PictureBox pictureBox)
         {
             string str;
             if (foundBond != null)
@@ -53,6 +54,23 @@ namespace OrganicMoleculesBuilder.Model
                 if (orderPos == 4)
                     orderPos = 1;
                 str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by {orderPos}";
+                return pictureBox.Image = Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
+            }
+            return pictureBox.Image;
+        }
+        public Image ChangeBondType(PictureBox pictureBox, ToolType type)
+        {
+            string str = "";
+            if (foundBond != null)
+            {
+                if (type == ToolType.WedgetBond)
+                    str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by w";
+                else if (type == ToolType.HashedWedgetBond)
+                    str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by hw";
+                else if (type == ToolType.DashedBond)
+                    str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by dashed";
+                else if (type == ToolType.WavyBond)
+                    str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by wavy";
                 return pictureBox.Image = Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
             }
             return pictureBox.Image;
@@ -90,10 +108,60 @@ namespace OrganicMoleculesBuilder.Model
             {
                 g.FillRectangle(new SolidBrush(Color.FromArgb(120, Color.Red)), foundBond.BondCenter.X - 5, foundBond.BondCenter.Y - 5, 10, 10);
             }
-            if (crrMolecule.atoms.Count > 2)
+        }
+
+        public Image DeleteSelectedAtom(PictureBox pictureBox)
+        {
+            if (founAtom != null)
             {
-                g.DrawRectangle(Pens.Blue, Molecule.GetRectangle(crrMolecule));
+                string str = $"Delete {founAtom.Index}";
+                return pictureBox.Image = Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
             }
+            return pictureBox.Image;
+        }
+
+        public Image RotateSub(PictureBox pictureBox, bool direction)
+        {
+            if (direction == true)
+            {
+                angleCounter++;
+                if (angleCounter == angles.Length)
+                    angleCounter = 0;
+            }
+            else
+            {
+                angleCounter--;
+                if (angleCounter < 0)
+                    angleCounter = angles.Length - 1;
+                
+            }
+
+            int secInd = 0;
+            foreach (Bond b in crrMolecule.bonds)
+            {
+                if (b.A.Index == crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index)
+                    secInd = b.B.Index;
+                if (b.B.Index == crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index)
+                    secInd = b.A.Index;
+            }
+
+            crrMolecule.atoms[crrMolecule.atoms.Count - 1].Position = new PointF(crrMolecule.atoms[secInd - 1].Position.X,
+            (float)(crrMolecule.atoms[secInd - 1].Position.Y - Molecule.L));
+
+            string str = $"Rotate {crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index} base {secInd} {angles[angleCounter]}";
+            return Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
+        }
+
+        public Image InsertAtom(string atom, PictureBox pictureBox)
+        {
+            string path = "";
+            if (founAtom != null)
+            {
+                path = $"Insert {atom} {founAtom.Index}";
+                if (!string.IsNullOrEmpty(path))
+                    return Molecule.RunCommand(ref crrMolecule, path, pictureBox.Width, pictureBox.Height);
+            }
+            return pictureBox.Image;
         }
     }
 }
