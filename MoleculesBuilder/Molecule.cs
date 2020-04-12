@@ -796,7 +796,9 @@ namespace MoleculesBuilder
             
         private void RemoveAtom(int index)
         {
-            foreach(Atom at in atoms)
+            Atom targetAtom = atoms[index - 1];
+            // Удаление связей атома с индексом index и обнуление ссылок у соседей.
+            foreach (Atom at in atoms)
             {
                 List<Bond> delBonds = new List<Bond>();
                 foreach (Bond b in bonds)
@@ -820,7 +822,8 @@ namespace MoleculesBuilder
                         at.Neighbours[i] = null;
                 }
             }
-            int t = 1;
+
+            // Поиск и удаление атомов, которые больше не имеют соседей.
             List<Atom> delAtoms = new List<Atom>();
             foreach (Atom a in atoms)
             {
@@ -828,25 +831,22 @@ namespace MoleculesBuilder
                 {
                     delAtoms.Add(a);
                 }
-                if (a.GetFreeBonds() == a.Valence && index > a.Index)
-                {
-                    t++;
-                }
             }
-
-            foreach (Atom atom in atoms)
-            {
-                if (atom.Index > index)
-                    atom.Index -= t;
-            }
-
-            atoms.Remove(atoms[index - 1]);
             foreach (Atom atom in delAtoms)
             {
                 atoms.Remove(atom);
             }
             delAtoms = null;
-
+            atoms.Remove(targetAtom); // Удаление целевого атома
+            
+            // Переназанчение индексов оставшихся атомов.
+            int d = 1;
+            foreach (Atom a in atoms)
+            {
+                a.Index = d;
+                d++;
+            }
+            targetAtom = null;
             GC.Collect();
         }
 

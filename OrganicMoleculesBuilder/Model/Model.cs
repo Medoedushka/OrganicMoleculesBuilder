@@ -108,6 +108,10 @@ namespace OrganicMoleculesBuilder.Model
             {
                 g.FillRectangle(new SolidBrush(Color.FromArgb(120, Color.Red)), foundBond.BondCenter.X - 5, foundBond.BondCenter.Y - 5, 10, 10);
             }
+            if (crrMolecule.atoms.Count == 0)
+            {
+                g.Clear(Color.White);
+            }
         }
 
         public Image DeleteSelectedAtom(PictureBox pictureBox)
