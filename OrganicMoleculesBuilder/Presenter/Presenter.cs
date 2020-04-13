@@ -72,6 +72,12 @@ namespace OrganicMoleculesBuilder.Presenter
                 g.DrawImage(_model.TestRot(), 5, 5);
                 g.Dispose();
             }
+            else if (e.KeyCode == Keys.D1)
+                _model.ChangeOrder(_mainViewer.DrawPlace, 1);
+            else if (e.KeyCode == Keys.D2)
+                _model.ChangeOrder(_mainViewer.DrawPlace, 2);
+            else if (e.KeyCode == Keys.D3)
+                _model.ChangeOrder(_mainViewer.DrawPlace, 3);
         }
 
         private void DrawPlace_Paint(object sender, PaintEventArgs e)
@@ -103,14 +109,7 @@ namespace OrganicMoleculesBuilder.Presenter
             }
             else if (_mainViewer.ToolType == ToolType.ChangeOrder)
             {
-                try
-                {
-                    _model.ChangeOrder(_mainViewer.DrawPlace);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                
             }
             else if (_mainViewer.ToolType == ToolType.WedgetBond || _mainViewer.ToolType == ToolType.HashedWedgetBond ||
                 _mainViewer.ToolType == ToolType.DashedBond || _mainViewer.ToolType == ToolType.WavyBond)

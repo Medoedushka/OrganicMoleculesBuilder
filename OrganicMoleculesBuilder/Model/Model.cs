@@ -60,15 +60,12 @@ namespace OrganicMoleculesBuilder.Model
             }
         }
 
-        public void ChangeOrder(PictureBox pictureBox)
+        public void ChangeOrder(PictureBox pictureBox, int order)
         {
             string str;
             if (foundBond != null)
             {
-                orderPos++;
-                if (orderPos == 4)
-                    orderPos = 1;
-                str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by {orderPos}";
+                str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by {order}";
                 Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
             }
         }
