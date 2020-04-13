@@ -15,6 +15,8 @@ namespace OrganicMoleculesBuilder.Presenter
         PointF mouseLoc;
         bool controlPressed = false;
         bool writingText = false;
+        bool movingMolecule = false;
+        bool FigureMoving = false;
         TextBox tb;
 
         public Presenter(IMainViewer main)
@@ -29,6 +31,7 @@ namespace OrganicMoleculesBuilder.Presenter
             };
             timer.Start();
             _mainViewer.DrawPlace.MouseUp += DrawPlace_MouseUp;
+            _mainViewer.DrawPlace.DoubleClick += DrawPlace_DoubleClick;
             _mainViewer.DrawPlace.MouseDown += DrawPlace_MouseDown;
             _mainViewer.DrawPlace.MouseMove += DrawPlace_MouseMove;
             _mainViewer.DrawPlace.Paint += DrawPlace_Paint;
@@ -37,15 +40,36 @@ namespace OrganicMoleculesBuilder.Presenter
             
         }
 
+        private void DrawPlace_DoubleClick(object sender, EventArgs e)
+        {
+            if (_mainViewer.ToolType == ToolType.None)
+            {
+                foreach(Molecule mol in _model.Molecules)
+                {
+                    System.Drawing.Rectangle rect = Molecule.GetRectangle(mol);
+                    if (mouseLoc.X >= rect.X && mouseLoc.X <= (rect.X + rect.Width) && mouseLoc.Y >= rect.Y && mouseLoc.Y <= (rect.Y + rect.Height))
+                    {
+                        _model.checkedMolecule = mol;
+                        break;
+                    }
+                    _model.checkedMolecule = null;
+                }
+            }
+        }
+
         private void DrawPlace_MouseDown(object sender, MouseEventArgs e)
         {
             if (_mainViewer.ToolType == ToolType.Arrow)
             {
                 _model.FigureDrawing = true;
                 _model.crrFigure = new Arrow(e.Location, e.Location);
-                (_model.crrFigure as Arrow).FillArrowEnd = false;
+                (_model.crrFigure as Arrow).FillArrowEnd = true;
                 (_model.crrFigure as Arrow).StrokeWidth = 2;
             }
+            if (_model.checkedMolecule != null)
+                movingMolecule = true;
+            if (_model.checkedFigure != null)
+                FigureMoving = true;
         }
 
         private void Presenter_KeyUp(object sender, KeyEventArgs e)
@@ -125,6 +149,19 @@ namespace OrganicMoleculesBuilder.Presenter
         {
             mouseLoc = e.Location;
 
+            if (movingMolecule)
+            {
+                System.Drawing.Rectangle rect = Molecule.GetRectangle(_model.checkedMolecule);
+                PointF vector = new PointF(mouseLoc.X - rect.X, mouseLoc.Y - rect.Y);
+                Molecule.RunCommand(ref _model.checkedMolecule, $"Move {vector.X},{vector.Y}", _mainViewer.DrawPlace.Width, _mainViewer.DrawPlace.Height);
+            }
+
+            if (FigureMoving)
+            {
+                _model.checkedFigure.DotA = mouseLoc;
+            }
+                
+
             if (_mainViewer.ToolType == ToolType.Arrow && _model.FigureDrawing)
             {
                 if (!controlPressed)
@@ -141,6 +178,11 @@ namespace OrganicMoleculesBuilder.Presenter
 
         private void DrawPlace_MouseUp(object sender, MouseEventArgs e)
         {
+            if (movingMolecule)
+            {
+                _model.checkedMolecule = null;
+                movingMolecule = false;
+            }
             if (_model.FigureDrawing)
             {
                 _model.FigureDrawing = false;
@@ -149,7 +191,12 @@ namespace OrganicMoleculesBuilder.Presenter
                 _model.crrFigure = null;
             }
 
-            if (_model.Figures.Count > 0 && _mainViewer.ToolType == ToolType.None)
+            if (FigureMoving)
+            {
+                FigureMoving = false;
+            }
+
+            if (_model.Figures.Count > 0 && _mainViewer.ToolType == ToolType.None && !FigureMoving)
             {
                 foreach (Figure f in _model.Figures)
                 {

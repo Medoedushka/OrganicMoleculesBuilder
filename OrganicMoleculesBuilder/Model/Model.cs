@@ -12,6 +12,7 @@ namespace OrganicMoleculesBuilder.Model
     public class BuilderModel
     {
         public List<Molecule> Molecules { get; set; }
+        public Molecule checkedMolecule;
         public List<Figure> Figures { get; set; }
         public Figure checkedFigure;
         public Figure crrFigure;
@@ -45,7 +46,6 @@ namespace OrganicMoleculesBuilder.Model
             if (founAtom == null)
             {
                 Molecule molecule = new Molecule(Convert.ToString(Molecules.Count + 1), path);
-                molecule.ShowAtomNumbers = true;
                 Molecules.Add(molecule);
                 crrMolecule = molecule;
             }
@@ -226,6 +226,10 @@ namespace OrganicMoleculesBuilder.Model
                             f.DrawFigure(g);
                         else f.DrawCheckedFigure(g);
                     }
+                }
+                if (checkedMolecule != null)
+                {
+                    g.DrawRectangle(new Pen(Color.FromArgb(255, Color.Blue)), Molecule.GetRectangle(checkedMolecule));
                 }
 
             }

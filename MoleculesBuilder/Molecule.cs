@@ -586,7 +586,7 @@ namespace MoleculesBuilder
                             PointF moveVector = new PointF(a, b);
                             foreach (Atom at in crrMolecule.atoms)
                             {
-                                at.Position = new PointF(at.Position.X + moveVector.X, at.Position.Y - moveVector.Y);
+                                at.Position = new PointF(at.Position.X + moveVector.X, at.Position.Y + moveVector.Y);
                             }
 
                         }
