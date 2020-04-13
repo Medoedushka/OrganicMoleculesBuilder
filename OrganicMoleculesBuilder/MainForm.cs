@@ -13,16 +13,9 @@ namespace OrganicMoleculesBuilder
 {
     public partial class MainForm : Form, IMainViewer
     {
-        //Molecule crrMolecule;
-        //ToolType toolType = ToolType.SolidBond;
-        //PointF mouseLoc;
-        //bool firstClick = true;
-
         public MainForm()
         {
             InitializeComponent();
-            //crrMolecule = new Molecule("Name", "sfse");
-            //crrMolecule.ShowAtomNumbers = false;
 
         }
         public ToolType ToolType { get; set; }
