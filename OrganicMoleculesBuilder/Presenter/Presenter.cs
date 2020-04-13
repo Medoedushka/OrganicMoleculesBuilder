@@ -154,8 +154,11 @@ namespace OrganicMoleculesBuilder.Presenter
                 foreach (Figure f in _model.Figures)
                 {
                     if (f.FigureChecked(mouseLoc))
+                    {
                         _model.checkedFigure = f;
-                    else _model.checkedFigure = null;
+                        break;
+                    }
+                    _model.checkedFigure = null;
                 }
                 
             }

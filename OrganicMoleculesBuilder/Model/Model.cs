@@ -45,6 +45,7 @@ namespace OrganicMoleculesBuilder.Model
             if (founAtom == null)
             {
                 Molecule molecule = new Molecule(Convert.ToString(Molecules.Count + 1), path);
+                molecule.ShowAtomNumbers = true;
                 Molecules.Add(molecule);
                 crrMolecule = molecule;
             }
@@ -153,6 +154,12 @@ namespace OrganicMoleculesBuilder.Model
             }
             if (crrMolecule?.atoms.Count == 0)
                 Molecules.Remove(crrMolecule);
+            if (Molecules.Count == 0)
+            {
+                founAtom = null;
+                foundBond = null;
+                crrMolecule = null;
+            }
         }
         public void RotateSub(PictureBox pictureBox, bool direction)
         {
