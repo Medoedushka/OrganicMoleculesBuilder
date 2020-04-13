@@ -4,13 +4,18 @@ using System.Drawing;
 using System.Windows.Forms;
 using MoleculesBuilder;
 using OrganicMoleculesBuilder.Viewer;
+using MyDrawing.Figures;
 
 namespace OrganicMoleculesBuilder.Model
 {
 
     public class BuilderModel
     {
-        List<Molecule> Molecules { get; set; }
+        public List<Molecule> Molecules { get; set; }
+        public List<Figure> Figures { get; set; }
+        public Figure checkedFigure;
+        public Figure crrFigure;
+        public bool FigureDrawing = false;
         string path = "";
         Molecule crrMolecule;
         Atom founAtom;
@@ -22,13 +27,14 @@ namespace OrganicMoleculesBuilder.Model
         public BuilderModel()
         {
             Molecules = new List<Molecule>();
+            Figures = new List<Figure>();
             angles = new int[] { 0, 30, 60, 90, 120, 150, 180, -150, -120, -90, -60, -30 };
         }
 
         // ВРАЩЕНИЕ МОЛЕКУЛЫ
         public Image TestRot()
         {
-            Rectangle r = Molecule.GetRectangle(crrMolecule);
+            System.Drawing.Rectangle r = Molecule.GetRectangle(crrMolecule);
 
             return crrMolecule.Image;
         }
@@ -113,7 +119,6 @@ namespace OrganicMoleculesBuilder.Model
                 }
             }
         }
-
         public void ApdateSelection(Graphics g)
         {
             if (founAtom != null)
@@ -124,9 +129,18 @@ namespace OrganicMoleculesBuilder.Model
             {
                 g.FillRectangle(new SolidBrush(Color.FromArgb(120, Color.Red)), foundBond.BondCenter.X - 5, foundBond.BondCenter.Y - 5, 10, 10);
             }
-            if (Molecules.Count == 0)
+            if (Molecules.Count == 0 && !FigureDrawing)
             {
                 g.Clear(Color.White);
+                if (Figures.Count > 0)
+                {
+                    foreach (Figure f in Figures)
+                    {
+                        if (f != checkedFigure)
+                            f.DrawFigure(g);
+                        else f.DrawCheckedFigure(g);
+                    }
+                }
             }
         }
 
@@ -137,10 +151,9 @@ namespace OrganicMoleculesBuilder.Model
                 string str = $"Delete {founAtom.Index}";
                 Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
             }
-            if (crrMolecule.atoms.Count == 0)
+            if (crrMolecule?.atoms.Count == 0)
                 Molecules.Remove(crrMolecule);
         }
-
         public void RotateSub(PictureBox pictureBox, bool direction)
         {
             if (direction == true)
@@ -172,7 +185,6 @@ namespace OrganicMoleculesBuilder.Model
             string str = $"Rotate {crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index} base {secInd} {angles[angleCounter]}";
             Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
         }
-
         public void InsertAtom(string atom, PictureBox pictureBox)
         {
             string path = "";
@@ -191,10 +203,24 @@ namespace OrganicMoleculesBuilder.Model
             {
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
                 foreach (Molecule mol in Molecules)
                 {
                     g.DrawImage(mol.Image, Molecule.GetRectangle(mol).Location);
                 }
+
+                if (FigureDrawing && crrFigure != null)
+                    crrFigure.DrawFigure(g);
+                if (Figures.Count != 0)
+                {
+                    foreach (Figure f in Figures)
+                    {
+                        if (f != checkedFigure)
+                            f.DrawFigure(g);
+                        else f.DrawCheckedFigure(g);
+                    }
+                }
+
             }
             picture.Image = bm;
         }

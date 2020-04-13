@@ -89,7 +89,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\icons8_right_25px.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SolidBond.png" />
   </ItemGroup>
@@ -125,6 +127,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Связьб4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8_cursor_25px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8_text_color_25px.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

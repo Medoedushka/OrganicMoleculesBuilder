@@ -41,7 +41,7 @@ namespace MoleculesBuilder
             "I",
             "S"
         };
-        public const double L = 30; // Длина связи C-C
+        public const double L = 35; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
 

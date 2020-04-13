@@ -10,12 +10,14 @@ namespace OrganicMoleculesBuilder.Viewer
 {
     public enum ToolType
     {
+        None,
         SolidBond,
         WedgetBond,
         HashedWedgetBond,
         WavyBond,
         DashedBond,
-        ChangeOrder
+        Arrow,
+        Text
     }
 
     public interface IMainViewer
