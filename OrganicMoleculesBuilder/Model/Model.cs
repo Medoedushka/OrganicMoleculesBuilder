@@ -25,6 +25,7 @@ namespace OrganicMoleculesBuilder.Model
             angles = new int[] { 0, 30, 60, 90, 120, 150, 180, -150, -120, -90, -60, -30 };
         }
 
+        // ВРАЩЕНИЕ МОЛЕКУЛЫ
         public Image TestRot()
         {
             Rectangle r = Molecule.GetRectangle(crrMolecule);
