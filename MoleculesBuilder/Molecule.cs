@@ -59,7 +59,7 @@ namespace MoleculesBuilder
             MolecularPartsDir = dir;
             atoms = new List<Atom>();
             bonds = new List<Bond>();
-            ShowAtomNumbers = true;
+            ShowAtomNumbers = false;
             DrawAtomCircle = false;
         }
 
@@ -121,6 +121,7 @@ namespace MoleculesBuilder
         {
             Rectangle r = Molecule.GetRectangle(this);
             Bitmap bm = new Bitmap(r.Width, r.Height);
+            bm.MakeTransparent();
             PointF moveVector = new PointF(-r.Location.X, -r.Location.Y);
             foreach(Atom a in atoms)
             {
@@ -131,7 +132,6 @@ namespace MoleculesBuilder
             {
                 a.Position = new PointF(a.Position.X - moveVector.X, a.Position.Y - moveVector.Y);
             }
-
             return bm;
         }
 
@@ -1029,7 +1029,7 @@ namespace MoleculesBuilder
 
             using (Graphics g = Graphics.FromImage(bm))
             {
-                g.Clear(Color.White);
+                //g.Clear(Color.White);
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 

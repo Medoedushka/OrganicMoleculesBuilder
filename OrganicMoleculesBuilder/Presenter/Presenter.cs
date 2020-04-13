@@ -17,7 +17,12 @@ namespace OrganicMoleculesBuilder.Presenter
         {
             _mainViewer = main;
             _model = new BuilderModel();
-
+            Timer timer = new Timer();
+            timer.Interval = 50;
+            timer.Tick += (object o, EventArgs e) => {
+                _model.DrawMolecules(_mainViewer.DrawPlace);
+            };
+            timer.Start();
             _mainViewer.DrawPlace.MouseUp += DrawPlace_MouseUp;
             _mainViewer.DrawPlace.MouseMove += DrawPlace_MouseMove;
             _mainViewer.DrawPlace.Paint += DrawPlace_Paint;
@@ -30,37 +35,37 @@ namespace OrganicMoleculesBuilder.Presenter
         {
             if (e.KeyCode == Keys.O)
             {
-                _mainViewer.DrawPlace.Image = _model.InsertAtom("O(2)", _mainViewer.DrawPlace);
+                _model.InsertAtom("O(2)", _mainViewer.DrawPlace);
             }
             else if (e.KeyCode == Keys.N)
             {
-                _mainViewer.DrawPlace.Image = _model.InsertAtom("N(3)", _mainViewer.DrawPlace);
+                _model.InsertAtom("N(3)", _mainViewer.DrawPlace);
             }
             else if (e.KeyCode == Keys.S)
             {
-                _mainViewer.DrawPlace.Image = _model.InsertAtom("S(2)", _mainViewer.DrawPlace);
+                _model.InsertAtom("S(2)", _mainViewer.DrawPlace);
             }
             else if (e.KeyCode == Keys.H)
-                _mainViewer.DrawPlace.Image = _model.InsertAtom("H(1)", _mainViewer.DrawPlace);
+                _model.InsertAtom("H(1)", _mainViewer.DrawPlace);
             else if (e.KeyCode == Keys.F)
-                _mainViewer.DrawPlace.Image = _model.InsertAtom("F(1)", _mainViewer.DrawPlace);
+                _model.InsertAtom("F(1)", _mainViewer.DrawPlace);
             else if (e.KeyCode == Keys.L)
-                _mainViewer.DrawPlace.Image = _model.InsertAtom("Cl(1)", _mainViewer.DrawPlace);
+                _model.InsertAtom("Cl(1)", _mainViewer.DrawPlace);
             else if (e.KeyCode == Keys.B)
-                _mainViewer.DrawPlace.Image = _model.InsertAtom("Br(1)", _mainViewer.DrawPlace);
+                _model.InsertAtom("Br(1)", _mainViewer.DrawPlace);
             else if (e.KeyCode == Keys.I)
-                _mainViewer.DrawPlace.Image = _model.InsertAtom("I(1)", _mainViewer.DrawPlace);
+                _model.InsertAtom("I(1)", _mainViewer.DrawPlace);
 
         }
 
         private void Presenter_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
-                _mainViewer.DrawPlace.Image = _model.DeleteSelectedAtom(_mainViewer.DrawPlace);
+                _model.DeleteSelectedAtom(_mainViewer.DrawPlace);
             if (e.KeyCode == Keys.E)
-                _mainViewer.DrawPlace.Image = _model.RotateSub(_mainViewer.DrawPlace, true);
+                _model.RotateSub(_mainViewer.DrawPlace, true);
             else if (e.KeyCode == Keys.Q)
-                _mainViewer.DrawPlace.Image = _model.RotateSub(_mainViewer.DrawPlace, false);
+                _model.RotateSub(_mainViewer.DrawPlace, false);
             else if (e.KeyCode == Keys.Enter)
             {
                 Graphics g = _mainViewer.DrawPlace.CreateGraphics();
@@ -89,7 +94,7 @@ namespace OrganicMoleculesBuilder.Presenter
             {
                 try
                 {
-                    _mainViewer.DrawPlace.Image = _model.DrawSolidBond(_mainViewer.DrawPlace, mouseLoc);
+                    _model.DrawSolidBond(_mainViewer.DrawPlace, mouseLoc);
                 }
                 catch (ArgumentOutOfRangeException ex)
                 {
@@ -100,7 +105,7 @@ namespace OrganicMoleculesBuilder.Presenter
             {
                 try
                 {
-                    _mainViewer.DrawPlace.Image = _model.ChangeOrder(_mainViewer.DrawPlace);
+                    _model.ChangeOrder(_mainViewer.DrawPlace);
                 }
                 catch (Exception ex)
                 {
@@ -110,7 +115,7 @@ namespace OrganicMoleculesBuilder.Presenter
             else if (_mainViewer.ToolType == ToolType.WedgetBond || _mainViewer.ToolType == ToolType.HashedWedgetBond ||
                 _mainViewer.ToolType == ToolType.DashedBond || _mainViewer.ToolType == ToolType.WavyBond)
             {
-                _mainViewer.DrawPlace.Image = _model.ChangeBondType(_mainViewer.DrawPlace, _mainViewer.ToolType);
+                _model.ChangeBondType(_mainViewer.DrawPlace, _mainViewer.ToolType);
             }
         }
     }
