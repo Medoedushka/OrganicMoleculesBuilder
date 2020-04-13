@@ -39,6 +39,8 @@ namespace MoleculesBuilder
         public double AtomWeight { get; private set; }
         public PointF Position { get; set; }
         public Atom[] Neighbours;
+        public string Label { get; set; } = "";
+        public Font LabelFont { get; set; }
 
         public Atom(Element type, int valence, int ind, PointF pos)
         {
@@ -47,6 +49,7 @@ namespace MoleculesBuilder
             Neighbours = new Atom[Valence];
             Index = ind;
             Position = pos;
+            LabelFont = new Font("Arial", 10);
 
             if (Type.ToString() == "Cl") AtomWeight = 35.5;
             else AtomWeight = (int)Type;

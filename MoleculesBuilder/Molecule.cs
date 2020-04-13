@@ -376,19 +376,31 @@ namespace MoleculesBuilder
         {
             Rectangle rectangleF;
             float minX = float.MaxValue, maxX = float.MinValue, minY = float.MaxValue, maxY = float.MinValue;
-            foreach(Atom a in crrMolecule.atoms)
+            int shift = 5;
+            using (Graphics gr = Graphics.FromImage(new Bitmap(1, 1)))
             {
-                if (a.Position.X < minX)
-                    minX = a.Position.X;
-                if (a.Position.X > maxX)
-                    maxX = a.Position.X;
+                foreach (Atom a in crrMolecule.atoms)
+                {
+                    SizeF size = gr.MeasureString(a.Label, a.LabelFont);
+                    if ((a.Position.X - size.Width) < minX)
+                    {
+                        minX = a.Position.X - size.Width;
+                    }
+                    if ((a.Position.X + size.Width) > maxX)
+                    {
+                        maxX = a.Position.X + size.Width;
+                    }
 
-                if (a.Position.Y < minY)
-                    minY = a.Position.Y;
-                if (a.Position.Y > maxY)
-                    maxY = a.Position.Y;
+                    if ((a.Position.Y - size.Height) < minY)
+                    {
+                        minY = a.Position.Y - size.Height;
+                    }
+                    if ((a.Position.Y + size.Height) > maxY)
+                    {
+                        maxY = a.Position.Y + size.Height;
+                    }
+                }
             }
-            int shift = 25;
             return rectangleF = new Rectangle((int)minX - shift, (int)minY - shift, (int)(maxX - minX) + 2 * shift, (int)(maxY - minY) + 2 * shift);
 
         }
@@ -1086,7 +1098,10 @@ namespace MoleculesBuilder
                             else symbol = hidrNum > 1 ? at.ToString() + "H" + hidrNum : at.ToString() + (hidrNum == 0 ? "" : "H");
 
                             Font symbolFont = new Font("Arial", 9);
+                            at.LabelFont = symbolFont;
+                            at.Label = symbol;
                             SizeF size = g.MeasureString(symbol, symbolFont);
+
                             g.FillRectangle(new SolidBrush(Color.Transparent), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));
 
                             if (bondVector.X == 0 && bondVector.Y == 0)
