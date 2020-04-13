@@ -23,6 +23,13 @@ namespace OrganicMoleculesBuilder.Model
             angles = new int[] { 0, 30, 60, 90, 120, 150, 180, -150, -120, -90, -60, -30 };
         }
 
+        public Image TestRot()
+        {
+            Rectangle r = Molecule.GetRectangle(crrMolecule);
+
+            return crrMolecule.Image;
+        }
+
         public Image DrawSolidBond(PictureBox pictureBox, PointF pos)
         {
             string str = "";
@@ -167,5 +174,7 @@ namespace OrganicMoleculesBuilder.Model
             }
             return pictureBox.Image;
         }
+
+        
     }
 }

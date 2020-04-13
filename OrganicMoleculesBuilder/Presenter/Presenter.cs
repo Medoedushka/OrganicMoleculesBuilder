@@ -23,6 +23,7 @@ namespace OrganicMoleculesBuilder.Presenter
             _mainViewer.DrawPlace.Paint += DrawPlace_Paint;
             (_mainViewer as MainForm).KeyDown += Presenter_KeyDown;
             (_mainViewer as MainForm).KeyUp += Presenter_KeyUp;
+            
         }
 
         private void Presenter_KeyUp(object sender, KeyEventArgs e)
@@ -60,6 +61,12 @@ namespace OrganicMoleculesBuilder.Presenter
                 _mainViewer.DrawPlace.Image = _model.RotateSub(_mainViewer.DrawPlace, true);
             else if (e.KeyCode == Keys.Q)
                 _mainViewer.DrawPlace.Image = _model.RotateSub(_mainViewer.DrawPlace, false);
+            else if (e.KeyCode == Keys.Enter)
+            {
+                Graphics g = _mainViewer.DrawPlace.CreateGraphics();
+                g.DrawImage(_model.TestRot(), 5, 5);
+                g.Dispose();
+            }
         }
 
         private void DrawPlace_Paint(object sender, PaintEventArgs e)

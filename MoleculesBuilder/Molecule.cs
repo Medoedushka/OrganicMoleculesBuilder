@@ -41,17 +41,17 @@ namespace MoleculesBuilder
             "I",
             "S"
         };
-
-        string Name { get; set; }
         public const double L = 30; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
+
+        public string Name { get; set; }
         public List<Atom> atoms { get; set; }
         public List<Bond> bonds { get; set; }
-        
         public bool ShowAtomNumbers { get; set; }
         public bool DrawAtomCircle { get; set; }
         public string MolecularPartsDir { get; set; }
+        public Image Image { get => GetImage(); set => Image = value; }
 
         public Molecule(string name, string dir)
         {
@@ -116,6 +116,25 @@ namespace MoleculesBuilder
 
             return pt;
         }
+
+        private Image GetImage()
+        {
+            Rectangle r = Molecule.GetRectangle(this);
+            Bitmap bm = new Bitmap(r.Width, r.Height);
+            PointF moveVector = new PointF(-r.Location.X, -r.Location.Y);
+            foreach(Atom a in atoms)
+            {
+                a.Position = new PointF(a.Position.X + moveVector.X, a.Position.Y + moveVector.Y);
+            }
+            bm = ReturnPic(bm.Width, bm.Height);
+            foreach (Atom a in atoms)
+            {
+                a.Position = new PointF(a.Position.X - moveVector.X, a.Position.Y - moveVector.Y);
+            }
+
+            return bm;
+        }
+
         //Вращает вектор по часовой стрелке для положительных значений аргумента ang
         public static PointF RotateVector(double ang, PointF vec)
         {
@@ -124,6 +143,7 @@ namespace MoleculesBuilder
             y = (float)(vec.X * Math.Sin(ang * K) + vec.Y * Math.Cos(ang * K));
             return new PointF(x, y);
         }
+
         //Вращение указанных вершин молекулы относительно базовой вершины на угол ang
         private static void RotateMolecularPart(Molecule crrMolecule, int[] rotInd, int baseInd, double ang)
         {
@@ -196,6 +216,23 @@ namespace MoleculesBuilder
                 }
             }
         }
+
+        //Вращение всех вершин молекулы относительно указанной точки _basePt.
+        public static Bitmap RotateMolecularPart(PictureBox pictureBox, Molecule crrMolecule, PointF _basePt, double ang)
+        {
+            //поиск координат атомов
+            PointF[] rotPt = new PointF[crrMolecule.atoms.Count];
+            PointF basePt = _basePt;
+
+            foreach (Atom at in crrMolecule.atoms)
+            {
+                PointF oldVector = new PointF(at.Position.X - basePt.X, at.Position.Y - basePt.Y);
+                PointF newVector = RotateVector(ang, oldVector);
+                at.Position = new PointF(basePt.X + newVector.X, basePt.Y + newVector.Y);
+            }
+            return crrMolecule.ReturnPic(pictureBox.Width, pictureBox.Height);
+        }
+
         //Добавление нового заместителя в молекулу
         private static void DrawSub(Molecule crrMolecule, string type, string pos, double ang)
         {
@@ -330,7 +367,11 @@ namespace MoleculesBuilder
 
 
         }
-
+        /// <summary>
+        /// Возвращает прямоугольную область, которую занимает молекула.
+        /// </summary>
+        /// <param name="crrMolecule"></param>
+        /// <returns></returns>
         public static Rectangle GetRectangle(Molecule crrMolecule)
         {
             Rectangle rectangleF;
@@ -979,14 +1020,6 @@ namespace MoleculesBuilder
             createdAtom = null;
             return false;
         }
-        //private bool AtomExists(int atomIndex)
-        //{
-        //    foreach (Atom at in atoms)
-        //    {
-        //        if (at.Index == atomIndex) return true;
-        //    }
-        //    return false;
-        //}
 
         private Bitmap ReturnPic(int width, int height)
         {
