@@ -1,0 +1,25 @@
+Add cyclo-5 at 200;250 0
+Rotate 2,3,4,5 base 1 -90
+Add Me at 3 -60
+Add Me at 6 -120
+Add Me at 7 180
+Add Me at 8 120
+Connect 9 4 by 1
+Connect 3 4 by 2
+Connect 7 6 by 2
+Connect 8 9 by 2
+Circles Off
+Insert S(6) 5
+Add O at 5 120
+Add O at 5 180
+Connect 5 10 by 2
+Connect 5 11 by 2
+Rotate 11 base 5 15
+Insert O(2) 1
+AddFromFile [phenyl] 2 60 11
+AddFromFile [phenyl] 2 -45 17
+Add O at 15 60
+Add O at 14 120
+Add O at 21 -45
+Add O at 22 -105
+Numbers Off

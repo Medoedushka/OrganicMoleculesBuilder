@@ -138,7 +138,7 @@ namespace OrganicMoleculesBuilder.Presenter
                     BackColor = _mainViewer.DrawPlace.BackColor,
                     BorderStyle = BorderStyle.Fixed3D,
                     Location = new Point((int)mouseLoc.X, (int)mouseLoc.Y),
-                    Font = new Font("Arial", 10),
+                    Font = new Font("Times New Roman", 15),
                     Size = new Size(150, 50),
                 };
                 _mainViewer.DrawPlace.Controls.Add(tb);

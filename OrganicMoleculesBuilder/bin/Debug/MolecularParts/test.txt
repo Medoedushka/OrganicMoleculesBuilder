@@ -1,0 +1,5 @@
+Add cyclo-6 at 200;200 0
+Add Me at 3 60
+Connect 3 7 by hw
+Insert O(2) 7
+Circles Off

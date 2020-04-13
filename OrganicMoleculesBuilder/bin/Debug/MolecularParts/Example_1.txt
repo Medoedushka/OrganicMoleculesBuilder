@@ -1,0 +1,23 @@
+Add cyclo-5 at 200;250 0
+Rotate 2,3,4,5 base 1 -90
+Move 100,0
+Add Me at 3 -60
+Add Me at 6 -120
+Add Me at 7 180
+Add Me at 8 120
+Connect 9 4 by 1
+Add Me at 8 -120
+Add Me at 10 180
+Add Me at 11 120
+Add Me at 12 60
+Connect 13 9 by 1
+Add Et at 11 -120
+Add Et at 15 0
+Connect 17 10 by 1
+Add O at 15 -120
+Add Et at 2 18
+Add Et at 20 18
+Add Et at 22 18
+Add Me at 23 -42
+Numbers Off
+Circles Off

@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MoleculesBuilder</name>
+    </assembly>
+    <members>
+        <member name="M:MoleculesBuilder.Molecule.GetRectangle(MoleculesBuilder.Molecule)">
+            <summary>
+            Возвращает прямоугольную область, которую занимает молекула.
+            </summary>
+            <param name="crrMolecule"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MoleculesBuilder.Molecule.RunCommand(MoleculesBuilder.Molecule@,System.String,System.Int32,System.Int32)">
+            <summary>
+            Выполняет команду по отрисовке молекулы. Возвращает картинку с отрисованной молекулой.
+            </summary>
+            <param name="crrMolecule"></param>
+            <param name="comm"></param>
+            <param name="bmWidth"></param>
+            <param name="bmHeight"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MoleculesBuilder.Molecule.ExistBond(System.Int32,System.Int32,MoleculesBuilder.Bond@)">
+            <summary>
+            Проверка наличия связи между атомами и возврат объекта Bond если связь существует.
+            </summary>
+            <param name="A1">Индекс первого атома</param>
+            <param name="A2">Индекс второго атома</param>
+            <param name="foundBond"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MoleculesBuilder.Molecule.ExistBond(System.Int32,System.Int32)">
+            <summary>
+            Проверка наличия свзязи между атомами.
+            </summary>
+            <param name="A1">Индекс первого атома</param>
+            <param name="A2">Индекс второго атома.</param>
+            <returns></returns>
+        </member>
+        <member name="M:MoleculesBuilder.Molecule.Bonds(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Поиск порядка связи между атомами для случае, когда mode == true; поиск свободных валентностей, когда mode == false
+            (в этом случае secondInd игнорируется).
+            </summary>
+            <param name="firstInd"></param>
+            <param name="secondInd"></param>
+            <param name="mode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MoleculesBuilder.Molecule.SameCoords(MoleculesBuilder.Atom,MoleculesBuilder.Atom@)">
+            <summary>
+            Метод для проверки совпадения координат добавляемого атома с координатами уже существующего атома.
+            В случае если такой атом найдет, метод возвращает объект уже существующего атома.
+            </summary>
+            <param name="newAtom"></param>
+            <param name="createdAtom"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MoleculesBuilder.Quantitative.MoleculesProperties">
+            <summary>
+            Класс, предоставляющий методы для количественной характеристики молекулы.
+            </summary>
+        </member>
+        <member name="M:MoleculesBuilder.Quantitative.MoleculesProperties.CountMolecularWeight(MoleculesBuilder.Molecule)">
+            <summary>
+            Рассчитывает молекулярную массу передаваемой молекулы.
+            </summary>
+            <param name="crrMol"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MoleculesBuilder.Quantitative.MoleculesProperties.CountMolecularWeight(System.String)">
+            <summary>
+            Рассчитывает молекулярную массу вещества по формуле.
+            </summary>
+            <param name="formula">химическая формула вещества. Например: K2Cr2O7.</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

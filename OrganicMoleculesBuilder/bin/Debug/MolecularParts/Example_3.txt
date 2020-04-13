@@ -1,0 +1,26 @@
+AddFromFile [benzene] 250 300
+Add N at 3 60
+Add Et at 7 120
+Add Me at 9 -120
+Connect 2 10 by 2
+Connect 2 10 by 1
+AddFromFile [carboxyl] 9 120 10
+Add O at 10 180
+Connect 14 10 by 2
+Connect 9 8 by 2
+Connect 9 8 by 2 inv
+Add Me at 7 0
+Add Me at 15 30
+Add Me at 16 -90
+Connect 17 15 by 1
+Add F at 6 -120
+Add N at 5 -60
+Add Me at 19 0
+Add Et at 20 -60
+Rotate 22 base 21 -120
+Add Me at 22 180
+Add Me at 23 120
+Connect 24 19 by 1
+Insert N(3) 22
+Rotate all base 18 -30
+Numbers Off

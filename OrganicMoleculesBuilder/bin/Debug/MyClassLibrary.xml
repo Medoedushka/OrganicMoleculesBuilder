@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyClassLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:MyClassLibrary.Chemistry">
+            <summary>
+            Предоставляет методы для проведения химических расчётов.
+            </summary>
+        </member>
+        <member name="M:MyClassLibrary.Chemistry.CountMolecularWeight(System.String)">
+            <summary>
+            Рассчитывает молекулярную массу вещества.
+            </summary>
+            <param name="formula">химическая формула вещества. Например: K2Cr2O7.</param>
+            <returns></returns>
+        </member>
+        <member name="T:MyClassLibrary.ConfigControler">
+            <summary>
+            Предоставляет методы для контроля настроек приложения.
+            </summary>
+        </member>
+        <member name="M:MyClassLibrary.ConfigControler.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="path">Путь к файлу с настройками</param>
+        </member>
+        <member name="M:MyClassLibrary.ConfigControler.SetConfig(System.String)">
+            <summary>
+            Изменяет значения параметра в файле настроек.
+            </summary>
+            <param name="value">ConfigToChange=newValue</param>
+        </member>
+        <member name="M:MyClassLibrary.ConfigControler.GetConfig(System.String)">
+            <summary>
+            Возвращает значение передаваемого параметра.
+            </summary>
+            <param name="configName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:MyClassLibrary.Standart">
+            <summary>
+            Предоставляет методы для проведения расчётов и отображения данных.
+            </summary>
+        </member>
+        <member name="M:MyClassLibrary.Standart.Converting(System.String)">
+            <summary>
+            Конвертирует экспоненциальную форму числа.
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MyClassLibrary.Standart.ZeroOneFunc(System.Int32)">
+            <summary>
+            Возвращает двоичное прдставление передаваемого аргумента в десятичной системе.
+            </summary>
+            <param name="k"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

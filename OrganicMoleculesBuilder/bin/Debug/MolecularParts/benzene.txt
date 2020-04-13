@@ -1,0 +1,7 @@
+(x,y)
+Add cyclo-6 at {x};{y} 0
+Connect 4 3 by 2
+Connect 1 2 by 2
+Connect 5 6 by 2
+Circles Off
+Numbers Off

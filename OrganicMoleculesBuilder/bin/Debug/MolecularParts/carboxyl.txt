@@ -1,0 +1,6 @@
+//карбоксильная группа
+(x,ang,z)
+Add Me at {x} {ang} //z+1
+Add O at {z}+1 {ang}-60 //as
+Connect {z}+1 {z}+2 by 2
+Add O at {z}+1 {ang}+60 

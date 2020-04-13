@@ -1,0 +1,13 @@
+Add N at 200;250 0
+Add Et at 1 0
+Add Et at 1 120
+Add Et at 1 -120
+Add Me at 7 -120
+Add N at 8 180
+Add Et at 9 120
+Rotate 11 base 10 -120
+Connect 11 6 by 1
+Add S at 3 0
+Add O at 5 120
+Numbers Off
+Circles Off

@@ -1,0 +1,335 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyDrawing</name>
+    </assembly>
+    <members>
+        <member name="T:MyDrawing.Bars">
+            <summary>
+            Представляет структуру для инициализации столбцов гистограммы.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Bars.BarName">
+            <summary>
+            Название ряда данных.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Bars.BarValues">
+            <summary>
+            Массив значений ряда данных. Порядок значений должен соответствовать порядку названий секторов.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Bars.BarColor">
+            <summary>
+            Цвет заливки столбца.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Bars.TextureImgage">
+            <summary>
+            Картинка для текстуры ряда данных.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Bars.GradientColor1">
+            <summary>
+            Первый цвет градиента столбца.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Bars.GradientColor2">
+            <summary>
+            Второй цвет градиента столбца.
+            </summary>
+        </member>
+        <member name="M:MyDrawing.Bars.#ctor(System.Double[],System.Drawing.Color,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="interiorColor">Цвет, входящий в структуру Color.</param>
+            <param name="values"></param>
+            <param name="name"></param>
+        </member>
+        <member name="M:MyDrawing.BarChart.SetDefaultParams">
+            <summary>
+            Устанавливает настройки диаграммы по умолчанию.
+            </summary>
+        </member>
+        <member name="M:MyDrawing.BarChart.AddBar(MyDrawing.Bars)">
+            <summary>
+            Добавляет созданную колонку в коллекцию для рисования гистограммы.
+            </summary>
+            <param name="bar"></param>
+        </member>
+        <member name="M:MyDrawing.BarChart.DrawDiagram">
+            <summary>
+            Рисует гистограмму.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.CircleDiagramConfig.DiagramSize">
+            <summary>
+            Регулировка размеров диаграммы.
+            </summary>
+        </member>
+        <member name="T:MyDrawing.TextPosition">
+            <summary>
+            Определяет выравнивание текста.
+            </summary>
+        </member>
+        <member name="F:MyDrawing.TextPosition.Left">
+            <summary>
+            Выравнивание текста по левому краю.
+            </summary>
+        </member>
+        <member name="F:MyDrawing.TextPosition.Centre">
+            <summary>
+            Выравнивание текста по центру.
+            </summary>
+        </member>
+        <member name="F:MyDrawing.TextPosition.Right">
+            <summary>
+            Вырванивание текста по правому краю.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Diagram.g">
+            <summary>
+            Объект класса Graphics, представляющий методы и свойства для рисования графики.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Diagram.placeToDraw">
+            <summary>
+            Холст на котором производится рисование pictureBox, Panel и т.д.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Diagram.RealCenter">
+            <summary>
+            Точка начала отсчёта.
+            </summary>
+        </member>
+        <member name="T:MyDrawing.Figures.Figure">
+            <summary>
+            Абстрактный класс, представляющий характеристики рисуемых фигур.
+            </summary>
+        </member>
+        <member name="M:MyDrawing.Figures.Figure.ConvertToSmallChars(System.String,System.Boolean)">
+            <summary>
+            Конвертирует строковое представление числа в эквивалентное число в надстрочном или подстрочном формате.
+            </summary>
+            <param name="num">строковое прдствление числа</param>
+            <param name="mode">параметр указывающий тип конвертации: false - в подстрочный формат, true - в надстрочный</param>
+            <returns></returns>
+        </member>
+        <member name="T:MyDrawing.Figures.Line">
+            <summary>
+            Наследник класса Figure для отрисовки обычной прямой линии.
+            </summary>
+        </member>
+        <member name="M:MyDrawing.Figures.Line.#ctor(System.Drawing.PointF,System.Drawing.PointF)">
+            <summary>
+            Создание эземпляра линии, которая содержит точки построения в системе координат области построения класса Graphics.
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+        </member>
+        <member name="T:MyDrawing.Figures.Arrow">
+            <summary>
+            Наследник класса Line для отрисовки прямой стрелки.
+            </summary>
+        </member>
+        <member name="T:MyDrawing.Figures.Rectangle">
+            <summary>
+            Наследник класса Figure для отрисовки прямоугольника.
+            </summary>
+        </member>
+        <member name="T:MyDrawing.Figures.Circle">
+            <summary>
+            Наследник класса Rectangle для отрисовки окружност или круга.
+            </summary>
+        </member>
+        <member name="T:MyDrawing.Figures.Text">
+            <summary>
+            Наследник класса Figure для отрисовки текста.
+            </summary>
+        </member>
+        <member name="T:MyDrawing.PointsGraphConfig">
+            <summary>
+            Содержит свойства для настройки графика.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.OXName">
+            <summary>
+            Устанавливает название оси Ox.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.OYName">
+            <summary>
+            Устанавливает название оси Oy.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.OXNamePosition">
+            <summary>
+            Перечисление возможных выравниваний оси абсцисс.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.OYNamePosition">
+            <summary>
+            Перечисление возможных выравниваний оси ординат
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.Grid">
+            <summary>
+            Добавление сетки на график.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.SmoothAngles">
+            <summary>
+            Сглаживание углов кривой.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.DrawPoints">
+            <summary>
+            Явная отрисовка точек кривой.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.StepOX">
+            <summary>
+            Устанавливает расстояние между делениями на оси Ох.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.StepOY">
+            <summary>
+            Устанавливает расстояние между делениями на оси Оy.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.NumberOfSepOX">
+            <summary>
+            Устанавливает количество делений на оси Ох.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.NumberOfSepOY">
+            <summary>
+            Устанавливает количество делений на оси Оy.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.OXNameSize">
+            <summary>
+            Устанавливает размер шрифта для названия оси Ox.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.OYNameSize">
+            <summary>
+            Устанавливает размер шрифта для названия оси Oy.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.PriceForPointOX">
+            <summary>
+            Устанавливает цену деления оси Ox.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphConfig.PriceForPointOY">
+            <summary>
+            Устанавливает цену деления оси Oy.
+            </summary>
+        </member>
+        <member name="T:MyDrawing.PointsGraphic">
+            <summary>
+            Предоставляет свойства и методы для рисования графика на элементе управления pictureBox.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphic.Config">
+            <summary>
+            Содержит свойства для настройки графика.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.PointsGraphic.GraphCurves">
+            <summary>
+            Список созданных кривых для построения.
+            </summary>
+        </member>
+        <member name="M:MyDrawing.PointsGraphic.#ctor(System.Windows.Forms.PictureBox)">
+            <summary>
+            
+            </summary>
+            <param name="picture">область для рисования графика</param>
+            <param name="axesPos">количесвто отображаемых четвертей</param>
+        </member>
+        <member name="M:MyDrawing.PointsGraphic.SetDefaultOX">
+            <summary>
+            Устанавливает параметры Ox по умолчанию.
+            </summary>
+        </member>
+        <member name="M:MyDrawing.PointsGraphic.SetDefaultOY">
+            <summary>
+            Устанавливает параметры Oy по умолчанию.
+            </summary>
+        </member>
+        <member name="M:MyDrawing.PointsGraphic.SetPlaceToDrawSize(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Рассчёт координат центра в зависимости от размеров пикчербокса.
+            </summary>
+            <param name="width"></param>
+            <param name="height"></param>
+        </member>
+        <member name="M:MyDrawing.PointsGraphic.DrawDiagram">
+            <summary>
+            Рисует: график, с добавленными кривыми, названия осей и диаграммы, легенду. 
+            </summary>
+            
+        </member>
+        <member name="M:MyDrawing.PointsGraphic.AddCurve(MyDrawing.Curves)">
+            <summary>
+            Добавляет кривую в коллекцию для построения.
+            </summary>
+            <param name="curve"></param>
+        </member>
+        <member name="M:MyDrawing.PointsGraphic.ConvertValues(System.Double,System.Double,MyDrawing.CoordType)">
+            <summary>
+            Преобразует входящие параметры в значения прямоугольной системы координат или в значение системы координат объекта Control.
+            </summary>
+            <param name="x">Значение абсциссы точки</param>
+            <param name="y">Значение ординаты точки</param>
+            <param name="type">Тип системы координат, в котором возвращаются значения</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyDrawing.PointsGraphic.ConvertValues(System.Drawing.PointF,MyDrawing.CoordType)">
+            <summary>
+            Преобразует входящие параметры в значения прямоугольной системы координат или в значение системы координат объекта Control.
+            </summary>
+            <param name="convertPt">Точка для конвертации</param>
+            <param name="type">Тип системы координат, в котором возвращаются значения</param>
+            <returns></returns>
+        </member>
+        <member name="T:MyDrawing.Curves">
+            <summary>
+            Представляет структуру для инициализации кривой.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Curves.PointsToDraw">
+            <summary>
+            Массив точек кривой.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Curves.CurveThickness">
+            <summary>
+            Толщина линии кривой.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Curves.CurveColor">
+            <summary>
+            Устанавливает цвет кривой графика.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Curves.Legend">
+            <summary>
+            Легенда кривой.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Curves.DotsType">
+            <summary>
+            Строка, характеризующая наличие, цвет и тип отображаемых точек кривой.
+            </summary>
+        </member>
+        <member name="P:MyDrawing.Curves.DashStyle">
+            <summary>
+            Задаёт стиль рисования кривой.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,21 @@
+Add cyclo-6 at 200;200 0
+Add Me at 3 60
+Connect 3 7 by hw
+Insert O(2) 7
+Add Me at 2 120
+Insert O(2) 8
+Connect 2 8 by hw
+Numbers Off
+Numbers On
+Add O at 5 -60
+Add O at 6 -120
+Connect 5 9 by w
+Connect 6 10 by w
+Numbers Off
+Numbers On
+Add O at 4 0
+Add O at 1 180
+Connect 4 11 by w
+Connect 1 12 by hw
+Numbers Off
+Circles Off
