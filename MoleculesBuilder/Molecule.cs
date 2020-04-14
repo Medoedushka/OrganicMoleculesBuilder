@@ -1089,9 +1089,10 @@ namespace MoleculesBuilder
                         if (DrawAtomCircle == false && at.ToString() != "C")
                         {
                             string symbol = at.Label;
-                            Font symbolFont = new Font("Calibri", 11);
+                            Font symbolFont = new Font("Times New Roman", 10);
                             at.LabelFont = symbolFont;
-                            SizeF size = g.MeasureString(symbol, symbolFont);
+                            string temp = symbol.Replace("{", "").Replace("_", "").Replace("}", "");
+                            SizeF size = g.MeasureString(temp, symbolFont);
 
                             g.FillRectangle(new SolidBrush(Color.Transparent), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));
 
@@ -1101,17 +1102,25 @@ namespace MoleculesBuilder
                                 g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2);
                             }
                             else if (bondVector.X > 0 && bondVector.Y < 0)
-                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X, at.Position.Y - size.Height / 2);
+                                MyDrawing.Figures.Figure.DrawString(symbol, new PointF(at.Position.X, at.Position.Y - size.Height / 2), symbolFont, Color.Black, g);
                             else if (bondVector.X > 0 && bondVector.Y > 0)
-                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X, at.Position.Y);
+                                MyDrawing.Figures.Figure.DrawString(symbol, new PointF(at.Position.X, at.Position.Y), symbolFont, Color.Black, g);
                             else if (bondVector.X < 0 && bondVector.Y < 0)
-                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width, at.Position.Y - size.Height / 2);
+                                MyDrawing.Figures.Figure.DrawString(symbol, new PointF(at.Position.X - size.Width, at.Position.Y - size.Height / 2), symbolFont, Color.Black, g);
+                            //g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width, at.Position.Y - size.Height / 2);
                             else if (bondVector.X < 0 && bondVector.Y > 0)
-                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width, at.Position.Y);
+                                MyDrawing.Figures.Figure.DrawString(symbol, new PointF(at.Position.X - size.Width, at.Position.Y), symbolFont, Color.Black, g);
+                            //g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width, at.Position.Y);
                             else if (bondVector.X == 0 && bondVector.Y > 0)
-                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 4, at.Position.Y);
+                                MyDrawing.Figures.Figure.DrawString(symbol, new PointF(at.Position.X - size.Width / 4, at.Position.Y), symbolFont, Color.Black, g);
+                            //g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 4, at.Position.Y);
                             else if (bondVector.X == 0 && bondVector.Y < 0)
-                                g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 4, at.Position.Y - size.Height);
+                                MyDrawing.Figures.Figure.DrawString(symbol, new PointF(at.Position.X - size.Width / 4, at.Position.Y - size.Height), symbolFont, Color.Black, g);
+                            //g.DrawString(symbol, symbolFont, new SolidBrush(Color.Black), at.Position.X - size.Width / 4, at.Position.Y - size.Height);
+                            else if (bondVector.X > 0  && bondVector.Y == 0)
+                                MyDrawing.Figures.Figure.DrawString(symbol, new PointF(at.Position.X, at.Position.Y - size.Height / 2), symbolFont, Color.Black, g);
+                            else if (bondVector.X < 0 && bondVector.Y == 0)
+                                MyDrawing.Figures.Figure.DrawString(symbol, new PointF(at.Position.X - size.Width, at.Position.Y - size.Height / 2), symbolFont, Color.Black, g);
                         }
 
                         if (DrawAtomCircle)

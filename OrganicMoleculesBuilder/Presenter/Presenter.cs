@@ -138,7 +138,7 @@ namespace OrganicMoleculesBuilder.Presenter
                     BackColor = _mainViewer.DrawPlace.BackColor,
                     BorderStyle = BorderStyle.Fixed3D,
                     Location = new Point((int)mouseLoc.X, (int)mouseLoc.Y),
-                    Font = new Font("Times New Roman", 15),
+                    Font = new Font("Times New Roman", 12),
                     Size = new Size(150, 50),
                 };
                 _mainViewer.DrawPlace.Controls.Add(tb);
@@ -206,7 +206,8 @@ namespace OrganicMoleculesBuilder.Presenter
             }
             catch(ArgumentException ex)
             {
-                MessageBox.Show(ex.Message + "\nДля вставки атома с переменной валентностью используйте редактор атомов.");
+                MessageBox.Show(ex.Message + "\nДля вставки атома с переменной валентностью используйте редактор атомов.", "Несоответствие валентносетй", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error );
             }
         }
         private void Presenter_KeyDown(object sender, KeyEventArgs e)

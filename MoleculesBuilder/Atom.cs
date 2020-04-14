@@ -56,12 +56,11 @@ namespace MoleculesBuilder
                             Position.Y - Neighbours[i].Position.Y);
                     }
                 }
-                if ((bondVector.X < 0 && bondVector.Y < 0) || (bondVector.X < 0 && bondVector.Y > 0))
+                if ((bondVector.X < 0 && bondVector.Y < 0) || (bondVector.X < 0 && bondVector.Y > 0) || (bondVector.X < 0 && bondVector.Y == 0))
                 {
-                    symbol = hidrNum > 1 ? "H" + MyDrawing.Figures.Figure.ConvertToSmallChars(hidrNum.ToString()) + ToString() : (hidrNum == 0 ? "" : "H") + ToString();
+                    symbol = hidrNum > 1 ? "H_{" + $"{hidrNum}" + "}" + ToString() : (hidrNum == 0 ? "" : "H") + ToString();
                 }
-                else symbol = hidrNum > 1 ? ToString() + "H" + 
-                        MyDrawing.Figures.Figure.ConvertToSmallChars(hidrNum.ToString()) : ToString() + (hidrNum == 0 ? "" : "H");
+                else symbol = hidrNum > 1 ? ToString() + "H_{" + $"{hidrNum}" + "}" : ToString() + (hidrNum == 0 ? "" : "H");
                 return symbol;
             }
             set
