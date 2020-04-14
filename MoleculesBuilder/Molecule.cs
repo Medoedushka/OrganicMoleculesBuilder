@@ -376,7 +376,7 @@ namespace MoleculesBuilder
         {
             Rectangle rectangleF;
             float minX = float.MaxValue, maxX = float.MinValue, minY = float.MaxValue, maxY = float.MinValue;
-            int shift = 5;
+            int shift = 10;
             using (Graphics gr = Graphics.FromImage(new Bitmap(1, 1)))
             {
                 foreach (Atom a in crrMolecule.atoms)
@@ -1093,11 +1093,11 @@ namespace MoleculesBuilder
                             string symbol;
                             if ((bondVector.X < 0 && bondVector.Y < 0) || (bondVector.X < 0 && bondVector.Y > 0))
                             {
-                                symbol = hidrNum > 1 ? "H" + hidrNum + at.ToString() : (hidrNum == 0 ? "" : "H") + at.ToString();
+                                symbol = hidrNum > 1 ? "H" + MyDrawing.Figures.Figure.ConvertToSmallChars(hidrNum.ToString()) + at.ToString() : (hidrNum == 0 ? "" : "H") + at.ToString();
                             }
-                            else symbol = hidrNum > 1 ? at.ToString() + "H" + hidrNum : at.ToString() + (hidrNum == 0 ? "" : "H");
+                            else symbol = hidrNum > 1 ? at.ToString() + "H" + MyDrawing.Figures.Figure.ConvertToSmallChars(hidrNum.ToString()) : at.ToString() + (hidrNum == 0 ? "" : "H");
 
-                            Font symbolFont = new Font("Arial", 9);
+                            Font symbolFont = new Font("Calibri", 11);
                             at.LabelFont = symbolFont;
                             at.Label = symbol;
                             SizeF size = g.MeasureString(symbol, symbolFont);
