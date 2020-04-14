@@ -1088,18 +1088,9 @@ namespace MoleculesBuilder
                         
                         if (DrawAtomCircle == false && at.ToString() != "C")
                         {
-                            
-                            int hidrNum = Bonds(at.Index, 0, false);
-                            string symbol;
-                            if ((bondVector.X < 0 && bondVector.Y < 0) || (bondVector.X < 0 && bondVector.Y > 0))
-                            {
-                                symbol = hidrNum > 1 ? "H" + MyDrawing.Figures.Figure.ConvertToSmallChars(hidrNum.ToString()) + at.ToString() : (hidrNum == 0 ? "" : "H") + at.ToString();
-                            }
-                            else symbol = hidrNum > 1 ? at.ToString() + "H" + MyDrawing.Figures.Figure.ConvertToSmallChars(hidrNum.ToString()) : at.ToString() + (hidrNum == 0 ? "" : "H");
-
+                            string symbol = at.Label;
                             Font symbolFont = new Font("Calibri", 11);
                             at.LabelFont = symbolFont;
-                            at.Label = symbol;
                             SizeF size = g.MeasureString(symbol, symbolFont);
 
                             g.FillRectangle(new SolidBrush(Color.Transparent), new RectangleF(new PointF(at.Position.X - size.Width / 2, at.Position.Y - size.Height / 2), size));

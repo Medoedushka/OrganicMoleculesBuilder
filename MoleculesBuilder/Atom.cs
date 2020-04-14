@@ -39,7 +39,36 @@ namespace MoleculesBuilder
         public double AtomWeight { get; private set; }
         public PointF Position { get; set; }
         public Atom[] Neighbours;
-        public string Label { get; set; } = "";
+        public string Label
+        {
+            get
+            {
+                string symbol = "";
+                int hidrNum = 0;
+                PointF bondVector = new PointF();
+                for (int i = 0; i < Valence; i++)
+                {
+                    if (Neighbours[i] == null)
+                        hidrNum++;
+                    if (Neighbours[i] != null)
+                    {
+                        bondVector = new PointF(Position.X - Neighbours[i].Position.X,
+                            Position.Y - Neighbours[i].Position.Y);
+                    }
+                }
+                if ((bondVector.X < 0 && bondVector.Y < 0) || (bondVector.X < 0 && bondVector.Y > 0))
+                {
+                    symbol = hidrNum > 1 ? "H" + MyDrawing.Figures.Figure.ConvertToSmallChars(hidrNum.ToString()) + ToString() : (hidrNum == 0 ? "" : "H") + ToString();
+                }
+                else symbol = hidrNum > 1 ? ToString() + "H" + 
+                        MyDrawing.Figures.Figure.ConvertToSmallChars(hidrNum.ToString()) : ToString() + (hidrNum == 0 ? "" : "H");
+                return symbol;
+            }
+            set
+            {
+                Label = value;   
+            }
+        }
         public Font LabelFont { get; set; }
 
         public Atom(Element type, int valence, int ind, PointF pos)

@@ -183,24 +183,31 @@ namespace OrganicMoleculesBuilder.Presenter
             if (!e.Control)
                 controlPressed = false;
 
-            #region<---Вставка гетероатомов--->
-            if (e.KeyCode == Keys.O && !writingText)
-                _model.InsertAtom("O(2)", _mainViewer.DrawPlace);
-            else if (e.KeyCode == Keys.N && !writingText)
-                _model.InsertAtom("N(3)", _mainViewer.DrawPlace);
-            else if (e.KeyCode == Keys.S && !writingText)
-                _model.InsertAtom("S(2)", _mainViewer.DrawPlace);
-            else if (e.KeyCode == Keys.H && !writingText)
-                _model.InsertAtom("H(1)", _mainViewer.DrawPlace);
-            else if (e.KeyCode == Keys.F && !writingText)
-                _model.InsertAtom("F(1)", _mainViewer.DrawPlace);
-            else if (e.KeyCode == Keys.L && !writingText)
-                _model.InsertAtom("Cl(1)", _mainViewer.DrawPlace);
-            else if (e.KeyCode == Keys.B && !writingText)
-                _model.InsertAtom("Br(1)", _mainViewer.DrawPlace);
-            else if (e.KeyCode == Keys.I && !writingText)
-                _model.InsertAtom("I(1)", _mainViewer.DrawPlace);
-            #endregion
+            try
+            {
+                #region<---Вставка гетероатомов--->
+                if (e.KeyCode == Keys.O && !writingText)
+                    _model.InsertAtom("O(2)", _mainViewer.DrawPlace);
+                else if (e.KeyCode == Keys.N && !writingText)
+                    _model.InsertAtom("N(3)", _mainViewer.DrawPlace);
+                else if (e.KeyCode == Keys.S && !writingText)
+                    _model.InsertAtom("S(2)", _mainViewer.DrawPlace);
+                else if (e.KeyCode == Keys.H && !writingText)
+                    _model.InsertAtom("H(1)", _mainViewer.DrawPlace);
+                else if (e.KeyCode == Keys.F && !writingText)
+                    _model.InsertAtom("F(1)", _mainViewer.DrawPlace);
+                else if (e.KeyCode == Keys.L && !writingText)
+                    _model.InsertAtom("Cl(1)", _mainViewer.DrawPlace);
+                else if (e.KeyCode == Keys.B && !writingText)
+                    _model.InsertAtom("Br(1)", _mainViewer.DrawPlace);
+                else if (e.KeyCode == Keys.I && !writingText)
+                    _model.InsertAtom("I(1)", _mainViewer.DrawPlace);
+                #endregion
+            }
+            catch(ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message + "\nДля вставки атома с переменной валентностью используйте редактор атомов.");
+            }
         }
         private void Presenter_KeyDown(object sender, KeyEventArgs e)
         {
