@@ -168,6 +168,7 @@
             // 
             // pcb_None
             // 
+            this.pcb_None.BackColor = System.Drawing.Color.LightCoral;
             this.pcb_None.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pcb_None.Image = global::OrganicMoleculesBuilder.Properties.Resources.icons8_cursor_25px;
             this.pcb_None.Location = new System.Drawing.Point(24, 16);
