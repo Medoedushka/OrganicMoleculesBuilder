@@ -70,7 +70,7 @@ namespace OrganicMoleculesBuilder.Model
 
         public void ChangeOrder(PictureBox pictureBox, int order)
         {
-            string str;
+            string str = "";
             if (foundBond != null)
             {
                 str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by {order}";
@@ -194,12 +194,12 @@ namespace OrganicMoleculesBuilder.Model
         }
         public void InsertAtom(string atom, PictureBox pictureBox)
         {
-            string path = "";
+            string str = "";
             if (founAtom != null)
             {
-                path = $"Insert {atom} {founAtom.Index}";
-                if (!string.IsNullOrEmpty(path))
-                    Molecule.RunCommand(ref crrMolecule, path, pictureBox.Width, pictureBox.Height);
+                str = $"Insert {atom} {founAtom.Index}";
+                if (!string.IsNullOrEmpty(str))
+                    Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
             }
         }
 

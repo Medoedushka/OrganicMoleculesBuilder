@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace MoleculesBuilder
 {
-    public class Molecule
+    public class Molecule : ICloneable
     {
         public static string[] Keywords =
         {
@@ -52,6 +52,7 @@ namespace MoleculesBuilder
         public bool DrawAtomCircle { get; set; }
         public string MolecularPartsDir { get; set; }
         public Image Image { get => GetImage(); set => Image = value; }
+        public string Pattern { get; private set; }
 
         public Molecule(string name, string dir)
         {
@@ -61,6 +62,35 @@ namespace MoleculesBuilder
             bonds = new List<Bond>();
             ShowAtomNumbers = false;
             DrawAtomCircle = false;
+        }
+        public object Clone()
+        {
+            Molecule newMol = new Molecule(this.Name, this.MolecularPartsDir);
+            newMol.DrawAtomCircle = this.DrawAtomCircle;
+            newMol.ShowAtomNumbers = this.ShowAtomNumbers;
+            string[] commands = this.Pattern.Split('\n');
+            foreach(string c in commands)
+            {
+                if (c != "")
+                {
+                    if (c.Contains("Rotate"))
+                    {
+                        int secInd = 0;
+                        foreach (Bond b in newMol.bonds)
+                        {
+                            if (b.A.Index == newMol.atoms[newMol.atoms.Count - 1].Index)
+                                secInd = b.B.Index;
+                            if (b.B.Index == newMol.atoms[newMol.atoms.Count - 1].Index)
+                                secInd = b.A.Index;
+                        }
+                        newMol.atoms[newMol.atoms.Count - 1].Position = new PointF(newMol.atoms[secInd - 1].Position.X,
+                                (float)(newMol.atoms[secInd - 1].Position.Y - Molecule.L));
+                    }
+                    Molecule.RunCommand(ref newMol, c, this.Image.Width, this.Image.Height);
+                }
+                    
+            }
+            return newMol;
         }
 
         //Вспомагательные методы
@@ -418,7 +448,7 @@ namespace MoleculesBuilder
                 throw new Exception("Молекула не создана!");
 
             Bitmap result = new Bitmap(bmWidth, bmHeight);
-
+            crrMolecule.Pattern += comm + "\n";
             string command = comm.Trim(new char[] { '\n' });
             string[] el = command.Split(' '); // получение массива ключевых слов и передаваемых значений
             switch (el[0])
