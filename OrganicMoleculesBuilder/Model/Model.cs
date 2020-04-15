@@ -186,8 +186,8 @@ namespace OrganicMoleculesBuilder.Model
                     secInd = b.A.Index;
             }
 
-            crrMolecule.atoms[crrMolecule.atoms.Count - 1].Position = new PointF(crrMolecule.atoms[secInd - 1].Position.X,
-            (float)(crrMolecule.atoms[secInd - 1].Position.Y - Molecule.L));
+            //crrMolecule.atoms[crrMolecule.atoms.Count - 1].Position = new PointF(crrMolecule.atoms[secInd - 1].Position.X,
+            //(float)(crrMolecule.atoms[secInd - 1].Position.Y - Molecule.L));
 
             string str = $"Rotate {crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index} base {secInd} {angles[angleCounter]}";
             Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);

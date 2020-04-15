@@ -73,19 +73,19 @@ namespace MoleculesBuilder
             {
                 if (c != "")
                 {
-                    if (c.Contains("Rotate"))
-                    {
-                        int secInd = 0;
-                        foreach (Bond b in newMol.bonds)
-                        {
-                            if (b.A.Index == newMol.atoms[newMol.atoms.Count - 1].Index)
-                                secInd = b.B.Index;
-                            if (b.B.Index == newMol.atoms[newMol.atoms.Count - 1].Index)
-                                secInd = b.A.Index;
-                        }
-                        newMol.atoms[newMol.atoms.Count - 1].Position = new PointF(newMol.atoms[secInd - 1].Position.X,
-                                (float)(newMol.atoms[secInd - 1].Position.Y - Molecule.L));
-                    }
+                    //if (c.Contains("Rotate"))
+                    //{
+                    //    int secInd = 0;
+                    //    foreach (Bond b in newMol.bonds)
+                    //    {
+                    //        if (b.A.Index == newMol.atoms[newMol.atoms.Count - 1].Index)
+                    //            secInd = b.B.Index;
+                    //        if (b.B.Index == newMol.atoms[newMol.atoms.Count - 1].Index)
+                    //            secInd = b.A.Index;
+                    //    }
+                    //    newMol.atoms[newMol.atoms.Count - 1].Position = new PointF(newMol.atoms[secInd - 1].Position.X,
+                    //            (float)(newMol.atoms[secInd - 1].Position.Y - Molecule.L));
+                    //}
                     Molecule.RunCommand(ref newMol, c, this.Image.Width, this.Image.Height);
                 }
                     
@@ -177,6 +177,17 @@ namespace MoleculesBuilder
         //Вращение указанных вершин молекулы относительно базовой вершины на угол ang
         private static void RotateMolecularPart(Molecule crrMolecule, int[] rotInd, int baseInd, double ang)
         {
+            int secInd = 0;
+            foreach (Bond b in crrMolecule.bonds)
+            {
+                if (b.A.Index == crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index)
+                    secInd = b.B.Index;
+                if (b.B.Index == crrMolecule.atoms[crrMolecule.atoms.Count - 1].Index)
+                    secInd = b.A.Index;
+            }
+            crrMolecule.atoms[crrMolecule.atoms.Count - 1].Position = new PointF(crrMolecule.atoms[secInd - 1].Position.X,
+            (float)(crrMolecule.atoms[secInd - 1].Position.Y - Molecule.L));
+
             //поиск координат атомов
             PointF[] rotPt = new PointF[rotInd.Length];
             PointF basePt = new PointF();
