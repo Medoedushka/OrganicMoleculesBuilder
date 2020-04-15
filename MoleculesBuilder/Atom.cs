@@ -39,22 +39,17 @@ namespace MoleculesBuilder
         public double AtomWeight { get; private set; }
         public PointF Position { get; set; }
         public Atom[] Neighbours;
+        string _label;
         public string Label
         {
             get
             {
                 string symbol = "";
                 int hidrNum = 0;
-                PointF bondVector = new PointF();
                 for (int i = 0; i < Valence; i++)
                 {
                     if (Neighbours[i] == null)
                         hidrNum++;
-                    if (Neighbours[i] != null)
-                    {
-                        bondVector = new PointF(Position.X - Neighbours[i].Position.X,
-                            Position.Y - Neighbours[i].Position.Y);
-                    }
                 }
                 if ((bondVector.X < 0 && bondVector.Y < 0) || (bondVector.X < 0 && bondVector.Y > 0) || (bondVector.X < 0 && bondVector.Y == 0))
                 {
@@ -65,10 +60,62 @@ namespace MoleculesBuilder
             }
             set
             {
-                Label = value;   
+                _label = value;   
             }
         }
         public Font LabelFont { get; set; }
+        public PointF LabelPosition
+        {
+            get
+            {
+                PointF pt;
+                string temp = Label.Replace("{", "").Replace("_", "").Replace("}", "");
+                SizeF size = new SizeF();
+                using (Graphics g = Graphics.FromImage(new Bitmap(1, 1))) { size = g.MeasureString(temp, LabelFont); }
+                if (bondVector.X == 0 && bondVector.Y == 0)
+                    return new PointF(Position.X - size.Width / 2, Position.Y - size.Height / 2);
+                else if (bondVector.X > 0 && bondVector.Y < 0)
+                    return new PointF(Position.X, Position.Y - size.Height / 2);
+                else if (bondVector.X > 0 && bondVector.Y > 0)
+                    return new PointF(Position.X, Position.Y);
+                else if (bondVector.X < 0 && bondVector.Y < 0)
+                    return new PointF(Position.X - size.Width, Position.Y - size.Height / 2);
+                else if (bondVector.X < 0 && bondVector.Y > 0)
+                    return new PointF(Position.X - size.Width, Position.Y);
+                else if (bondVector.X == 0 && bondVector.Y > 0)
+                    return new PointF(Position.X - size.Width / 4, Position.Y);
+                else if (bondVector.X == 0 && bondVector.Y < 0)
+                    return new PointF(Position.X - size.Width / 4, Position.Y - size.Height);
+                else if (bondVector.X > 0 && bondVector.Y == 0)
+                    return new PointF(Position.X, Position.Y - size.Height / 2);
+                else //(bondVector.X < 0 && bondVector.Y == 0)
+                    return new PointF(Position.X - size.Width, Position.Y - size.Height / 2);
+            }
+        }
+
+        // Вектор связи дял правильного позиционирования положения лэйбла.
+        private PointF bondVector {
+            get
+            {
+                int counter = 0;
+                int k = 0;
+                for (int i = 0; i < Neighbours.Length; i++)
+                {
+                    if (Neighbours[i] == null)
+                        counter++;
+                    else k = i;
+                }
+                if (Valence - counter > 1)
+                    return new PointF(0, 0);
+                else
+                {
+                    return new PointF(Position.X - Neighbours[k].Position.X,
+                                Position.Y - Neighbours[k].Position.Y);
+                }
+            }
+        }
+
+        public Atom() { }
 
         public Atom(Element type, int valence, int ind, PointF pos)
         {
@@ -77,8 +124,8 @@ namespace MoleculesBuilder
             Neighbours = new Atom[Valence];
             Index = ind;
             Position = pos;
-            LabelFont = new Font("Arial", 10);
-
+            LabelFont = new Font("Times New Roman", 10);
+            Label = "None";
             if (Type.ToString() == "Cl") AtomWeight = 35.5;
             else AtomWeight = (int)Type;
 

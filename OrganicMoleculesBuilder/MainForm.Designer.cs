@@ -31,10 +31,6 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pcb_Text = new System.Windows.Forms.PictureBox();
             this.pcb_Arrow = new System.Windows.Forms.PictureBox();
             this.pcb_WavyBond = new System.Windows.Forms.PictureBox();
@@ -43,11 +39,13 @@
             this.pcb_WedgetBond = new System.Windows.Forms.PictureBox();
             this.pcb_None = new System.Windows.Forms.PictureBox();
             this.pcb_SolidBond = new System.Windows.Forms.PictureBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Text)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Arrow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_WavyBond)).BeginInit();
@@ -56,6 +54,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pcb_WedgetBond)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_None)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_SolidBond)).BeginInit();
+            this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -93,47 +94,6 @@
             this.groupBox1.Size = new System.Drawing.Size(81, 199);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            // 
-            // panel2
-            // 
-            this.panel2.BackColor = System.Drawing.Color.LightCoral;
-            this.panel2.Controls.Add(this.groupBox1);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel2.Location = new System.Drawing.Point(0, 25);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(108, 537);
-            this.panel2.TabIndex = 4;
-            // 
-            // panel1
-            // 
-            this.panel1.AutoScroll = true;
-            this.panel1.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.pictureBox3);
-            this.panel1.Controls.Add(this.panel3);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(108, 25);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(922, 537);
-            this.panel1.TabIndex = 5;
-            // 
-            // panel3
-            // 
-            this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(168)))), ((int)(((byte)(168)))), ((int)(((byte)(168)))));
-            this.panel3.Location = new System.Drawing.Point(7, 4);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(720, 522);
-            this.panel3.TabIndex = 1;
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.BackColor = System.Drawing.Color.White;
-            this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox3.Location = new System.Drawing.Point(5, 2);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(720, 522);
-            this.pictureBox3.TabIndex = 0;
-            this.pictureBox3.TabStop = false;
             // 
             // pcb_Text
             // 
@@ -231,6 +191,57 @@
             this.pcb_SolidBond.TabStop = false;
             this.pcb_SolidBond.Click += new System.EventHandler(this.pcb_SolidBond_Click);
             // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.LightCoral;
+            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.groupBox1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel2.Location = new System.Drawing.Point(0, 25);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(108, 537);
+            this.panel2.TabIndex = 4;
+            // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.pictureBox3);
+            this.panel1.Controls.Add(this.panel3);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(108, 25);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(922, 537);
+            this.panel1.TabIndex = 5;
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.BackColor = System.Drawing.Color.White;
+            this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox3.Location = new System.Drawing.Point(5, 2);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(720, 522);
+            this.pictureBox3.TabIndex = 0;
+            this.pictureBox3.TabStop = false;
+            // 
+            // panel3
+            // 
+            this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(168)))), ((int)(((byte)(168)))), ((int)(((byte)(168)))));
+            this.panel3.Location = new System.Drawing.Point(7, 4);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(720, 522);
+            this.panel3.TabIndex = 1;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(18, 244);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 20F);
@@ -251,9 +262,6 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Text)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Arrow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_WavyBond)).EndInit();
@@ -262,6 +270,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pcb_WedgetBond)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_None)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_SolidBond)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -283,6 +294,7 @@
         private System.Windows.Forms.PictureBox pcb_Arrow;
         private System.Windows.Forms.PictureBox pcb_Text;
         private System.Windows.Forms.PictureBox pcb_None;
+        public System.Windows.Forms.Button button1;
     }
 }
 
