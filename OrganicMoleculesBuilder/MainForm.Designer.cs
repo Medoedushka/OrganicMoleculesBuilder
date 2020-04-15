@@ -43,6 +43,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.экспортироватьКакPNGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Text)).BeginInit();
@@ -72,6 +73,8 @@
             // 
             // файлToolStripMenuItem
             // 
+            this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.экспортироватьКакPNGToolStripMenuItem});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 19);
             this.файлToolStripMenuItem.Text = "Файл";
@@ -232,6 +235,13 @@
             this.panel3.Size = new System.Drawing.Size(720, 522);
             this.panel3.TabIndex = 1;
             // 
+            // экспортироватьКакPNGToolStripMenuItem
+            // 
+            this.экспортироватьКакPNGToolStripMenuItem.Name = "экспортироватьКакPNGToolStripMenuItem";
+            this.экспортироватьКакPNGToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.экспортироватьКакPNGToolStripMenuItem.Text = "Экспортировать как PNG...";
+            this.экспортироватьКакPNGToolStripMenuItem.Click += new System.EventHandler(this.экспортироватьКакPNGToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 20F);
@@ -284,6 +294,7 @@
         private System.Windows.Forms.PictureBox pcb_Arrow;
         private System.Windows.Forms.PictureBox pcb_Text;
         private System.Windows.Forms.PictureBox pcb_None;
+        private System.Windows.Forms.ToolStripMenuItem экспортироватьКакPNGToolStripMenuItem;
     }
 }
 

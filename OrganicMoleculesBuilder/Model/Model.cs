@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using MoleculesBuilder;
 using OrganicMoleculesBuilder.Viewer;
 using MyDrawing.Figures;
+using System.Drawing.Imaging;
 
 namespace OrganicMoleculesBuilder.Model
 {
@@ -23,7 +24,6 @@ namespace OrganicMoleculesBuilder.Model
         Bond foundBond;
         int[] angles;
         int angleCounter = 0;
-        int orderPos = 1;
 
         public BuilderModel()
         {
@@ -230,6 +230,48 @@ namespace OrganicMoleculesBuilder.Model
 
             }
             picture.Image = bm;
+        }
+
+        public void SaveAsImage(string path, Image im)
+        {
+            float maxX = float.MinValue, maxY = float.MinValue;
+            foreach (Molecule mol in Molecules)
+            {
+                System.Drawing.Rectangle rect = Molecule.GetRectangle(mol);
+                PointF pt = new PointF(rect.Location.X + rect.Width, rect.Location.Y + rect.Height);
+                if (pt.X > maxX)
+                    maxX = pt.X;
+                if (pt.Y > maxY)
+                    maxY = pt.Y;
+            }
+            foreach (Figure f in Figures)
+            {
+                if (f is Text)
+                {
+                    System.Drawing.RectangleF rect = (f as Text).Area;
+                    PointF pt = new PointF(rect.Location.X + rect.Width, rect.Location.Y + rect.Height);
+                    if (pt.X > maxX)
+                        maxX = pt.X;
+                    if (rect.Y > maxY)
+                        maxY = pt.Y;
+                }
+            }
+            Bitmap bm = new Bitmap((int)maxX, (int)maxY);
+            using (Graphics g = Graphics.FromImage(bm))
+            {
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                foreach (Molecule mol in Molecules)
+                    g.DrawImage(mol.Image, Molecule.GetRectangle(mol).Location);
+
+                if (Figures.Count != 0)
+                {
+                    foreach (Figure f in Figures)
+                        f.DrawFigure(g);
+                }
+            }
+            bm.Save(path, ImageFormat.Png);
         }
     }
 }

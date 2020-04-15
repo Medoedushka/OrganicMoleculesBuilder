@@ -16,6 +16,8 @@ namespace OrganicMoleculesBuilder
         PictureBox[] pcbGroup1;
         Color buttonChecked = Color.FromArgb(150, 80, 80);
 
+        public event Action<string> SaveWorkSpace;
+
         public MainForm()
         {
             InitializeComponent();
@@ -39,6 +41,22 @@ namespace OrganicMoleculesBuilder
         }
         public ToolType ToolType { get; set; }
         public PictureBox DrawPlace => pictureBox3;
+
+        public string PathToSave
+        {
+            get
+            {
+                using (SaveFileDialog sf = new SaveFileDialog())
+                {
+                    sf.Filter = "PNG (*.png)|*.png";
+                    if (sf.ShowDialog() == DialogResult.OK)
+                    {
+                        return sf.FileName;
+                    }
+                    else return "";
+                }
+            }
+        }
 
         private void SetGroupColor(Color color, PictureBox[] pbs)
         {
@@ -107,6 +125,11 @@ namespace OrganicMoleculesBuilder
             pcb_Text.BackColor = Color.FromArgb(150, 80, 80);
             ToolType = ToolType.Text;
             pictureBox3.Cursor = Cursors.IBeam;
+        }
+
+        private void экспортироватьКакPNGToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveWorkSpace?.Invoke(PathToSave);
         }
     }
 }

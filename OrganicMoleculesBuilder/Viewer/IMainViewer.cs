@@ -24,6 +24,8 @@ namespace OrganicMoleculesBuilder.Viewer
     {
         ToolType ToolType { get; set;}
         PictureBox DrawPlace { get;}
+        string PathToSave { get;}
 
+        event Action<string> SaveWorkSpace;
     }
 }

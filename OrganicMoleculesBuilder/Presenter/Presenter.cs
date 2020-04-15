@@ -38,7 +38,14 @@ namespace OrganicMoleculesBuilder.Presenter
             _mainViewer.DrawPlace.Paint += DrawPlace_Paint;
             (_mainViewer as MainForm).KeyDown += Presenter_KeyDown;
             (_mainViewer as MainForm).KeyUp += Presenter_KeyUp;
+            _mainViewer.SaveWorkSpace += _mainViewer_SaveWorkSpace;
         }
+
+        private void _mainViewer_SaveWorkSpace(string path)
+        {
+            _model.SaveAsImage(path, _mainViewer.DrawPlace.Image);
+        }
+
         private void DrawPlace_DoubleClick(object sender, EventArgs e)
         {
             // Выделение отдельной молекулы.
