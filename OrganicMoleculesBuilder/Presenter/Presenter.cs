@@ -160,7 +160,9 @@ namespace OrganicMoleculesBuilder.Presenter
             {
                 System.Drawing.Rectangle rect = Molecule.GetRectangle(_model.checkedMolecule);
                 PointF vector = new PointF(mouseLoc.X - rect.X, mouseLoc.Y - rect.Y);
-                Molecule.RunCommand(ref _model.checkedMolecule, $"Move {vector.X},{vector.Y}", _mainViewer.DrawPlace.Width, _mainViewer.DrawPlace.Height);
+                if (!controlPressed)
+                    Molecule.RunCommand(ref _model.checkedMolecule, $"Move {vector.X},{vector.Y}", _mainViewer.DrawPlace.Width, _mainViewer.DrawPlace.Height);
+                else Molecule.RunCommand(ref _model.checkedMolecule, $"Move {vector.X},{0}", _mainViewer.DrawPlace.Width, _mainViewer.DrawPlace.Height);
             }
             // Перемещение фигуры пока зажата кнопка мыши.
             if (FigureMoving)
