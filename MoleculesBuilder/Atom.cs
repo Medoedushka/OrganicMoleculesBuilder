@@ -114,9 +114,7 @@ namespace MoleculesBuilder
                 }
             }
         }
-
-        public Atom() { }
-
+        
         public Atom(Element type, int valence, int ind, PointF pos)
         {
             this.type = type;
@@ -135,7 +133,6 @@ namespace MoleculesBuilder
             }
 
         }
-
         public void ApdateValence(int val)
         {
             Atom[] temp = new Atom[val];

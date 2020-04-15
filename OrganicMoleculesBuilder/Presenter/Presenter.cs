@@ -37,20 +37,7 @@ namespace OrganicMoleculesBuilder.Presenter
             _mainViewer.DrawPlace.Paint += DrawPlace_Paint;
             (_mainViewer as MainForm).KeyDown += Presenter_KeyDown;
             (_mainViewer as MainForm).KeyUp += Presenter_KeyUp;
-            (_mainViewer as MainForm).button1.Click += Button1_Click;
         }
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            if (_model.checkedMolecule != null)
-            {
-                Molecule mol = _model.checkedMolecule;
-                _model.Molecules.Add(mol);
-                Molecule.RunCommand(ref mol, "Move 10,10", _mainViewer.DrawPlace.Width, _mainViewer.DrawPlace.Height);
-                _model.checkedMolecule = null;
-            }
-        }
-
         private void DrawPlace_DoubleClick(object sender, EventArgs e)
         {
             // Выделение отдельной молекулы.
