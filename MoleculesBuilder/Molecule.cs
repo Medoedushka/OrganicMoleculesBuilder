@@ -63,6 +63,10 @@ namespace MoleculesBuilder
             ShowAtomNumbers = false;
             DrawAtomCircle = false;
         }
+        /// <summary>
+        /// Выполняет паттерн копируемой молекулы и возвращает новый экземпляр класса.
+        /// </summary>
+        /// <returns></returns>
         public object Clone()
         {
             Molecule newMol = new Molecule(this.Name, this.MolecularPartsDir);
@@ -73,19 +77,7 @@ namespace MoleculesBuilder
             {
                 if (c != "")
                 {
-                    //if (c.Contains("Rotate"))
-                    //{
-                    //    int secInd = 0;
-                    //    foreach (Bond b in newMol.bonds)
-                    //    {
-                    //        if (b.A.Index == newMol.atoms[newMol.atoms.Count - 1].Index)
-                    //            secInd = b.B.Index;
-                    //        if (b.B.Index == newMol.atoms[newMol.atoms.Count - 1].Index)
-                    //            secInd = b.A.Index;
-                    //    }
-                    //    newMol.atoms[newMol.atoms.Count - 1].Position = new PointF(newMol.atoms[secInd - 1].Position.X,
-                    //            (float)(newMol.atoms[secInd - 1].Position.Y - Molecule.L));
-                    //}
+                    
                     Molecule.RunCommand(ref newMol, c, this.Image.Width, this.Image.Height);
                 }
                     

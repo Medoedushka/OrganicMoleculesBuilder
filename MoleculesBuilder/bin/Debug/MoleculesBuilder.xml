@@ -4,6 +4,12 @@
         <name>MoleculesBuilder</name>
     </assembly>
     <members>
+        <member name="M:MoleculesBuilder.Molecule.Clone">
+            <summary>
+            Выполняет паттерн копируемой молекулы и возвращает новый экземпляр класса.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:MoleculesBuilder.Molecule.GetRectangle(MoleculesBuilder.Molecule)">
             <summary>
             Возвращает прямоугольную область, которую занимает молекула.
