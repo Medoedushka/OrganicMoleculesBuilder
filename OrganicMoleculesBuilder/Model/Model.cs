@@ -176,7 +176,7 @@ namespace OrganicMoleculesBuilder.Model
                     angleCounter = angles.Length - 1;
                 
             }
-
+            
             int secInd = 0;
             foreach (Bond b in crrMolecule.bonds)
             {

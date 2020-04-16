@@ -73,15 +73,21 @@ namespace MoleculesBuilder
             newMol.DrawAtomCircle = this.DrawAtomCircle;
             newMol.ShowAtomNumbers = this.ShowAtomNumbers;
             string[] commands = this.Pattern.Split('\n');
-            foreach(string c in commands)
+            List<string> EditedCommands = new List<string>();
+            for (int i = 0; i < commands.Length; i++)
             {
-                if (c != "")
-                {
-                    
-                    Molecule.RunCommand(ref newMol, c, this.Image.Width, this.Image.Height);
-                }
-                    
+                if (commands[i].Contains("Rotate") && commands[i + 1].Contains("Rotate"))
+                    commands[i] = "";
+                if (commands[i] != "")
+                    EditedCommands.Add(commands[i]);
+
             }
+            commands = null;
+            foreach(string c in EditedCommands)
+            {
+                Molecule.RunCommand(ref newMol, c, this.Image.Width, this.Image.Height);
+            }
+            GC.Collect();
             return newMol;
         }
 

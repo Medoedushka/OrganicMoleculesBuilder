@@ -30,6 +30,7 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.экспортироватьКакPNGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pcb_Text = new System.Windows.Forms.PictureBox();
             this.pcb_Arrow = new System.Windows.Forms.PictureBox();
@@ -43,7 +44,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.экспортироватьКакPNGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Text)).BeginInit();
@@ -78,6 +79,13 @@
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 19);
             this.файлToolStripMenuItem.Text = "Файл";
+            // 
+            // экспортироватьКакPNGToolStripMenuItem
+            // 
+            this.экспортироватьКакPNGToolStripMenuItem.Name = "экспортироватьКакPNGToolStripMenuItem";
+            this.экспортироватьКакPNGToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.экспортироватьКакPNGToolStripMenuItem.Text = "Экспортировать как PNG...";
+            this.экспортироватьКакPNGToolStripMenuItem.Click += new System.EventHandler(this.экспортироватьКакPNGToolStripMenuItem_Click);
             // 
             // groupBox1
             // 
@@ -197,6 +205,7 @@
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.LightCoral;
+            this.panel2.Controls.Add(this.button1);
             this.panel2.Controls.Add(this.groupBox1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel2.Location = new System.Drawing.Point(0, 25);
@@ -235,12 +244,14 @@
             this.panel3.Size = new System.Drawing.Size(720, 522);
             this.panel3.TabIndex = 1;
             // 
-            // экспортироватьКакPNGToolStripMenuItem
+            // button1
             // 
-            this.экспортироватьКакPNGToolStripMenuItem.Name = "экспортироватьКакPNGToolStripMenuItem";
-            this.экспортироватьКакPNGToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.экспортироватьКакPNGToolStripMenuItem.Text = "Экспортировать как PNG...";
-            this.экспортироватьКакPNGToolStripMenuItem.Click += new System.EventHandler(this.экспортироватьКакPNGToolStripMenuItem_Click);
+            this.button1.Location = new System.Drawing.Point(36, 252);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -295,6 +306,7 @@
         private System.Windows.Forms.PictureBox pcb_Text;
         private System.Windows.Forms.PictureBox pcb_None;
         private System.Windows.Forms.ToolStripMenuItem экспортироватьКакPNGToolStripMenuItem;
+        public System.Windows.Forms.Button button1;
     }
 }
 
