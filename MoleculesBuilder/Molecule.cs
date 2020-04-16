@@ -87,6 +87,13 @@ namespace MoleculesBuilder
             {
                 Molecule.RunCommand(ref newMol, c, this.Image.Width, this.Image.Height);
             }
+
+            Pattern = "";
+            foreach(string c in EditedCommands)
+            {
+                Pattern += c + "\n";
+            }
+            EditedCommands = null;
             GC.Collect();
             return newMol;
         }

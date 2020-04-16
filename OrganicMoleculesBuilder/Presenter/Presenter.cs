@@ -38,16 +38,8 @@ namespace OrganicMoleculesBuilder.Presenter
             _mainViewer.DrawPlace.Paint += DrawPlace_Paint;
             (_mainViewer as MainForm).KeyDown += Presenter_KeyDown;
             (_mainViewer as MainForm).KeyUp += Presenter_KeyUp;
-            (_mainViewer as MainForm).button1.Click += Button1_Click;
             _mainViewer.SaveWorkSpace += _mainViewer_SaveWorkSpace;
         }
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            Molecule mol = (Molecule)_model.checkedMolecule.Clone();
-            _model.Molecules.Add(mol);
-        }
-
         private void _mainViewer_SaveWorkSpace(string path)
         {
             _model.SaveAsImage(path, _mainViewer.DrawPlace.Image);
@@ -238,6 +230,11 @@ namespace OrganicMoleculesBuilder.Presenter
                 {
                     _model.Figures.Remove(_model.checkedFigure);
                     _model.checkedFigure = null;
+                }
+                else if (_model.checkedMolecule != null)
+                {
+                    _model.Molecules.Remove(_model.checkedMolecule);
+                    _model.checkedMolecule = null;
                 }
             }
             // Выход из режима ввода текста.
