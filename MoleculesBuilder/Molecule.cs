@@ -604,8 +604,10 @@ namespace MoleculesBuilder
                             Bond b1 = null;
                             crrMolecule.ExistBond(int.Parse(el[1]), int.Parse(el[2]), out b1);
                             if (b1 != null && el[4] == "2")
+                            {
                                 b1.InverseBond = !b1.InverseBond;
-                            b1.BondType = BondType.Default;
+                                b1.BondType = BondType.Default;
+                            }
                             crrMolecule.ConnectAtoms(int.Parse(el[1]), int.Parse(el[2]), int.Parse(el[4]));
                         }
                         else

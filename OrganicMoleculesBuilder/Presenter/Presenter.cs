@@ -17,6 +17,7 @@ namespace OrganicMoleculesBuilder.Presenter
         bool writingText = false;
         bool movingMolecule = false;
         bool FigureMoving = false;
+        bool ConnectionMode = false;
         TextBox tb;
         Timer timer;
 
@@ -149,6 +150,15 @@ namespace OrganicMoleculesBuilder.Presenter
                 _mainViewer.DrawPlace.Controls.Add(tb);
                 writingText = true;
             }
+            else if (_mainViewer.ToolType == ToolType.Connection)
+            {
+                _model.ConnectAtoms(_mainViewer.DrawPlace);
+            }
+            //
+            // Блок сброса параметров
+            //
+            if (_mainViewer.ToolType != ToolType.Connection)
+                _model.ConnectAtoms();
         }
         private void DrawPlace_MouseMove(object sender, MouseEventArgs e)
         {
@@ -222,10 +232,11 @@ namespace OrganicMoleculesBuilder.Presenter
             if (e.Control)
                 controlPressed = true;
 
-            // Удаление выделеного атома или удаление молекулы если атомов в ней больше не осталось.
+            // Удаление выделеного атома, связи или фигуры.
             if (e.KeyCode == Keys.Delete)
             {
                 _model.DeleteSelectedAtom(_mainViewer.DrawPlace);
+                _model.DeleteSelectedBond(_mainViewer.DrawPlace);
                 if (_model.checkedFigure != null)
                 {
                     _model.Figures.Remove(_model.checkedFigure);
@@ -236,6 +247,7 @@ namespace OrganicMoleculesBuilder.Presenter
                     _model.Molecules.Remove(_model.checkedMolecule);
                     _model.checkedMolecule = null;
                 }
+                
             }
             // Выход из режима ввода текста.
             else if (e.KeyCode == Keys.Escape && writingText)

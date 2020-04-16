@@ -161,6 +161,24 @@ namespace OrganicMoleculesBuilder.Model
                 crrMolecule = null;
             }
         }
+        public void DeleteSelectedBond(PictureBox pictureBox)
+        {
+            if (foundBond != null)
+            {
+                if (crrMolecule.bonds.Count == 1)
+                {
+                    Molecules.Remove(crrMolecule);
+                    crrMolecule = null;
+                    founAtom = null;
+                    foundBond = null;
+                }
+                else
+                {
+                    string str = $"Connect {foundBond.A.Index} {foundBond.B.Index} by 0";
+                    Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
+                }
+            }
+        }
         public void RotateSub(PictureBox pictureBox, bool direction)
         {
             if (direction == true)
@@ -197,6 +215,26 @@ namespace OrganicMoleculesBuilder.Model
                 if (!string.IsNullOrEmpty(str))
                     Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
             }
+        }
+
+        int ind1 = 0, ind2 = 0;
+        public void ConnectAtoms(PictureBox pictureBox)
+        {
+            if (ind1 == 0 && ind2 == 0)
+            {
+                ind1 = founAtom.Index;
+            }
+            else ind2 = founAtom.Index;
+            if (ind1 != 0 && ind2 != 0)
+            {
+                string str = $"Connect {ind1} {ind2} by 1";
+                Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
+                ind1 = 0; ind2 = 0;
+            }
+        }
+        public void ConnectAtoms() // сброс параметров
+        {
+            ind1 = 0; ind2 = 0;
         }
 
         public void DrawMolecules(PictureBox picture)

@@ -17,7 +17,8 @@ namespace OrganicMoleculesBuilder.Viewer
         WavyBond,
         DashedBond,
         Arrow,
-        Text
+        Text,
+        Connection
     }
 
     public interface IMainViewer

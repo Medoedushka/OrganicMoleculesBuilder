@@ -107,11 +107,12 @@ namespace MoleculesBuilder
                 }
                 if (Valence - counter > 1)
                     return new PointF(0, 0);
-                else
+                else if (counter == 1)
                 {
                     return new PointF(Position.X - Neighbours[k].Position.X,
                                 Position.Y - Neighbours[k].Position.Y);
                 }
+                else return new PointF();
             }
         }
         

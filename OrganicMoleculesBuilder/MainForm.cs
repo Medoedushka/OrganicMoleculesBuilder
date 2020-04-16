@@ -30,13 +30,39 @@ namespace OrganicMoleculesBuilder
                 pcb_WavyBond,
                 pcb_DashedBond,
                 pcb_Text,
-                pcb_Arrow
+                pcb_Arrow,
+                pcb_ConnectAtoms
+            };
+            string[] ExpStrings = new string[]
+            {
+                /*0*/"Клинкните на связь, чтобы изменить вид связи",
+                /*1*/"Кликните на свободное место на холсте, чтобы ввести текст. Используйте _{} и ^{}, чтобы вводить верхние и нижние индексы соответственно",
+                /*2*/"Нажмите и удерживайте, чтобы добавить стрелку",
+                /*3*/"Выберите последовательно два атома, чтобы соединить их обычной одинарной связью",
+                /*4*/"Кликните по фигуре, чтобы её выбрать; дважды кликните по молекуле, чтобы её выделить; удерживайте и тяните курсор пока молекула выделена, чтобы её переместить"
             };
             ToolType = ToolType.SolidBond;
             foreach(PictureBox pb in pcbGroup1)
             {
-                pb.MouseEnter += (object o, EventArgs e) => { if (pb.BackColor != buttonChecked) pb.BackColor = Color.FromArgb(177, 195, 80, 80); };
-                pb.MouseLeave += (object o, EventArgs e) => { if (pb.BackColor != buttonChecked) pb.BackColor = Color.LightCoral; };
+                pb.MouseEnter += (object o, EventArgs e) => 
+                {
+                    if (pb.BackColor != buttonChecked)
+                        pb.BackColor = Color.FromArgb(177, 195, 80, 80);
+                    if (pb.Name == pcb_Text.Name)
+                        lbl_Status.Text = ExpStrings[1];
+                    else if (pb.Name == pcb_Arrow.Name)
+                        lbl_Status.Text = ExpStrings[2];
+                    else if (pb.Name == pcb_ConnectAtoms.Name)
+                        lbl_Status.Text = ExpStrings[3];
+                    else if (pb.Name == pcb_None.Name)
+                        lbl_Status.Text = ExpStrings[4];
+                    else lbl_Status.Text = ExpStrings[0];
+                };
+                pb.MouseLeave += (object o, EventArgs e) => 
+                { if (pb.BackColor != buttonChecked)
+                        pb.BackColor = Color.LightCoral;
+                    lbl_Status.Text = "";
+                };
             }
         }
         public ToolType ToolType { get; set; }
@@ -130,6 +156,14 @@ namespace OrganicMoleculesBuilder
         private void экспортироватьКакPNGToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveWorkSpace?.Invoke(PathToSave);
+        }
+
+        private void pcb_ConnectAtoms_Click(object sender, EventArgs e)
+        {
+            SetGroupColor(Color.LightCoral, pcbGroup1);
+            pcb_ConnectAtoms.BackColor = Color.FromArgb(150, 80, 80);
+            ToolType = ToolType.Connection;
+            pictureBox3.Cursor = Cursors.Hand;
         }
     }
 }
