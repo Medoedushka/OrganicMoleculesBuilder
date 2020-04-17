@@ -185,7 +185,7 @@ namespace OrganicMoleculesBuilder.Presenter
         private void DrawPlace_MouseMove(object sender, MouseEventArgs e)
         {
             mouseLoc = e.Location;
-
+            
             // Перемещение молекулы пока зажата кнопки мыши.
             if (movingMolecule)
             {

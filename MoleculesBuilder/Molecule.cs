@@ -266,7 +266,7 @@ namespace MoleculesBuilder
         }
 
         //Вращение всех вершин молекулы относительно указанной точки _basePt.
-        public static Bitmap RotateMolecularPart(PictureBox pictureBox, Molecule crrMolecule, PointF _basePt, double ang)
+        public static void RotateMolecule(Molecule crrMolecule, PointF _basePt, double ang)
         {
             foreach (Atom at in crrMolecule.atoms)
             {
@@ -274,7 +274,6 @@ namespace MoleculesBuilder
                 PointF newVector = RotateVector(ang, oldVector);
                 at.Position = new PointF(_basePt.X + newVector.X, _basePt.Y + newVector.Y);
             }
-            return crrMolecule.ReturnPic(pictureBox.Width, pictureBox.Height);
         }
 
         //Добавление нового заместителя в молекулу

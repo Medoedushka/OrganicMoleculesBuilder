@@ -16,6 +16,7 @@ namespace OrganicMoleculesBuilder.Model
         public Molecule checkedMolecule;
         public List<Figure> Figures { get; set; }
         public Figure checkedFigure;
+        public PointF rotateCheckedFigure;
         public Figure crrFigure;
         public bool FigureDrawing = false;
         string path = "";
@@ -33,11 +34,15 @@ namespace OrganicMoleculesBuilder.Model
         }
 
         // ВРАЩЕНИЕ МОЛЕКУЛЫ
-        public Image TestRot()
+        PointF basePt = new PointF(0, 0);
+        public void RotateStructure(double angle)
         {
-            System.Drawing.Rectangle r = Molecule.GetRectangle(crrMolecule);
-
-            return crrMolecule.Image;
+            if (basePt.X == 0 && basePt.Y == 0)
+            {
+                System.Drawing.Rectangle r = Molecule.GetRectangle(checkedMolecule);
+                basePt = new PointF(r.X + r.Width / 2, r.Y + r.Height / 2);
+            }
+            Molecule.RotateMolecule(checkedMolecule, basePt, angle);
         }
 
         public void DrawSolidBond(PictureBox pictureBox, PointF pos)
@@ -277,7 +282,14 @@ namespace OrganicMoleculesBuilder.Model
                 }
                 if (checkedMolecule != null)
                 {
-                    g.DrawRectangle(new Pen(Color.FromArgb(255, Color.Blue)), Molecule.GetRectangle(checkedMolecule));
+                    System.Drawing.Rectangle rect = Molecule.GetRectangle(checkedMolecule);
+                    g.DrawRectangle(new Pen(Color.FromArgb(170, Color.Blue), 3), rect);
+                    float w = 3, h = 15, s = 10;
+                    g.FillRectangle(new SolidBrush(Color.FromArgb(170, Color.Blue)),
+                        rect.X + (rect.Width - w) / 2, rect.Y - h, w, h);
+                    g.FillRectangle(new SolidBrush(Color.FromArgb(170, Color.Blue)),
+                        rect.X + (rect.Width - s) / 2, rect.Y - h - s, s, s);
+                    rotateCheckedFigure = new PointF(rect.X + rect.Width / 2, rect.Y - h - s / 2);
                 }
 
             }
