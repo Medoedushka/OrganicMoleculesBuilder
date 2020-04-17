@@ -17,7 +17,6 @@ namespace OrganicMoleculesBuilder.Presenter
         bool writingText = false;
         bool movingMolecule = false;
         bool FigureMoving = false;
-        bool ConnectionMode = false;
         TextBox tb;
         Timer timer;
 
@@ -65,95 +64,114 @@ namespace OrganicMoleculesBuilder.Presenter
         }
         private void DrawPlace_MouseDown(object sender, MouseEventArgs e)
         {
-            // Инициализация начальных параметров для рисования стрелки.
-            if (_mainViewer.ToolType == ToolType.Arrow)
+            if (e.Button == MouseButtons.Left)
             {
-                _model.FigureDrawing = true;
-                _model.crrFigure = new Arrow(e.Location, e.Location);
-                (_model.crrFigure as Arrow).FillArrowEnd = true;
-                (_model.crrFigure as Arrow).StrokeWidth = 2;
+                // Инициализация начальных параметров для рисования стрелки.
+                if (_mainViewer.ToolType == ToolType.Arrow)
+                {
+                    _model.FigureDrawing = true;
+                    _model.crrFigure = new Arrow(e.Location, e.Location);
+                    (_model.crrFigure as Arrow).FillArrowEnd = true;
+                    (_model.crrFigure as Arrow).StrokeWidth = 2;
+                }
+
+                // Подготовка к перещению молекулы/фигуры
+                if (_model.checkedMolecule != null)
+                    movingMolecule = true;
+                if (_model.checkedFigure != null)
+                    FigureMoving = true;
             }
-            // Подготовка к перещению молекулы/фигуры
-            if (_model.checkedMolecule != null)
-                movingMolecule = true;
-            if (_model.checkedFigure != null)
-                FigureMoving = true;
         }
         private void DrawPlace_MouseUp(object sender, MouseEventArgs e)
         {
-           
-            // Прекращение рисования фигуры и добавление её в список фигур.
-            if (_model.FigureDrawing)
+            if (e.Button == MouseButtons.Left)
             {
-                _model.FigureDrawing = false;
-                if (_model.crrFigure != null && _model.crrFigure.DotA != _model.crrFigure.DotB)
-                    _model.Figures.Add(_model.crrFigure);
-                _model.crrFigure = null;
-            }
-            // Выделение нарисованной фигуры.
-            if (_model.Figures.Count > 0 && _mainViewer.ToolType == ToolType.None && !FigureMoving)
-            {
-                foreach (Figure f in _model.Figures)
+                // Прекращение рисования фигуры и добавление её в список фигур.
+                if (_model.FigureDrawing)
                 {
-                    if (f.FigureChecked(mouseLoc))
+                    _model.FigureDrawing = false;
+                    if (_model.crrFigure != null && _model.crrFigure.DotA != _model.crrFigure.DotB)
+                        _model.Figures.Add(_model.crrFigure);
+                    _model.crrFigure = null;
+                }
+                // Выделение нарисованной фигуры.
+                if (_model.Figures.Count > 0 && _mainViewer.ToolType == ToolType.None && !FigureMoving)
+                {
+                    foreach (Figure f in _model.Figures)
                     {
-                        _model.checkedFigure = f;
-                        break;
+                        if (f.FigureChecked(mouseLoc))
+                        {
+                            _model.checkedFigure = f;
+                            break;
+                        }
+                        _model.checkedFigure = null;
                     }
+
+                }
+                // Прекращение перемещение молекулы.
+                if (movingMolecule)
+                {
+                    _model.checkedMolecule = null;
+                    movingMolecule = false;
+                }
+                // Прекращение перемещения фигуры.
+                if (FigureMoving)
+                {
+                    FigureMoving = false;
                     _model.checkedFigure = null;
                 }
 
-            }
-            // Прекращение перемещение молекулы.
-            if (movingMolecule)
-            {
-                _model.checkedMolecule = null;
-                movingMolecule = false;
-            }
-            // Прекращение перемещения фигуры.
-            if (FigureMoving)
-            {
-                FigureMoving = false;
-                _model.checkedFigure = null;
-            }
-
-            if (_mainViewer.ToolType == ToolType.SolidBond) // Инструмент для рисования одиночной связи.
-            {
-                try
+                if (_mainViewer.ToolType == ToolType.SolidBond) // Инструмент для рисования одиночной связи.
                 {
-                    _model.DrawSolidBond(_mainViewer.DrawPlace, mouseLoc);
+                    try
+                    {
+                        _model.DrawSolidBond(_mainViewer.DrawPlace, mouseLoc);
+                    }
+                    catch (ArgumentOutOfRangeException ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
-                catch (ArgumentOutOfRangeException ex)
+                // Изменения внешенего вида одиночной связи.
+                else if (_mainViewer.ToolType == ToolType.WedgetBond || _mainViewer.ToolType == ToolType.HashedWedgetBond ||
+                    _mainViewer.ToolType == ToolType.DashedBond || _mainViewer.ToolType == ToolType.WavyBond)
                 {
-                    MessageBox.Show(ex.Message);
+                    _model.ChangeBondType(_mainViewer.DrawPlace, _mainViewer.ToolType);
+                }
+                //Инструмент для вставки текста.
+                else if (_mainViewer.ToolType == ToolType.Text)
+                {
+                    _mainViewer.DrawPlace.Controls.Clear();
+                    tb = new TextBox()
+                    {
+                        Multiline = true,
+                        BackColor = _mainViewer.DrawPlace.BackColor,
+                        BorderStyle = BorderStyle.Fixed3D,
+                        Location = new Point((int)mouseLoc.X, (int)mouseLoc.Y),
+                        Font = new Font("Times New Roman", 12),
+                        Size = new Size(150, 50),
+                    };
+                    _mainViewer.DrawPlace.Controls.Add(tb);
+                    writingText = true;
+                }
+                else if (_mainViewer.ToolType == ToolType.Connection)
+                {
+                    _model.ConnectAtoms(_mainViewer.DrawPlace);
                 }
             }
-            // Изменения внешенего вида одиночной связи.
-            else if (_mainViewer.ToolType == ToolType.WedgetBond || _mainViewer.ToolType == ToolType.HashedWedgetBond ||
-                _mainViewer.ToolType == ToolType.DashedBond || _mainViewer.ToolType == ToolType.WavyBond)
+            else if (e.Button == MouseButtons.Right)
             {
-                _model.ChangeBondType(_mainViewer.DrawPlace, _mainViewer.ToolType);
-            }
-            //Инструмент для вставки текста.
-            else if (_mainViewer.ToolType == ToolType.Text)
-            {
-                _mainViewer.DrawPlace.Controls.Clear();
-                tb = new TextBox()
+                if (_model.checkedMolecule != null)
                 {
-                    Multiline = true,
-                    BackColor = _mainViewer.DrawPlace.BackColor,
-                    BorderStyle = BorderStyle.Fixed3D,
-                    Location = new Point((int)mouseLoc.X, (int)mouseLoc.Y),
-                    Font = new Font("Times New Roman", 12),
-                    Size = new Size(150, 50),
-                };
-                _mainViewer.DrawPlace.Controls.Add(tb);
-                writingText = true;
+                    System.Drawing.Rectangle rect = Molecule.GetRectangle(_model.checkedMolecule);
+                    if (mouseLoc.X >= rect.X && mouseLoc.X <= (rect.X + rect.Width) && mouseLoc.Y >= rect.Y
+                        && mouseLoc.Y <= (rect.Y + rect.Height))
+                    {
+                        (_mainViewer as MainForm).MoleculeSettings.Show(_mainViewer.DrawPlace, e.Location, ToolStripDropDownDirection.Left);
+                    }
+                }
             }
-            else if (_mainViewer.ToolType == ToolType.Connection)
-            {
-                _model.ConnectAtoms(_mainViewer.DrawPlace);
-            }
+                        
             //
             // Блок сброса параметров
             //
@@ -168,10 +186,14 @@ namespace OrganicMoleculesBuilder.Presenter
             if (movingMolecule)
             {
                 System.Drawing.Rectangle rect = Molecule.GetRectangle(_model.checkedMolecule);
-                PointF vector = new PointF(mouseLoc.X - rect.X, mouseLoc.Y - rect.Y);
-                if (!controlPressed)
-                    Molecule.RunCommand(ref _model.checkedMolecule, $"Move {vector.X},{vector.Y}", _mainViewer.DrawPlace.Width, _mainViewer.DrawPlace.Height);
-                else Molecule.RunCommand(ref _model.checkedMolecule, $"Move {vector.X},{0}", _mainViewer.DrawPlace.Width, _mainViewer.DrawPlace.Height);
+                if (mouseLoc.X >= rect.X && mouseLoc.X <= (rect.X + rect.Width) && mouseLoc.Y >= rect.Y &&
+                    mouseLoc.Y <= (rect.Y + rect.Height))
+                {
+                    PointF vector = new PointF(mouseLoc.X - rect.X - rect.Width / 2, mouseLoc.Y - rect.Y - rect.Height / 2);
+                    if (!controlPressed)
+                        Molecule.RunCommand(ref _model.checkedMolecule, $"Move {vector.X},{vector.Y}", _mainViewer.DrawPlace.Width, _mainViewer.DrawPlace.Height);
+                    else Molecule.RunCommand(ref _model.checkedMolecule, $"Move {vector.X},{0}", _mainViewer.DrawPlace.Width, _mainViewer.DrawPlace.Height);
+                }
             }
             // Перемещение фигуры пока зажата кнопка мыши.
             if (FigureMoving)

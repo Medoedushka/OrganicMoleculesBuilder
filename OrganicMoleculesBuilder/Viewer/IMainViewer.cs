@@ -27,6 +27,12 @@ namespace OrganicMoleculesBuilder.Viewer
         PictureBox DrawPlace { get;}
         string PathToSave { get;}
 
+
+
         event Action<string> SaveWorkSpace;
+
+        event EventHandler<EventArgs> ShowMoleculesProperties;
+        event EventHandler<EventArgs> DuplicateMolecule;
+        event EventHandler<EventArgs> DeleteMolecule;
     }
 }

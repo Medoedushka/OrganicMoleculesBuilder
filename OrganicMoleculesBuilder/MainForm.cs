@@ -17,6 +17,9 @@ namespace OrganicMoleculesBuilder
         Color buttonChecked = Color.FromArgb(150, 80, 80);
 
         public event Action<string> SaveWorkSpace;
+        public event EventHandler<EventArgs> ShowMoleculesProperties;
+        public event EventHandler<EventArgs> DuplicateMolecule;
+        public event EventHandler<EventArgs> DeleteMolecule;
 
         public MainForm()
         {
@@ -35,7 +38,7 @@ namespace OrganicMoleculesBuilder
             };
             string[] ExpStrings = new string[]
             {
-                /*0*/"Клинкните на связь, чтобы изменить вид связи",
+                /*0*/"Клинкните на связь, чтобы изменить её вид",
                 /*1*/"Кликните на свободное место на холсте, чтобы ввести текст. Используйте _{} и ^{}, чтобы вводить верхние и нижние индексы соответственно",
                 /*2*/"Нажмите и удерживайте, чтобы добавить стрелку",
                 /*3*/"Выберите последовательно два атома, чтобы соединить их обычной одинарной связью",
@@ -164,6 +167,21 @@ namespace OrganicMoleculesBuilder
             pcb_ConnectAtoms.BackColor = Color.FromArgb(150, 80, 80);
             ToolType = ToolType.Connection;
             pictureBox3.Cursor = Cursors.Hand;
+        }
+
+        private void tsm_MolProperties_Click(object sender, EventArgs e)
+        {
+            ShowMoleculesProperties?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void tsm_MolDuplicate_Click(object sender, EventArgs e)
+        {
+            DuplicateMolecule?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void tsm_Delete_Click(object sender, EventArgs e)
+        {
+            DeleteMolecule?.Invoke(this, EventArgs.Empty);
         }
     }
 }

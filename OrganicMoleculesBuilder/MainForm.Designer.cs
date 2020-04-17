@@ -28,15 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.экспортироватьКакPNGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.lbl_Status = new System.Windows.Forms.ToolStripStatusLabel();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pcb_Text = new System.Windows.Forms.PictureBox();
             this.pcb_DashedBond = new System.Windows.Forms.PictureBox();
             this.pcb_ConnectAtoms = new System.Windows.Forms.PictureBox();
@@ -46,11 +42,17 @@
             this.pcb_WedgetBond = new System.Windows.Forms.PictureBox();
             this.pcb_None = new System.Windows.Forms.PictureBox();
             this.pcb_SolidBond = new System.Windows.Forms.PictureBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.lbl_Status = new System.Windows.Forms.ToolStripStatusLabel();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.MoleculeSettings = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsm_MolProperties = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsm_MolDuplicate = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsm_Delete = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Text)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_DashedBond)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_ConnectAtoms)).BeginInit();
@@ -60,6 +62,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pcb_WedgetBond)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_None)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_SolidBond)).BeginInit();
+            this.panel2.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            this.MoleculeSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -107,50 +113,6 @@
             this.groupBox1.Size = new System.Drawing.Size(81, 236);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            // 
-            // panel2
-            // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.panel2.BackColor = System.Drawing.Color.LightCoral;
-            this.panel2.Controls.Add(this.groupBox1);
-            this.panel2.Location = new System.Drawing.Point(0, 25);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(108, 537);
-            this.panel2.TabIndex = 4;
-            // 
-            // panel3
-            // 
-            this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(168)))), ((int)(((byte)(168)))), ((int)(((byte)(168)))));
-            this.panel3.Location = new System.Drawing.Point(114, 31);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(720, 522);
-            this.panel3.TabIndex = 1;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lbl_Status});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 540);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1030, 22);
-            this.statusStrip1.TabIndex = 5;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // lbl_Status
-            // 
-            this.lbl_Status.Name = "lbl_Status";
-            this.lbl_Status.Size = new System.Drawing.Size(0, 17);
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.BackColor = System.Drawing.Color.White;
-            this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox3.Location = new System.Drawing.Point(112, 29);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(720, 522);
-            this.pictureBox3.TabIndex = 0;
-            this.pictureBox3.TabStop = false;
             // 
             // pcb_Text
             // 
@@ -261,6 +223,82 @@
             this.pcb_SolidBond.TabStop = false;
             this.pcb_SolidBond.Click += new System.EventHandler(this.pcb_SolidBond_Click);
             // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel2.BackColor = System.Drawing.Color.LightCoral;
+            this.panel2.Controls.Add(this.groupBox1);
+            this.panel2.Location = new System.Drawing.Point(0, 25);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(108, 537);
+            this.panel2.TabIndex = 4;
+            // 
+            // panel3
+            // 
+            this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(168)))), ((int)(((byte)(168)))), ((int)(((byte)(168)))));
+            this.panel3.Location = new System.Drawing.Point(114, 31);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(720, 522);
+            this.panel3.TabIndex = 1;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lbl_Status});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 540);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1030, 22);
+            this.statusStrip1.TabIndex = 5;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // lbl_Status
+            // 
+            this.lbl_Status.Name = "lbl_Status";
+            this.lbl_Status.Size = new System.Drawing.Size(0, 17);
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.BackColor = System.Drawing.Color.White;
+            this.pictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox3.Location = new System.Drawing.Point(112, 29);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(720, 522);
+            this.pictureBox3.TabIndex = 0;
+            this.pictureBox3.TabStop = false;
+            // 
+            // MoleculeSettings
+            // 
+            this.MoleculeSettings.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.MoleculeSettings.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsm_MolProperties,
+            this.tsm_MolDuplicate,
+            this.tsm_Delete});
+            this.MoleculeSettings.Name = "MoleculeSettings";
+            this.MoleculeSettings.Size = new System.Drawing.Size(147, 70);
+            // 
+            // tsm_MolProperties
+            // 
+            this.tsm_MolProperties.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tsm_MolProperties.Name = "tsm_MolProperties";
+            this.tsm_MolProperties.Size = new System.Drawing.Size(146, 22);
+            this.tsm_MolProperties.Text = "Свойства";
+            this.tsm_MolProperties.Click += new System.EventHandler(this.tsm_MolProperties_Click);
+            // 
+            // tsm_MolDuplicate
+            // 
+            this.tsm_MolDuplicate.Name = "tsm_MolDuplicate";
+            this.tsm_MolDuplicate.Size = new System.Drawing.Size(146, 22);
+            this.tsm_MolDuplicate.Text = "Дублировать";
+            this.tsm_MolDuplicate.Click += new System.EventHandler(this.tsm_MolDuplicate_Click);
+            // 
+            // tsm_Delete
+            // 
+            this.tsm_Delete.Name = "tsm_Delete";
+            this.tsm_Delete.Size = new System.Drawing.Size(146, 22);
+            this.tsm_Delete.Text = "Удалить";
+            this.tsm_Delete.Click += new System.EventHandler(this.tsm_Delete_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 20F);
@@ -283,10 +321,6 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Text)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_DashedBond)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_ConnectAtoms)).EndInit();
@@ -296,6 +330,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pcb_WedgetBond)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_None)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_SolidBond)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            this.MoleculeSettings.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -320,6 +359,10 @@
         private System.Windows.Forms.PictureBox pcb_ConnectAtoms;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lbl_Status;
+        private System.Windows.Forms.ToolStripMenuItem tsm_MolProperties;
+        private System.Windows.Forms.ToolStripMenuItem tsm_MolDuplicate;
+        private System.Windows.Forms.ToolStripMenuItem tsm_Delete;
+        public System.Windows.Forms.ContextMenuStrip MoleculeSettings;
     }
 }
 
