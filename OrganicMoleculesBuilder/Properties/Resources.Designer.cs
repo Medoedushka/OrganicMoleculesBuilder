@@ -63,9 +63,39 @@ namespace OrganicMoleculesBuilder.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap benzene {
+            get {
+                object obj = ResourceManager.GetObject("benzene", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ChangeOrder {
             get {
                 object obj = ResourceManager.GetObject("ChangeOrder", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cyclohex {
+            get {
+                object obj = ResourceManager.GetObject("cyclohex", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cyclopent {
+            get {
+                object obj = ResourceManager.GetObject("cyclopent", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

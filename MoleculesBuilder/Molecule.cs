@@ -143,10 +143,11 @@ namespace MoleculesBuilder
         {
             PointF[] pt = new PointF[n];
             double R = l / (2 * Math.Sin(Math.PI / n));
+            double d = n == 5 ? Math.PI / 2 : 0;
             for (int i = 0; i < pt.Length; i++)
             {
-                pt[i].X = (float)(R * Math.Sin(i * 360 / n * K) + center.X);
-                pt[i].Y = (float)(R * Math.Cos(i * 360 / n * K) + center.Y);
+                pt[i].X = (float)(R * Math.Sin(i * 360 / n * K + d) + center.X);
+                pt[i].Y = (float)(R * Math.Cos(i * 360 / n * K + d) + center.Y);
             }
 
             return pt;
@@ -219,7 +220,8 @@ namespace MoleculesBuilder
                 }
             }
 
-             //Если при вращении заместитель совпадёт с же сущ. атомом, то атом-основание вращения соединяется с уже сущ. атомом.
+            //Если при вращении заместитель совпадёт с же сущ. атомом, 
+            //то атом-основание вращения соединяется с уже сущ. атомом.
             if (rotInd.Length == 1)
             {
                 Atom oldAtom;
@@ -266,15 +268,11 @@ namespace MoleculesBuilder
         //Вращение всех вершин молекулы относительно указанной точки _basePt.
         public static Bitmap RotateMolecularPart(PictureBox pictureBox, Molecule crrMolecule, PointF _basePt, double ang)
         {
-            //поиск координат атомов
-            PointF[] rotPt = new PointF[crrMolecule.atoms.Count];
-            PointF basePt = _basePt;
-
             foreach (Atom at in crrMolecule.atoms)
             {
-                PointF oldVector = new PointF(at.Position.X - basePt.X, at.Position.Y - basePt.Y);
+                PointF oldVector = new PointF(at.Position.X - _basePt.X, at.Position.Y - _basePt.Y);
                 PointF newVector = RotateVector(ang, oldVector);
-                at.Position = new PointF(basePt.X + newVector.X, basePt.Y + newVector.Y);
+                at.Position = new PointF(_basePt.X + newVector.X, _basePt.Y + newVector.Y);
             }
             return crrMolecule.ReturnPic(pictureBox.Width, pictureBox.Height);
         }
@@ -380,8 +378,7 @@ namespace MoleculesBuilder
                     {
                         string[] parts = type.Split('-');
                         int n = int.Parse(parts[1]);
-                        PointF vec = new PointF(0, 2 * (float)L);
-                        PointF[] MainAcyclicChain = DrawPoly(L, new PointF(targetPos.X - vec.X, targetPos.Y - vec.Y), n);
+                        PointF[] MainAcyclicChain = DrawPoly(L, targetPos, n);
                         int p = subPos;
                         int s = 0;
                         int[] ind = new int[n];
@@ -395,7 +392,6 @@ namespace MoleculesBuilder
                             if (s == 0) s = p;
                         }
                         crrMolecule.ConnectAtoms(s, p, 1);
-                        RotateMolecularPart(crrMolecule, ind, subPos, ang);
                     }
                     return;
             }

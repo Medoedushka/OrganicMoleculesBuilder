@@ -158,6 +158,10 @@ namespace OrganicMoleculesBuilder.Presenter
                 {
                     _model.ConnectAtoms(_mainViewer.DrawPlace);
                 }
+                else if (_mainViewer.ToolType == ToolType.Cycles && _mainViewer.Cycloalkane != 0)
+                {
+                    _model.DrawCycles(_mainViewer.Cycloalkane, _mainViewer.DrawPlace, mouseLoc);
+                }
             }
             else if (e.Button == MouseButtons.Right)
             {

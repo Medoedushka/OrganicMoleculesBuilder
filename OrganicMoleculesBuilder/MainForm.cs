@@ -34,7 +34,10 @@ namespace OrganicMoleculesBuilder
                 pcb_DashedBond,
                 pcb_Text,
                 pcb_Arrow,
-                pcb_ConnectAtoms
+                pcb_ConnectAtoms,
+                pcb_Cyclohexane,
+                pcb_Cyclopentane,
+                pcb_Benzene
             };
             string[] ExpStrings = new string[]
             {
@@ -42,7 +45,9 @@ namespace OrganicMoleculesBuilder
                 /*1*/"Кликните на свободное место на холсте, чтобы ввести текст. Используйте _{} и ^{}, чтобы вводить верхние и нижние индексы соответственно",
                 /*2*/"Нажмите и удерживайте, чтобы добавить стрелку",
                 /*3*/"Выберите последовательно два атома, чтобы соединить их обычной одинарной связью",
-                /*4*/"Кликните по фигуре, чтобы её выбрать; дважды кликните по молекуле, чтобы её выделить; удерживайте и тяните курсор пока молекула выделена, чтобы её переместить"
+                /*4*/"Кликните по фигуре, чтобы её выбрать; дважды кликните по молекуле, чтобы её выделить; удерживайте и тяните курсор пока молекула выделена, чтобы её переместить",
+                /*5*/"Кликните на свободное место, чтобы нарисовать цикл"
+
             };
             ToolType = ToolType.SolidBond;
             foreach(PictureBox pb in pcbGroup1)
@@ -59,6 +64,8 @@ namespace OrganicMoleculesBuilder
                         lbl_Status.Text = ExpStrings[3];
                     else if (pb.Name == pcb_None.Name)
                         lbl_Status.Text = ExpStrings[4];
+                    else if (pb.Name == pcb_Benzene.Name || pb.Name == pcb_Cyclohexane.Name || pb.Name == pcb_Cyclopentane.Name)
+                        lbl_Status.Text = ExpStrings[5];
                     else lbl_Status.Text = ExpStrings[0];
                 };
                 pb.MouseLeave += (object o, EventArgs e) => 
@@ -70,6 +77,8 @@ namespace OrganicMoleculesBuilder
         }
         public ToolType ToolType { get; set; }
         public PictureBox DrawPlace => pictureBox3;
+        public int Cycloalkane { get; private set; }
+
 
         public string PathToSave
         {
@@ -182,6 +191,31 @@ namespace OrganicMoleculesBuilder
         private void tsm_Delete_Click(object sender, EventArgs e)
         {
             DeleteMolecule?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void pcb_Cyclohexane_Click(object sender, EventArgs e)
+        {
+            SetGroupColor(Color.LightCoral, pcbGroup1);
+            pcb_Cyclohexane.BackColor = Color.FromArgb(150, 80, 80);
+            pictureBox3.Cursor = Cursors.Default;
+            ToolType = ToolType.Cycles;
+            Cycloalkane = 6;
+        }
+
+        private void pcb_Cyclopentane_Click(object sender, EventArgs e)
+        {
+            SetGroupColor(Color.LightCoral, pcbGroup1);
+            pcb_Cyclopentane.BackColor = Color.FromArgb(150, 80, 80);
+            pictureBox3.Cursor = Cursors.Default;
+            ToolType = ToolType.Cycles;
+            Cycloalkane = 5;
+        }
+
+        private void pcb_Benzene_Click(object sender, EventArgs e)
+        {
+            SetGroupColor(Color.LightCoral, pcbGroup1);
+            pcb_Benzene.BackColor = Color.FromArgb(150, 80, 80);
+            pictureBox3.Cursor = Cursors.Default;
         }
     }
 }

@@ -237,6 +237,20 @@ namespace OrganicMoleculesBuilder.Model
             ind1 = 0; ind2 = 0;
         }
 
+        public void DrawCycles(int angNum, PictureBox pictureBox, PointF pos)
+        {
+            string str = "";
+            if (founAtom == null && foundBond == null)
+            {
+                Molecule molecule = new Molecule(Convert.ToString(Molecules.Count + 1), path);
+                Molecules.Add(molecule);
+                crrMolecule = molecule;
+
+                str = $"Add cyclo-{angNum} at {pos.X};{pos.Y} 0";
+                Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
+            }
+        }
+
         public void DrawMolecules(PictureBox picture)
         {
             Bitmap bm = new Bitmap(picture.Width, picture.Height);

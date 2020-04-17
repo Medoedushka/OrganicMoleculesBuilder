@@ -18,7 +18,9 @@ namespace OrganicMoleculesBuilder.Viewer
         DashedBond,
         Arrow,
         Text,
-        Connection
+        Connection,
+        Cycles,
+        Benzene = 6
     }
 
     public interface IMainViewer
@@ -26,7 +28,7 @@ namespace OrganicMoleculesBuilder.Viewer
         ToolType ToolType { get; set;}
         PictureBox DrawPlace { get;}
         string PathToSave { get;}
-
+        int Cycloalkane { get;}
 
 
         event Action<string> SaveWorkSpace;

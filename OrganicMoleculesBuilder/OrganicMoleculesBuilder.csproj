@@ -143,5 +143,14 @@
   <ItemGroup>
     <None Include="Resources\selectionTool2.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cyclohex.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cyclopent.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\benzene.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
