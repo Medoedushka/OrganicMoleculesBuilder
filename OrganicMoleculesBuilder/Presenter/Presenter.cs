@@ -39,6 +39,14 @@ namespace OrganicMoleculesBuilder.Presenter
             (_mainViewer as MainForm).KeyDown += Presenter_KeyDown;
             (_mainViewer as MainForm).KeyUp += Presenter_KeyUp;
             _mainViewer.SaveWorkSpace += _mainViewer_SaveWorkSpace;
+            _mainViewer.DuplicateMolecule += (object o, EventArgs e) =>
+            {
+                if (_model.checkedMolecule != null)
+                {
+                    Molecule molecule = (Molecule)_model.checkedMolecule.Clone();
+                    _model.Molecules.Add(molecule);
+                }
+            };
         }
         private void _mainViewer_SaveWorkSpace(string path)
         {
@@ -301,6 +309,14 @@ namespace OrganicMoleculesBuilder.Presenter
                 _model.ChangeOrder(_mainViewer.DrawPlace, 2);
             else if (e.KeyCode == Keys.D3 && !writingText)
                 _model.ChangeOrder(_mainViewer.DrawPlace, 3);
+            else if (e.KeyCode == Keys.D && controlPressed)
+            {
+                if (_model.checkedMolecule != null)
+                {
+                    Molecule molecule = (Molecule)_model.checkedMolecule.Clone();
+                    _model.Molecules.Add(molecule);
+                }
+            }
         }
 
         private void DrawPlace_Paint(object sender, PaintEventArgs e)

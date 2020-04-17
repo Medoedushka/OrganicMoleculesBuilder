@@ -51,9 +51,9 @@
             this.lbl_Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.MoleculeSettings = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsm_MolProperties = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsm_MolDuplicate = new System.Windows.Forms.ToolStripMenuItem();
             this.tsm_Delete = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.tsm_MolDuplicate = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pcb_Text)).BeginInit();
@@ -310,7 +310,7 @@
             this.tsm_MolDuplicate,
             this.tsm_Delete});
             this.MoleculeSettings.Name = "MoleculeSettings";
-            this.MoleculeSettings.Size = new System.Drawing.Size(147, 70);
+            this.MoleculeSettings.Size = new System.Drawing.Size(189, 92);
             // 
             // tsm_MolProperties
             // 
@@ -319,13 +319,6 @@
             this.tsm_MolProperties.Size = new System.Drawing.Size(146, 22);
             this.tsm_MolProperties.Text = "Свойства";
             this.tsm_MolProperties.Click += new System.EventHandler(this.tsm_MolProperties_Click);
-            // 
-            // tsm_MolDuplicate
-            // 
-            this.tsm_MolDuplicate.Name = "tsm_MolDuplicate";
-            this.tsm_MolDuplicate.Size = new System.Drawing.Size(146, 22);
-            this.tsm_MolDuplicate.Text = "Дублировать";
-            this.tsm_MolDuplicate.Click += new System.EventHandler(this.tsm_MolDuplicate_Click);
             // 
             // tsm_Delete
             // 
@@ -343,6 +336,14 @@
             this.pictureBox3.Size = new System.Drawing.Size(720, 522);
             this.pictureBox3.TabIndex = 0;
             this.pictureBox3.TabStop = false;
+            // 
+            // tsm_MolDuplicate
+            // 
+            this.tsm_MolDuplicate.Name = "tsm_MolDuplicate";
+            this.tsm_MolDuplicate.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
+            this.tsm_MolDuplicate.Size = new System.Drawing.Size(188, 22);
+            this.tsm_MolDuplicate.Text = "Дублировать";
+            this.tsm_MolDuplicate.Click += new System.EventHandler(this.tsm_MolDuplicate_Click);
             // 
             // MainForm
             // 
@@ -408,12 +409,12 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lbl_Status;
         private System.Windows.Forms.ToolStripMenuItem tsm_MolProperties;
-        private System.Windows.Forms.ToolStripMenuItem tsm_MolDuplicate;
         private System.Windows.Forms.ToolStripMenuItem tsm_Delete;
         public System.Windows.Forms.ContextMenuStrip MoleculeSettings;
         private System.Windows.Forms.PictureBox pcb_Benzene;
         private System.Windows.Forms.PictureBox pcb_Cyclopentane;
         private System.Windows.Forms.PictureBox pcb_Cyclohexane;
+        private System.Windows.Forms.ToolStripMenuItem tsm_MolDuplicate;
     }
 }
 

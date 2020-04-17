@@ -74,14 +74,24 @@ namespace MoleculesBuilder
             newMol.ShowAtomNumbers = this.ShowAtomNumbers;
             string[] commands = this.Pattern.Split('\n');
             List<string> EditedCommands = new List<string>();
+            PointF sumVector = new PointF(0, 0);
             for (int i = 0; i < commands.Length; i++)
             {
                 if (commands[i].Contains("Rotate") && commands[i + 1].Contains("Rotate"))
                     commands[i] = "";
+                if (commands[i].Contains("Move"))
+                {
+                    string[] el = commands[i].Split(' ');
+                    string[] num = el[1].Split(',');
+                    sumVector.X += float.Parse(num[0]);
+                    sumVector.Y += float.Parse(num[1]);
+                    commands[i] = "";
+                }
                 if (commands[i] != "")
                     EditedCommands.Add(commands[i]);
 
             }
+            EditedCommands.Add($"Move {sumVector.X},{sumVector.Y}");
             commands = null;
             foreach(string c in EditedCommands)
             {
