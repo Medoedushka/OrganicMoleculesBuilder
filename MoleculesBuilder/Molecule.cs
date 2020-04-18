@@ -74,6 +74,7 @@ namespace MoleculesBuilder
             newMol.ShowAtomNumbers = this.ShowAtomNumbers;
             string[] commands = this.Pattern.Split('\n');
             List<string> EditedCommands = new List<string>();
+            List<string> ExistInsert = new List<string>();
             PointF sumVector = new PointF(0, 0);
             for (int i = 0; i < commands.Length; i++)
             {
@@ -87,11 +88,29 @@ namespace MoleculesBuilder
                     sumVector.Y += float.Parse(num[1]);
                     commands[i] = "";
                 }
+                if (commands[i].Contains("Insert"))
+                {
+                    string[] el = commands[i].Split(' ');
+                    for (int k = 0; k < ExistInsert.Count; k++)
+                    {
+                        if (ExistInsert[k].Contains(el[2]))
+                            ExistInsert.Remove(ExistInsert[k]);
+                        
+                    }
+                    ExistInsert.Add(commands[i]);
+                    
+                    commands[i] = "";
+                }
                 if (commands[i] != "")
                     EditedCommands.Add(commands[i]);
-
             }
-            EditedCommands.Add($"Move {sumVector.X},{sumVector.Y}");
+            if (ExistInsert.Count > 0)
+            {
+                foreach (string s in ExistInsert)
+                    EditedCommands.Add(s);
+            }
+            if (sumVector.X != 0 || sumVector.Y != 0)
+                EditedCommands.Add($"Move {sumVector.X},{sumVector.Y}");
             commands = null;
             foreach(string c in EditedCommands)
             {
@@ -104,6 +123,7 @@ namespace MoleculesBuilder
                 Pattern += c + "\n";
             }
             EditedCommands = null;
+            ExistInsert = null;
             GC.Collect();
             return newMol;
         }
