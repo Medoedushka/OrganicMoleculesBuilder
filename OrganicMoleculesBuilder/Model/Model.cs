@@ -51,6 +51,7 @@ namespace OrganicMoleculesBuilder.Model
             if (founAtom == null)
             {
                 Molecule molecule = new Molecule(Convert.ToString(Molecules.Count + 1), path);
+                //molecule.ShowAtomNumbers = true;
                 Molecules.Add(molecule);
                 crrMolecule = molecule;
             }
@@ -242,7 +243,7 @@ namespace OrganicMoleculesBuilder.Model
             ind1 = 0; ind2 = 0;
         }
 
-        public void DrawCycles(int angNum, PictureBox pictureBox, PointF pos)
+        public void DrawCycles(int angNum, PictureBox pictureBox, PointF pos, bool benzene = false)
         {
             string str = "";
             if (founAtom == null && foundBond == null)
@@ -252,6 +253,17 @@ namespace OrganicMoleculesBuilder.Model
                 crrMolecule = molecule;
 
                 str = $"Add cyclo-{angNum} at {pos.X};{pos.Y} 0";
+                Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
+            }
+            if(benzene == true)
+            {
+                str = "Connect 1 2 by 2";
+                Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
+
+                str = "Connect 3 4 by 2";
+                Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
+
+                str = "Connect 5 6 by 2";
                 Molecule.RunCommand(ref crrMolecule, str, pictureBox.Width, pictureBox.Height);
             }
         }

@@ -137,9 +137,12 @@ namespace MoleculesBuilder
         public void ApdateValence(int val)
         {
             Atom[] temp = new Atom[val];
+            int shift = 0;
             for(int i = 0; i < Neighbours.Length; i++)
             {
-                if (Neighbours[i] != null) temp[i] = Neighbours[i];
+                if (Neighbours[i] != null)
+                    temp[i - shift] = Neighbours[i];
+                else shift++;
             }
             Neighbours = temp;
             temp = null;

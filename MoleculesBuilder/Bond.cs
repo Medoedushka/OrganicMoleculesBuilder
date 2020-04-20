@@ -42,6 +42,7 @@ namespace MoleculesBuilder
             B = b;
             Order = _order;
             BondType = BondType.Default;
+            InverseBond = true;
         }
 
         public Bond()

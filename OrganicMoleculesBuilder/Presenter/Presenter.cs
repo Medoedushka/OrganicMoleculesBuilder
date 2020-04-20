@@ -28,7 +28,14 @@ namespace OrganicMoleculesBuilder.Presenter
             timer = new Timer();
             timer.Interval = 50;
             timer.Tick += (object o, EventArgs e) => {
-                _model.DrawMolecules(_mainViewer.DrawPlace);
+                try
+                {
+                    _model.DrawMolecules(_mainViewer.DrawPlace);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             };
             timer.Start();
             _mainViewer.DrawPlace.MouseUp += DrawPlace_MouseUp;
@@ -166,9 +173,18 @@ namespace OrganicMoleculesBuilder.Presenter
                 {
                     _model.ConnectAtoms(_mainViewer.DrawPlace);
                 }
-                else if (_mainViewer.ToolType == ToolType.Cycles && _mainViewer.Cycloalkane != 0)
+                else if (_mainViewer.ToolType == ToolType.Cycles && _mainViewer.CycloType != 0)
                 {
-                    _model.DrawCycles(_mainViewer.Cycloalkane, _mainViewer.DrawPlace, mouseLoc);
+                    if (_mainViewer.CycloType > 0) // построение циклоалканов 
+                        _model.DrawCycles(_mainViewer.CycloType, _mainViewer.DrawPlace, mouseLoc);
+                    else // построение прочих циклических соединений 
+                    {
+                        // бензол
+                        if(_mainViewer.CycloType == -6)
+                        {
+                            _model.DrawCycles(Math.Abs(_mainViewer.CycloType), _mainViewer.DrawPlace, mouseLoc, true);
+                        }
+                    }
                 }
             }
             else if (e.Button == MouseButtons.Right)
@@ -309,7 +325,7 @@ namespace OrganicMoleculesBuilder.Presenter
                 _model.ChangeOrder(_mainViewer.DrawPlace, 2);
             else if (e.KeyCode == Keys.D3 && !writingText)
                 _model.ChangeOrder(_mainViewer.DrawPlace, 3);
-            else if (e.KeyCode == Keys.D && controlPressed)
+            else if (e.KeyCode == Keys.D && controlPressed) // ctrl+D
             {
                 if (_model.checkedMolecule != null)
                 {
@@ -317,6 +333,10 @@ namespace OrganicMoleculesBuilder.Presenter
                     _model.Molecules.Add(molecule);
                 }
             }
+            else if (e.KeyCode == Keys.S)
+                (_mainViewer as MainForm).pcb_None_Click(this, EventArgs.Empty);
+            else if (e.KeyCode == Keys.A)
+                (_mainViewer as MainForm).pcb_SolidBond_Click(this, EventArgs.Empty);
         }
 
         private void DrawPlace_Paint(object sender, PaintEventArgs e)

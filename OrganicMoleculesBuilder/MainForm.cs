@@ -77,7 +77,7 @@ namespace OrganicMoleculesBuilder
         }
         public ToolType ToolType { get; set; }
         public PictureBox DrawPlace => pictureBox3;
-        public int Cycloalkane { get; private set; }
+        public int CycloType{ get; private set; }
 
 
         public string PathToSave
@@ -102,7 +102,7 @@ namespace OrganicMoleculesBuilder
                 pb.BackColor = color;
         }
 
-        private void pcb_SolidBond_Click(object sender, EventArgs e)
+        public void pcb_SolidBond_Click(object sender, EventArgs e)
         {
             SetGroupColor(Color.LightCoral, pcbGroup1);
             pcb_SolidBond.BackColor = Color.FromArgb(150, 80, 80);
@@ -149,7 +149,7 @@ namespace OrganicMoleculesBuilder
             pictureBox3.Cursor = Cursors.Cross;
         }
 
-        private void pcb_None_Click(object sender, EventArgs e)
+        public void pcb_None_Click(object sender, EventArgs e)
         {
             SetGroupColor(Color.LightCoral, pcbGroup1);
             pcb_None.BackColor = Color.FromArgb(150, 80, 80);
@@ -199,7 +199,7 @@ namespace OrganicMoleculesBuilder
             pcb_Cyclohexane.BackColor = Color.FromArgb(150, 80, 80);
             pictureBox3.Cursor = Cursors.Default;
             ToolType = ToolType.Cycles;
-            Cycloalkane = 6;
+            CycloType = 6;
         }
 
         private void pcb_Cyclopentane_Click(object sender, EventArgs e)
@@ -208,7 +208,7 @@ namespace OrganicMoleculesBuilder
             pcb_Cyclopentane.BackColor = Color.FromArgb(150, 80, 80);
             pictureBox3.Cursor = Cursors.Default;
             ToolType = ToolType.Cycles;
-            Cycloalkane = 5;
+            CycloType = 5;
         }
 
         private void pcb_Benzene_Click(object sender, EventArgs e)
@@ -216,6 +216,8 @@ namespace OrganicMoleculesBuilder
             SetGroupColor(Color.LightCoral, pcbGroup1);
             pcb_Benzene.BackColor = Color.FromArgb(150, 80, 80);
             pictureBox3.Cursor = Cursors.Default;
+            ToolType = ToolType.Cycles;
+            CycloType = -6;
         }
     }
 }

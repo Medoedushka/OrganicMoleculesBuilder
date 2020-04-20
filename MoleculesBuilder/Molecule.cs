@@ -41,7 +41,7 @@ namespace MoleculesBuilder
             "I",
             "S"
         };
-        public const double L = 35; // Длина связи C-C
+        public const double L = 30; // Длина связи C-C
         const double ANGLE = 120;//109.47; // Угол связи C-C
         const double K = Math.PI / 180;
 
@@ -75,6 +75,7 @@ namespace MoleculesBuilder
             string[] commands = this.Pattern.Split('\n');
             List<string> EditedCommands = new List<string>();
             List<string> ExistInsert = new List<string>();
+            List<string> DeleteCommands = new List<string>();
             PointF sumVector = new PointF(0, 0);
             for (int i = 0; i < commands.Length; i++)
             {
@@ -101,6 +102,13 @@ namespace MoleculesBuilder
                     
                     commands[i] = "";
                 }
+                if (commands[i].Contains("Delete"))
+                {
+                    DeleteCommands.Add(commands[i]);
+                    commands[i] = "";
+
+                }
+
                 if (commands[i] != "")
                     EditedCommands.Add(commands[i]);
             }
@@ -109,21 +117,24 @@ namespace MoleculesBuilder
                 foreach (string s in ExistInsert)
                     EditedCommands.Add(s);
             }
+            if (DeleteCommands.Count > 0)
+            {
+                foreach (string s in DeleteCommands)
+                    EditedCommands.Add(s);
+            }
             if (sumVector.X != 0 || sumVector.Y != 0)
                 EditedCommands.Add($"Move {sumVector.X},{sumVector.Y}");
             commands = null;
-            foreach(string c in EditedCommands)
+            Pattern = "";
+            foreach (string c in EditedCommands)
             {
                 Molecule.RunCommand(ref newMol, c, this.Image.Width, this.Image.Height);
-            }
-
-            Pattern = "";
-            foreach(string c in EditedCommands)
-            {
                 Pattern += c + "\n";
             }
             EditedCommands = null;
             ExistInsert = null;
+            DeleteCommands = null;
+            newMol.Pattern = this.Pattern;
             GC.Collect();
             return newMol;
         }
@@ -1089,17 +1100,19 @@ namespace MoleculesBuilder
         {
             foreach (Atom a in atoms)
             {
-                if (Math.Abs(a.Position.X - newAtom.Position.X) <= 0.01 && Math.Abs(a.Position.Y - newAtom.Position.Y) <= 0.01)
+                if (Math.Abs(a.Position.X - newAtom.Position.X) <= 0.1 && Math.Abs(a.Position.Y - newAtom.Position.Y) <= 0.1)
                 {
-                    for (int k = 0; k < a.Neighbours.Length; k++)
-                    {
-                        if (a.Neighbours[k] == null)
-                        {
-                            createdAtom = a;
-                            return true;
-                        }
+                    createdAtom = a;
+                    return true;
+                    //for (int k = 0; k < a.Neighbours.Length; k++)
+                    //{
+                    //    if (a.Neighbours[k] == null)
+                    //    {
+                    //        createdAtom = a;
+                    //        return true;
+                    //    }
 
-                    }
+                    //}
                 }
             }
             createdAtom = null;
